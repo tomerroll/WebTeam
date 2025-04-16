@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathDuo - סטטיסטיקות מפורטות</title>
+    <link href="./dist/output.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <a href="teacher-dashboard.html" class="text-xl font-bold">MathDuo</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="text-sm">שלום, לידור!</span>
+                <a href="login.html" class="text-sm hover:text-blue-200 bg-blue-700 px-4 py-2 rounded-lg transition-colors">התנתק</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-6">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">סטטיסטיקות מפורטות</h1>
+            <div class="flex space-x-4">
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    ייצא ל-PDF
+                </button>
+                <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                    שלח להורים
+                </button>
+            </div>
+        </div>
+
+        <!-- Student Overview -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">סקירת תלמידים</h2>
+            <div class="space-y-4">
+                <!-- Daniel Cohen -->
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-medium">דניאל כהן</span>
+                        <input type="checkbox" class="form-checkbox text-purple-600 h-5 w-5">
+                    </div>
+                    <div class="space-y-2">
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>התקדמות כללית</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-purple-600 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div class="bg-white p-2 rounded">
+                                <span class="text-gray-600">תרגילים שהושלמו</span>
+                                <div class="font-medium">15/20</div>
+                            </div>
+                            <div class="bg-white p-2 rounded">
+                                <span class="text-gray-600">ציון ממוצע</span>
+                                <div class="font-medium">85%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rotem Levi -->
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-medium">רותם לוי</span>
+                        <input type="checkbox" class="form-checkbox text-purple-600 h-5 w-5">
+                    </div>
+                    <div class="space-y-2">
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>התקדמות כללית</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-purple-600 h-2 rounded-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div class="bg-white p-2 rounded">
+                                <span class="text-gray-600">תרגילים שהושלמו</span>
+                                <div class="font-medium">18/20</div>
+                            </div>
+                            <div class="bg-white p-2 rounded">
+                                <span class="text-gray-600">ציון ממוצע</span>
+                                <div class="font-medium">92%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Noa Israeli -->
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-medium">נועה ישראלי</span>
+                        <input type="checkbox" class="form-checkbox text-purple-600 h-5 w-5">
+                    </div>
+                    <div class="space-y-2">
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>התקדמות כללית</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-purple-600 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div class="bg-white p-2 rounded">
+                                <span class="text-gray-600">תרגילים שהושלמו</span>
+                                <div class="font-medium">17/20</div>
+                            </div>
+                            <div class="bg-white p-2 rounded">
+                                <span class="text-gray-600">ציון ממוצע</span>
+                                <div class="font-medium">88%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Progress Overview -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold mb-4">התקדמות כללית</h2>
+                <div class="chart-container">
+                    <canvas id="progressChart"></canvas>
+                </div>
+                <div class="mt-4 grid grid-cols-3 gap-4">
+                    <div class="bg-blue-50 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold text-blue-600">85%</div>
+                        <div class="text-sm text-gray-600">ממוצע כללי</div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold text-green-600">92%</div>
+                        <div class="text-sm text-gray-600">השבוע האחרון</div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg text-center">
+                        <div class="text-2xl font-bold text-purple-600">78%</div>
+                        <div class="text-sm text-gray-600">החודש האחרון</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topic Performance -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold mb-4">ביצועים לפי נושא</h2>
+                <div class="chart-container">
+                    <canvas id="topicChart"></canvas>
+                </div>
+                <div class="mt-4 space-y-2">
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span>סדר פעולות חשבון</span>
+                            <span>90%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: 90%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span>שברים</span>
+                            <span>75%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span>משוואות</span>
+                            <span>85%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-purple-600 h-2 rounded-full" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Time Analysis -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold mb-4">ניתוח זמן</h2>
+                <div class="chart-container">
+                    <canvas id="timeChart"></canvas>
+                </div>
+                <div class="mt-4 grid grid-cols-2 gap-4">
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <div class="text-sm text-gray-600 mb-1">זמן ממוצע לתרגיל</div>
+                        <div class="text-xl font-bold">2:15 דקות</div>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <div class="text-sm text-gray-600 mb-1">זמן כולל</div>
+                        <div class="text-xl font-bold">4:30 שעות</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Common Mistakes -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold mb-4">טעויות נפוצות</h2>
+                <div class="space-y-4">
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <div class="font-medium mb-2">סדר פעולות חשבון</div>
+                        <p class="text-sm text-gray-600">טעות נפוצה: חיבור לפני כפל בסוגריים</p>
+                        <p class="text-sm text-gray-600">תרגילים עם טעות: 5 מתוך 20</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <div class="font-medium mb-2">שברים</div>
+                        <p class="text-sm text-gray-600">טעות נפוצה: חיבור מכנים שונים</p>
+                        <p class="text-sm text-gray-600">תרגילים עם טעות: 3 מתוך 15</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mt-6">
+            <h2 class="text-xl font-bold mb-4">משוב למורה</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">המלצות לשיפור</label>
+                    <textarea class="w-full p-2 border rounded-lg" rows="3">מומלץ להתמקד בתרגול שברים, במיוחד בחיבור שברים עם מכנים שונים. התלמיד מראה התקדמות טובה בסדר פעולות חשבון.</textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">הערות נוספות</label>
+                    <textarea class="w-full p-2 border rounded-lg" rows="3"></textarea>
+                </div>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    שמור משוב
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Progress Chart
+        const progressCtx = document.getElementById('progressChart').getContext('2d');
+        new Chart(progressCtx, {
+            type: 'line',
+            data: {
+                labels: ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני'],
+                datasets: [{
+                    label: 'התקדמות',
+                    data: [65, 70, 75, 80, 85, 90],
+                    borderColor: 'rgb(59, 130, 246)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Topic Chart
+        const topicCtx = document.getElementById('topicChart').getContext('2d');
+        new Chart(topicCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['סדר פעולות חשבון', 'שברים', 'משוואות'],
+                datasets: [{
+                    data: [90, 75, 85],
+                    backgroundColor: [
+                        'rgb(59, 130, 246)',
+                        'rgb(34, 197, 94)',
+                        'rgb(168, 85, 247)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Time Chart
+        const timeCtx = document.getElementById('timeChart').getContext('2d');
+        new Chart(timeCtx, {
+            type: 'bar',
+            data: {
+                labels: ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי'],
+                datasets: [{
+                    label: 'זמן ממוצע לתרגיל',
+                    data: [2.5, 2.2, 2.0, 2.3, 2.1],
+                    backgroundColor: 'rgb(234, 179, 8)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+</body>
+</html>
+ 

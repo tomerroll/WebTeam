@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathDuo - לימוד מתמטיקה אינטראקטיבי</title>
+    <link href="./dist/output.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-4xl mx-auto p-8">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-bold text-blue-600 mb-4">MathDuo</h1>
+            <p class="text-xl text-gray-600">פלטפורמה אינטראקטיבית ללימוד מתמטיקה</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Student Card -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                <div class="p-6">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h2 class="text-2xl font-bold text-center mb-2">מסך תלמיד</h2>
+                    <p class="text-gray-600 text-center mb-6">למד מתמטיקה בצורה אינטראקטיבית ומהנה</p>
+                    <a href="student-login.html" class="block w-full py-3 px-4 bg-blue-600 text-white text-center rounded-lg hover:bg-blue-700 transition-colors duration-300">
+                        כניסה למסך תלמיד
+                    </a>
+                </div>
+            </div>
+
+            <!-- Teacher Card -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                <div class="p-6">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h2 class="text-2xl font-bold text-center mb-2">מסך מורה</h2>
+                    <p class="text-gray-600 text-center mb-6">נהל את הכיתה ועקוב אחר התקדמות התלמידים</p>
+                    <a href="teacher-login.html" class="block w-full py-3 px-4 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-colors duration-300">
+                        כניסה למסך מורה
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 text-center">
+            <p class="text-gray-500">© 2024 MathDuo - כל הזכויות שמורות</p>
+        </div>
+    </div>
+</body>
+</html> 

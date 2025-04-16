@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathDuo - דף הבית למורה</title>
+    <link href="./dist/output.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+        }
+        .dashboard-card {
+            transition: all 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .dashboard-card:active {
+            transform: translateY(0);
+            box-shadow: 0 5px 10px -3px rgba(0, 0, 0, 0.1);
+        }
+        .card-content {
+            display: none;
+        }
+        .card-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <a href="teacher-dashboard.html" class="text-xl font-bold">MathDuo</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="text-sm">שלום, לידור!</span>
+                <a href="login.html" class="text-sm hover:text-blue-200 bg-blue-700 px-4 py-2 rounded-lg transition-colors">התנתק</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">דף הבית למורה</h1>
+        
+        <!-- Main Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Manage Students -->
+            <a href="teacher-students.html" class="dashboard-card bg-white rounded-lg shadow-lg p-8">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-blue-100 p-4 rounded-full">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-medium mb-2">ניהול תלמידים</h3>
+                        <p class="text-gray-600">הוסף, ערוך וצפה בתלמידים</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Manage Exercises -->
+            <a href="teacher-exercises.html" class="dashboard-card bg-white rounded-lg shadow-lg p-8">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-green-100 p-4 rounded-full">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-medium mb-2">ניהול תרגילים</h3>
+                        <p class="text-gray-600">צור וערוך תרגילים</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- View Statistics -->
+            <a href="view-stats.html" class="dashboard-card bg-white rounded-lg shadow-lg p-8">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-purple-100 p-4 rounded-full">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-medium mb-2">סטטיסטיקות</h3>
+                        <p class="text-gray-600">צפה בהתקדמות התלמידים</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Create Test -->
+            <a href="#" class="dashboard-card bg-white rounded-lg shadow-lg p-8">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-yellow-100 p-4 rounded-full">
+                        <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-medium mb-2">צור מבחן</h3>
+                        <p class="text-gray-600">הרכב מבחן מותאם אישית</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Teaching Materials -->
+            <a href="#" class="dashboard-card bg-white rounded-lg shadow-lg p-8">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-red-100 p-4 rounded-full">
+                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-medium mb-2">חומרי לימוד</h3>
+                        <p class="text-gray-600">נהל חומרי לימוד</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Messages -->
+            <a href="#" class="dashboard-card bg-white rounded-lg shadow-lg p-8">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-indigo-100 p-4 rounded-full">
+                        <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-medium mb-2">הודעות</h3>
+                        <p class="text-gray-600">צ'אט עם תלמידים</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Settings -->
+            <div class="dashboard-card bg-white rounded-lg shadow-lg p-8">
+                <button onclick="toggleCard('settings')" class="w-full flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-gray-100 p-4 rounded-full">
+                            <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-medium mb-2">הגדרות</h3>
+                            <p class="text-gray-600">הגדר את העדפות המערכת</p>
+                        </div>
+                    </div>
+                    <svg class="w-6 h-6 transform transition-transform" id="settings-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div id="settings-content" class="card-content mt-4">
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-medium mb-2">הגדרות פרופיל</h4>
+                            <form class="space-y-2">
+                                <div class="space-y-1">
+                                    <label class="text-sm text-gray-600">שם מלא</label>
+                                    <input type="text" value="לידור" class="w-full p-2 rounded border border-gray-200">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-sm text-gray-600">אימייל</label>
+                                    <input type="email" value="lidor@example.com" class="w-full p-2 rounded border border-gray-200">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-sm text-gray-600">מספר טלפון</label>
+                                    <input type="tel" value="050-1234567" class="w-full p-2 rounded border border-gray-200">
+                                </div>
+                                <button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                    שמור שינויים
+                                </button>
+                            </form>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-medium mb-2">הגדרות כיתה</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center justify-between">
+                                    <span>אפשר הרשמה עצמאית לכיתה</span>
+                                    <input type="checkbox" class="form-checkbox text-blue-600" checked>
+                                </label>
+                                <label class="flex items-center justify-between">
+                                    <span>שלח התראות על תרגילים חדשים</span>
+                                    <input type="checkbox" class="form-checkbox text-blue-600" checked>
+                                </label>
+                                <label class="flex items-center justify-between">
+                                    <span>שלח דוח שבועי להורים</span>
+                                    <input type="checkbox" class="form-checkbox text-blue-600" checked>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-medium mb-2">הגדרות מערכת</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center justify-between">
+                                    <span>מצב כהה</span>
+                                    <input type="checkbox" class="form-checkbox text-blue-600">
+                                </label>
+                                <label class="flex items-center justify-between">
+                                    <span>הצג סטטיסטיקות בדף הבית</span>
+                                    <input type="checkbox" class="form-checkbox text-blue-600" checked>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help -->
+            <div class="dashboard-card bg-white rounded-lg shadow-lg p-8">
+                <button onclick="toggleCard('help')" class="w-full flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-orange-100 p-4 rounded-full">
+                            <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-medium mb-2">עזרה</h3>
+                            <p class="text-gray-600">מדריכים ותמיכה</p>
+                        </div>
+                    </div>
+                    <svg class="w-6 h-6 transform transition-transform" id="help-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div id="help-content" class="card-content mt-4">
+                    <div class="space-y-4">
+                        <div class="bg-orange-50 rounded-lg p-4">
+                            <h4 class="font-medium mb-2">מדריכים מהירים</h4>
+                            <div class="space-y-2">
+                                <details class="cursor-pointer">
+                                    <summary class="font-medium">איך מוסיפים תלמיד חדש?</summary>
+                                    <p class="mt-2 text-gray-600">1. לחץ על "ניהול תלמידים"<br>2. לחץ על כפתור "הוסף תלמיד"<br>3. מלא את פרטי התלמיד<br>4. לחץ על "שמור"</p>
+                                </details>
+                                <details class="cursor-pointer">
+                                    <summary class="font-medium">איך יוצרים תרגיל חדש?</summary>
+                                    <p class="mt-2 text-gray-600">1. לחץ על "ניהול תרגילים"<br>2. בחר את סוג התרגיל<br>3. הגדר את רמת הקושי והפרמטרים<br>4. לחץ על "צור תרגיל"</p>
+                                </details>
+                                <details class="cursor-pointer">
+                                    <summary class="font-medium">איך מנהלים את הכיתה?</summary>
+                                    <p class="mt-2 text-gray-600">1. צפה בסטטיסטיקות הכיתה<br>2. עקוב אחר התקדמות התלמידים<br>3. שלח משימות מותאמות אישית<br>4. תקשר עם התלמידים דרך הצ'אט</p>
+                                </details>
+                            </div>
+                        </div>
+                        <div class="bg-orange-50 rounded-lg p-4">
+                            <h4 class="font-medium mb-2">תמיכה טכנית</h4>
+                            <form class="space-y-2">
+                                <div class="space-y-1">
+                                    <label class="text-sm text-gray-600">נושא הפנייה</label>
+                                    <select class="w-full p-2 rounded border border-orange-200">
+                                        <option>בעיה טכנית</option>
+                                        <option>שאלה כללית</option>
+                                        <option>הצעת שיפור</option>
+                                        <option>אחר</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-sm text-gray-600">תיאור הבעיה</label>
+                                    <textarea placeholder="תאר את הבעיה בפירוט..." class="w-full p-2 rounded border border-orange-200 h-24"></textarea>
+                                </div>
+                                <div class="flex gap-4 mt-4">
+                                    <button type="button" onclick="toggleCard('help')" class="flex-1 bg-gray-500 text-white py-3 px-6 rounded-lg hover:bg-gray-600 transition-colors text-lg font-medium">
+                                        בטל
+                                    </button>
+                                    <button type="submit" class="flex-1 bg-orange-600 text-white py-3 px-6 rounded-lg hover:bg-orange-700 transition-colors text-lg font-medium">
+                                        שלח פנייה
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="bg-orange-50 rounded-lg p-4">
+                            <h4 class="font-medium mb-2">צור קשר</h4>
+                            <div class="space-y-2 text-gray-600">
+                                <p>טלפון: 1-800-123-456</p>
+                                <p>אימייל: support@mathduo.com</p>
+                                <p>שעות פעילות: א'-ה' 9:00-17:00</p>
+                            </div>
+                        </div>
+                        <div class="bg-orange-50 rounded-lg p-4">
+                            <h4 class="font-medium mb-2">עזרה ממנהל המערכת</h4>
+                            <p class="text-gray-600 mb-4">צריך עזרה דחופה? מנהל המערכת יצור איתך קשר בהקדם</p>
+                            <button onclick="requestAdminHelp()" class="w-full bg-orange-600 text-white py-3 px-6 rounded-lg hover:bg-orange-700 transition-colors text-lg font-medium flex items-center justify-center gap-2">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                </svg>
+                                בקש עזרה ממנהל המערכת
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleCard(id) {
+            // סגירת כל הטאבים האחרים
+            const allContents = document.querySelectorAll('.card-content');
+            const allArrows = document.querySelectorAll('.transform');
+            
+            allContents.forEach(content => {
+                if (content.id !== id + '-content') {
+                    content.classList.remove('active');
+                }
+            });
+            
+            allArrows.forEach(arrow => {
+                if (arrow.id !== id + '-arrow') {
+                    arrow.style.transform = '';
+                }
+            });
+
+            // פתיחה/סגירה של הטאב הנבחר
+            const content = document.getElementById(id + '-content');
+            const arrow = document.getElementById(id + '-arrow');
+            content.classList.toggle('active');
+            arrow.style.transform = content.classList.contains('active') ? 'rotate(180deg)' : '';
+        }
+
+        function requestAdminHelp() {
+            alert('בקשתך נשלחה למנהל המערכת. נציג יצור איתך קשר בהקדם.');
+        }
+    </script>
+</body>
+</html> 
