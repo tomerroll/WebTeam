@@ -6,27 +6,45 @@ const Help = () => {
   const [subject, setSubject] = useState('');
   const [helpContent, setHelpContent] = useState([]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // כאן נוסיף את הלוגיקה לשליחת ההודעה
-    console.log('Message:', message);
-    console.log('Subject:', subject);
-    // ניקוי הטופס
-    setMessage('');
-    setSubject('');
+    try {
+      const res = await fetch('http://localhost:5000/api/help', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject, message }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('הבקשה נשלחה בהצלחה');
+        setMessage('');
+        setSubject('');
+        // נטען מחדש את ההודעות אחרי שליחת פנייה
+        fetchHelpContent();
+      } else {
+        alert(`שגיאה: ${data.error}`);
+      }
+    } catch (err) {
+      console.error('שגיאה בשליחת בקשת העזרה:', err);
+      alert('אירעה שגיאה בעת שליחת הבקשה');
+    }
   };
 
-  useEffect(() => {
-    const fetchHelpContent = async () => {
-      try {
-        const res = await fetch('http://localhost:5000/api/help');
-        const data = await res.json();
-        setHelpContent(data);
-      } catch (err) {
-        console.error('Error fetching help content:', err);
-      }
-    };
+  // פונקציה שמביאה את כל ההודעות
+  const fetchHelpContent = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/help');
+      const data = await res.json();
+      setHelpContent(data);
+    } catch (err) {
+      console.error('שגיאה בהבאת תוכן עזרה:', err);
+    }
+  };
 
+  // שימוש ב- useEffect להוריד את תוכן העזרה עם הטעינה הראשונית של הרכיב
+  useEffect(() => {
     fetchHelpContent();
   }, []);
 
@@ -50,7 +68,7 @@ const Help = () => {
         <div className="px-4 py-6 sm:px-0">
           <div className="bg-white shadow rounded-lg p-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">בקשת עזרה</h2>
-            
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
@@ -89,6 +107,24 @@ const Help = () => {
                 </button>
               </div>
             </form>
+
+            {/* הצגת כל ההודעות */}
+            <div className="mt-8">
+              <h3 className="text-xl font-semibold text-gray-800">הודעות עזרה</h3>
+              <ul className="space-y-4 mt-4">
+                {helpContent.length > 0 ? (
+                  helpContent.map((help) => (
+                    <li key={help._id} className="p-4 bg-gray-50 rounded-lg shadow-md">
+                      <h4 className="font-medium text-gray-800">{help.subject}</h4>
+                      <p className="mt-2 text-gray-700">{help.message}</p>
+                      <p className="mt-2 text-sm text-gray-500">{new Date(help.createdAt).toLocaleString()}</p>
+                    </li>
+                  ))
+                ) : (
+                  <p className="text-gray-500">לא נמצאו הודעות עזרה.</p>
+                )}
+              </ul>
+            </div>
           </div>
         </div>
       </main>
@@ -96,4 +132,4 @@ const Help = () => {
   );
 };
 
-export default Help; 
+export default Help;

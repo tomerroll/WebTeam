@@ -10,10 +10,18 @@ app.use(express.json());
 // ייבוא הנתיבים
 const authRoutes = require('./routes/auth');
 const exerciseRoutes = require('./routes/exercises');
+const studentsRoutes = require('./routes/students');
+const rewardsRoutes = require('./routes/rewards');
+const theoryRoutes = require('./routes/theory'); // ייבוא נתיב התיאוריה
+const helpRoutes = require('./routes/help'); // ייבוא נתיב התיאוריה
 
 // חיבור הנתיבים
 app.use('/api/auth', authRoutes);
 app.use('/api/exercises', exerciseRoutes);
+app.use('/api/students', studentsRoutes);
+app.use('/api/rewards', rewardsRoutes);
+app.use('/api/theory', theoryRoutes); // חיבור נתיב התיאוריה
+app.use('/api/help', helpRoutes); // חיבור נתיב העזרה
 
 // חיבור למסד נתונים
 mongoose.connect(process.env.MONGO_URI, {

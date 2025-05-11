@@ -12,16 +12,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// הוספת תרגיל (קצר – ללא בדיקות)
-router.post('/', async (req, res) => {
-  try {
-    const exercise = new Exercise(req.body);
-    await exercise.save();
-    res.json(exercise);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+
 
 // הוספת תרגיל עם ולידציה
 router.post('/add', async (req, res) => {

@@ -76,7 +76,7 @@ const Rewards = () => {
   };
 
   const getRewardDetails = (rewardId) => {
-    return rewards.find(reward => reward.id === rewardId);
+    return rewards.find(reward => reward.id === rewardId) || { title: 'לא נמצא', icon: '❓' };
   };
 
   return (
@@ -220,4 +220,4 @@ const Rewards = () => {
   );
 };
 
-export default Rewards; 
+export default Rewards;
