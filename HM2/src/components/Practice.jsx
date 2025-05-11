@@ -15,7 +15,7 @@ const Practice = () => {
         const res = await fetch('http://localhost:5000/api/subjects');
         const data = await res.json();
         setSubjects(data);
-      } catch (err) {
+      } catch (err)  {
         console.error('Error fetching subjects:', err);
       }
     };
