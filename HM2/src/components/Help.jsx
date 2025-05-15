@@ -6,13 +6,23 @@ const Help = () => {
   const [subject, setSubject] = useState('');
   const [helpContent, setHelpContent] = useState([]);
 
+  // מושך את אובייקט המשתמש מ-localStorage
+  const user = JSON.parse(localStorage.getItem('user'));
+  const studentEmail = user?.email || null;
+  const studentName = user?.name || 'משתמש לא מזוהה';
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!studentEmail) {
+      alert('אירעה שגיאה: לא נמצא מייל תלמיד. אנא התחבר מחדש.');
+      return;
+    }
+
     try {
       const res = await fetch('http://localhost:5000/api/help', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subject, message }),
+        body: JSON.stringify({ subject, message, studentEmail, studentName }),
       });
 
       const data = await res.json();
@@ -21,7 +31,6 @@ const Help = () => {
         alert('הבקשה נשלחה בהצלחה');
         setMessage('');
         setSubject('');
-        // נטען מחדש את ההודעות אחרי שליחת פנייה
         fetchHelpContent();
       } else {
         alert(`שגיאה: ${data.error}`);
@@ -32,7 +41,6 @@ const Help = () => {
     }
   };
 
-  // פונקציה שמביאה את כל ההודעות
   const fetchHelpContent = async () => {
     try {
       const res = await fetch('http://localhost:5000/api/help');
@@ -43,7 +51,6 @@ const Help = () => {
     }
   };
 
-  // שימוש ב- useEffect להוריד את תוכן העזרה עם הטעינה הראשונית של הרכיב
   useEffect(() => {
     fetchHelpContent();
   }, []);
@@ -108,7 +115,6 @@ const Help = () => {
               </div>
             </form>
 
-            {/* הצגת כל ההודעות */}
             <div className="mt-8">
               <h3 className="text-xl font-semibold text-gray-800">הודעות עזרה</h3>
               <ul className="space-y-4 mt-4">
@@ -118,6 +124,15 @@ const Help = () => {
                       <h4 className="font-medium text-gray-800">{help.subject}</h4>
                       <p className="mt-2 text-gray-700">{help.message}</p>
                       <p className="mt-2 text-sm text-gray-500">{new Date(help.createdAt).toLocaleString()}</p>
+                      <p className="mt-1 text-sm text-gray-600 font-semibold">
+                        שם התלמיד: {help.studentName || help.studentEmail}
+                      </p>
+                      {help.answer && help.answer.trim() !== '' && (
+                        <div className="mt-4 p-3 bg-primary-100 text-primary-800 rounded-md">
+                          <h5 className="font-semibold">תשובת המורה:</h5>
+                          <p>{help.answer}</p>
+                        </div>
+                      )}
                     </li>
                   ))
                 ) : (
