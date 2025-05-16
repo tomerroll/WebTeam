@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Help = require('../models/Help');
-const Student = require('../models/student');
+const Student = require('../models/Student');
 
 // קבלת כל ההודעות
 router.get('/', async (req, res) => {
@@ -13,6 +13,7 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'שגיאה בשרת' });
   }
 });
+
 // שליחת פנייה
 router.post('/', async (req, res) => {
   const { subject, message, studentEmail } = req.body;
@@ -32,7 +33,6 @@ router.post('/', async (req, res) => {
       message,
       studentEmail,
       studentName: student.name,
-      // אין צורך לציין answer – ייקח כברירת מחדל מהסכימה
     });
 
     await newHelp.save();
@@ -42,7 +42,6 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'שגיאה בשרת' });
   }
 });
-
 
 // עדכון תשובת מורה לפנייה
 router.put('/:id/answer', async (req, res) => {
@@ -66,6 +65,36 @@ router.put('/:id/answer', async (req, res) => {
   } catch (err) {
     console.error('שגיאה בעדכון התשובה:', err);
     res.status(500).json({ error: 'שגיאה בשרת' });
+  }
+});
+
+// מחיקת תשובה בלבד
+router.delete('/:id/answer', async (req, res) => {
+  try {
+    const help = await Help.findById(req.params.id);
+    if (!help) return res.status(404).json({ error: 'לא נמצאה הפנייה' });
+
+    help.answer = undefined;
+    await help.save();
+
+    res.json({ message: 'התשובה נמחקה בהצלחה' });
+  } catch (err) {
+    console.error('שגיאה במחיקת תשובה:', err);
+    res.status(500).json({ error: 'שגיאה במחיקת התשובה' });
+  }
+});
+
+// *** מחיקת פנייה מלאה ***
+router.delete('/:id', async (req, res) => {
+  try {
+    const help = await Help.findById(req.params.id);
+    if (!help) return res.status(404).json({ error: 'לא נמצאה הפנייה למחיקה' });
+
+    await Help.findByIdAndDelete(req.params.id);
+    res.json({ message: 'הפנייה נמחקה בהצלחה' });
+  } catch (err) {
+    console.error('שגיאה במחיקת הפנייה:', err);
+    res.status(500).json({ error: 'שגיאה במחיקת הפנייה' });
   }
 });
 

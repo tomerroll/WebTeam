@@ -1,3 +1,4 @@
+// TeacherDashboard.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -42,6 +43,12 @@ const TeacherDashboard = () => {
       description: 'נהל תגמולים והתקדמות תלמידים',
       icon: '🏆',
       path: '/rewards',
+    },
+    {
+      title: 'פורום',
+      description: 'צפה בבקשות עזרה וענה עליהן',
+      icon: '💬',
+      path: '/teacher-help-forum', // נתיב חדש לפורום מורה
     },
   ];
 
@@ -96,4 +103,4 @@ const TeacherDashboard = () => {
   );
 };
 
-export default TeacherDashboard; 
+export default TeacherDashboard;
