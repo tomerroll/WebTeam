@@ -5,7 +5,8 @@ const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('student'); // 'student' or 'teacher'
+  const [fullName, setFullName] = useState('');
+  const [userType, setUserType] = useState('student');
   const [grade, setGrade] = useState('ז');
   const [className, setClassName] = useState('א');
   const [loading, setLoading] = useState(false);
@@ -16,6 +17,7 @@ const Login = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    
     if (isLogin) {
       // התחברות
       try {
@@ -30,8 +32,8 @@ const Login = () => {
         });
         const data = await res.json();
         if (data.token) {
-          // אפשר לשמור token ב-localStorage
-          // localStorage.setItem('token', data.token);
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
           if (userType === 'student') {
             navigate('/student-dashboard');
           } else {
@@ -50,7 +52,7 @@ const Login = () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name: username,
+            name: fullName,
             email: username,
             password,
             userType,
@@ -68,6 +70,7 @@ const Login = () => {
         setError('שגיאה בשרת');
       }
     }
+
     setLoading(false);
   };
 
@@ -84,9 +87,7 @@ const Login = () => {
           <button
             onClick={() => setIsLogin(true)}
             className={`px-4 py-2 rounded-md ${
-              isLogin
-                ? 'bg-primary-600 text-white'
-                : 'bg-gray-200 text-gray-700'
+              isLogin ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-700'
             }`}
           >
             התחברות
@@ -94,9 +95,7 @@ const Login = () => {
           <button
             onClick={() => setIsLogin(false)}
             className={`px-4 py-2 rounded-md ${
-              !isLogin
-                ? 'bg-primary-600 text-white'
-                : 'bg-gray-200 text-gray-700'
+              !isLogin ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-700'
             }`}
           >
             הרשמה
@@ -107,41 +106,19 @@ const Login = () => {
         {loading && <div className="text-center">טוען...</div>}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="username" className="sr-only">
-                שם משתמש
-              </label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="שם משתמש או אימייל"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                סיסמה
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="סיסמה"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
-
           {!isLogin && (
             <>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">שם מלא</label>
+                <input
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                  placeholder="הכנס את שמך המלא"
+                  required
+                />
+              </div>
               <div className="flex justify-center space-x-4 mb-4">
                 <button
                   type="button"
@@ -198,6 +175,35 @@ const Login = () => {
             </>
           )}
 
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="username" className="sr-only">שם משתמש</label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                placeholder="שם משתמש או אימייל"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">סיסמה</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                placeholder="סיסמה"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </div>
+
           <div>
             <button
               type="submit"
@@ -213,4 +219,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Login;

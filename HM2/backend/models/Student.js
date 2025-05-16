@@ -9,4 +9,4 @@ const studentSchema = new mongoose.Schema({
   password: { type: String, required: true }
 });
 
-module.exports = mongoose.model('Student', studentSchema); 
+module.exports = mongoose.models.Student || mongoose.model('Student', studentSchema);

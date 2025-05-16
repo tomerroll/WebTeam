@@ -48,7 +48,7 @@ const StudentDashboard = () => {
               className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow duration-300"
             >
               <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg font-medium text-gray-900">תרגול</h3>
+                <h3 className="text-lg font-medium text-gray-900">תרגול📝</h3>
                 <p className="mt-1 text-sm text-gray-500">
                   התחל לתרגל חומר חדש
                 </p>
@@ -60,7 +60,7 @@ const StudentDashboard = () => {
               className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow duration-300"
             >
               <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg font-medium text-gray-900">תיאוריה</h3>
+                <h3 className="text-lg font-medium text-gray-900">תיאוריה📚</h3>
                 <p className="mt-1 text-sm text-gray-500">
                   למד חומר חדש
                 </p>
@@ -72,7 +72,7 @@ const StudentDashboard = () => {
               className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow duration-300"
             >
               <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg font-medium text-gray-900">עזרה</h3>
+                <h3 className="text-lg font-medium text-gray-900">עזרה🆘</h3>
                 <p className="mt-1 text-sm text-gray-500">
                   קבל עזרה מהמורה
                 </p>

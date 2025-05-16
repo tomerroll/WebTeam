@@ -11,6 +11,8 @@ import ManageStudents from './components/ManageStudents';
 import ManageExercises from './components/ManageExercises';
 import Reports from './components/Reports';
 import Rewards from './components/Rewards';
+import TeacherHelpForum from './components/TeacherHelpForum'; 
+
 
 function App() {
   return (
@@ -28,6 +30,7 @@ function App() {
         <Route path="/reports" element={<Reports />} />
         <Route path="/rewards" element={<Rewards />} />
         <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/teacher-help-forum" element={<TeacherHelpForum />} />
       </Routes>
     </Router>
   );
