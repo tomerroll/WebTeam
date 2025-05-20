@@ -8,6 +8,14 @@ const Practice = () => {
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState('');
   const [showResult, setShowResult] = useState(false);
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser?.name) {
+      setUserName(storedUser.name);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -84,24 +92,35 @@ const Practice = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* סרגל עליון */}
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <Link to="/student-dashboard" className="text-primary-600 hover:text-primary-700">
-                  חזרה לדף הבית
-                </Link>
-              </div>
-            </div>
+          <div className="flex justify-between h-16 items-center">
+            {/* חזרה לדף הבית */}
+            <Link
+              to="/student-dashboard"
+              className="text-primary-600 hover:text-primary-700 font-medium"
+            >
+               חזרה לדף הבית
+            </Link>
+
+            {/* שלום, שם המשתמש */}
+            <Link
+              to="/profile"
+              className="text-gray-600 hover:text-primary-600 font-medium"
+              title="עבור לפרופיל"
+            >
+              שלום, {userName}
+            </Link>
           </div>
         </div>
       </nav>
 
+      {/* תוכן */}
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">תרגול</h2>
-          
+
           {!selectedSubject ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {subjects.map((subject) => (
@@ -139,14 +158,14 @@ const Practice = () => {
             <div className="bg-white shadow rounded-lg p-6">
               <h3 className="text-lg font-medium text-gray-900 mb-4">{selectedExercise.title}</h3>
               <p className="text-lg text-gray-700 mb-4">{selectedExercise.question}</p>
-              
+
               <div className="space-y-4">
                 {selectedExercise.options.map((option, index) => (
                   <button
                     key={index}
                     onClick={() => handleAnswerSelect(option)}
                     disabled={showResult}
-                    className={`w-full text-left p-4 rounded-lg border ${
+                    className={`w-full text-right p-4 rounded-lg border ${
                       showResult
                         ? option === selectedExercise.correctAnswer
                           ? 'bg-green-100 border-green-500'
@@ -181,4 +200,4 @@ const Practice = () => {
   );
 };
 
-export default Practice; 
+export default Practice;

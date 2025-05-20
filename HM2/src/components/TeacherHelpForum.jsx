@@ -5,6 +5,19 @@ const TeacherHelpForum = () => {
   const [helps, setHelps] = useState([]);
   const [answerInputs, setAnswerInputs] = useState({});
   const [editing, setEditing] = useState({});
+  const [user, setUser] = useState(null);
+
+  // טען את המשתמש מה-localStorage בפעם הראשונה
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch {
+        setUser(null);
+      }
+    }
+  }, []);
 
   const fetchHelps = async () => {
     try {
@@ -101,14 +114,28 @@ const TeacherHelpForum = () => {
     }
   };
 
+  if (!user) {
+    // אפשר להוסיף טעינת משתמש במידה ועדיין לא טען
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>טוען משתמש...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* Navbar עם שם המשתמש */}
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex space-x-4">
               <Link to="/teacher-dashboard" className="text-primary-600 hover:text-primary-700">
                 חזרה לדף הבית
+              </Link>
+              <h1> </h1>
+              <Link to="/profile" className="text-gray-600 hover:text-primary-700">
+                שלום, {user.name}
               </Link>
             </div>
           </div>
@@ -128,9 +155,10 @@ const TeacherHelpForum = () => {
                   <li key={help._id} className="relative p-4 bg-gray-50 rounded-lg shadow-md">
                     {/* כפתור מחיקת הפנייה בפינה שמאלית עליונה */}
                     <button
-                    onClick={() => deleteHelp(help._id)}
-                    className="absolute top-2 left-2 text-sm text-white bg-red-600  hover:bg-red-700 hover:animate-shake px-3 py-1 rounded shadow-md transition duration-300 ease-in-outfocus:outline-none focus:ring-2 focus:ring-red-500">
-                    מחק פנייה
+                      onClick={() => deleteHelp(help._id)}
+                      className="absolute top-2 left-2 text-sm text-white bg-red-600 hover:bg-red-700 hover:animate-shake px-3 py-1 rounded shadow-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                      מחק פנייה
                     </button>
                     <h4 className="font-medium text-gray-800">{help.subject}</h4>
                     <p className="mt-2 text-gray-700">{help.message}</p>

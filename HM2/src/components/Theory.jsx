@@ -3,7 +3,16 @@ import { Link } from 'react-router-dom';
 
 const Theory = () => {
   const [theoryContent, setTheoryContent] = useState([]);
-  const [expandedItems, setExpandedItems] = useState({}); // Track expanded state by ID
+  const [expandedItems, setExpandedItems] = useState({});
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    // שליפת שם משתמש מלוקל סטרוג'
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser && storedUser.name) {
+      setUserName(storedUser.name);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchTheoryContent = async () => {
@@ -30,13 +39,19 @@ const Theory = () => {
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <Link to="/student-dashboard" className="text-primary-600 hover:text-primary-700">
-                  חזרה לדף הבית
-                </Link>
-              </div>
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex items-center space-x-4">
+              <Link to="/student-dashboard" className="text-primary-600 hover:text-primary-700">
+                חזרה לדף הבית
+              </Link>
+            </div>
+            <div className="flex items-center">
+              <Link
+                to="/profile"
+                className="text-sm font-medium text-gray-600 hover:text-primary-900"
+              >
+                שלום, {userName}
+              </Link>
             </div>
           </div>
         </div>

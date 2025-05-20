@@ -5,8 +5,16 @@ const Help = () => {
   const [message, setMessage] = useState('');
   const [subject, setSubject] = useState('');
   const [helpContent, setHelpContent] = useState([]);
+  const [userName, setUserName] = useState('');
 
-  // מושך את אובייקט המשתמש מ-localStorage
+  // שליפת המשתמש מ-localStorage
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) {
+      setUserName(storedUser.name || 'משתמש לא מזוהה');
+    }
+  }, []);
+
   const user = JSON.parse(localStorage.getItem('user'));
   const studentEmail = user?.email || null;
   const studentName = user?.name || 'משתמש לא מזוהה';
@@ -59,13 +67,19 @@ const Help = () => {
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <Link to="/student-dashboard" className="text-primary-600 hover:text-primary-700">
-                  חזרה לדף הבית
-                </Link>
-              </div>
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex items-center space-x-4">
+              <Link to="/student-dashboard" className="text-primary-600 hover:text-primary-700">
+                חזרה לדף הבית
+              </Link>
+            </div>
+            <div className="flex items-center">
+              <Link
+                to="/profile"
+                className="text-sm font-medium text-gray-600 hover:text-primary-900"
+              >
+                שלום, {userName}
+              </Link>
             </div>
           </div>
         </div>
@@ -123,7 +137,9 @@ const Help = () => {
                     <li key={help._id} className="p-4 bg-gray-50 rounded-lg shadow-md">
                       <h4 className="font-medium text-gray-800">{help.subject}</h4>
                       <p className="mt-2 text-gray-700">{help.message}</p>
-                      <p className="mt-2 text-sm text-gray-500">{new Date(help.createdAt).toLocaleString()}</p>
+                      <p className="mt-2 text-sm text-gray-500">
+                        {new Date(help.createdAt).toLocaleString()}
+                      </p>
                       <p className="mt-1 text-sm text-gray-600 font-semibold">
                         שם התלמיד: {help.studentName || help.studentEmail}
                       </p>

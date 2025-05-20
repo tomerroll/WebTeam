@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const ManageStudents = () => {
+  const [user, setUser] = useState(null);
   const [students, setStudents] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newStudent, setNewStudent] = useState({
@@ -14,6 +15,20 @@ const ManageStudents = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // טען את המשתמש מה-localStorage בפעם הראשונה
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch {
+        // אם יש תקלה בפירוס json
+        setUser(null);
+      }
+    }
+  }, []);
+
+  // טען את רשימת התלמידים
   useEffect(() => {
     const fetchStudents = async () => {
       try {
@@ -64,17 +79,27 @@ const ManageStudents = () => {
     setLoading(false);
   };
 
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>טוען משתמש...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <Link to="/teacher-dashboard" className="text-primary-600 hover:text-primary-700">
-                  חזרה לדף הבית
-                </Link>
-              </div>
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex space-x-4">
+              <Link to="/teacher-dashboard" className="text-primary-600 hover:text-primary-700">
+                חזרה לדף הבית
+              </Link>
+              <h1>   </h1>
+              <Link to="/profile" className="text-gray-600 hover:text-primary-700">
+                שלום, {user.name}
+              </Link>
             </div>
           </div>
         </div>
@@ -241,4 +266,4 @@ const ManageStudents = () => {
   );
 };
 
-export default ManageStudents; 
+export default ManageStudents;

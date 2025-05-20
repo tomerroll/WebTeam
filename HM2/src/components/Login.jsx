@@ -34,6 +34,7 @@ const Login = () => {
         if (data.token) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
+          localStorage.setItem('userType', userType);
           if (userType === 'student') {
             navigate('/student-dashboard');
           } else {

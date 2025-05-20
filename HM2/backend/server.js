@@ -12,8 +12,8 @@ const authRoutes = require('./routes/auth');
 const exerciseRoutes = require('./routes/exercises');
 const studentsRoutes = require('./routes/students');
 const rewardsRoutes = require('./routes/rewards');
-const theoryRoutes = require('./routes/theory'); // ייבוא נתיב התיאוריה
-const helpRoutes = require('./routes/help'); // ייבוא נתיב התיאוריה
+const theoryRoutes = require('./routes/theory'); 
+const helpRoutes = require('./routes/help');
 
 
 // חיבור הנתיבים

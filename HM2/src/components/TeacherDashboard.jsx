@@ -4,8 +4,14 @@ import { Link } from 'react-router-dom';
 
 const TeacherDashboard = () => {
   const [teacherData, setTeacherData] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
     const fetchTeacherData = async () => {
       try {
         const res = await fetch('http://localhost:5000/api/teachers/me');
@@ -48,7 +54,7 @@ const TeacherDashboard = () => {
       title: 'פורום',
       description: 'צפה בבקשות עזרה וענה עליהן',
       icon: '💬',
-      path: '/teacher-help-forum', // נתיב חדש לפורום מורה
+      path: '/teacher-help-forum',
     },
   ];
 
@@ -56,16 +62,26 @@ const TeacherDashboard = () => {
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold text-gray-900">MathDuo - לוח בקרה למורה</h1>
-              </div>
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex items-center space-x-4">
+              <h1 className="text-xl font-bold text-gray-900">
+                MathDuo - לוח בקרה למורה
+              </h1>
+              <h1>   </h1>
+              {user && (
+                <Link
+                  to="/profile"
+                  className="text-sm text-gray-600 hover:text-primary-600"
+                >
+                  שלום, {user.name}
+                </Link>
+              )}
             </div>
-            <div className="flex items-center">
+
+            <div>
               <Link
                 to="/login"
-                className="text-gray-600 hover:text-gray-900"
+                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
               >
                 התנתק
               </Link>

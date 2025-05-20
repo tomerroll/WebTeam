@@ -10,6 +10,19 @@ const Reports = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [user, setUser] = useState(null);
+
+  // טען את המשתמש מה-localStorage בפעם הראשונה
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch {
+        setUser(null);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -41,23 +54,35 @@ const Reports = () => {
     }));
   };
 
+  if (!user) {
+    // אפשר להוסיף טעינת משתמש במידה ועדיין לא טען
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>טוען משתמש...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <Link to="/teacher-dashboard" className="text-primary-600 hover:text-primary-700">
-                  חזרה לדף הבית
-                </Link>
-              </div>
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex space-x-4">
+              <Link to="/teacher-dashboard" className="text-primary-600 hover:text-primary-700">
+                חזרה לדף הבית
+              </Link>
+              <h1>   </h1>
+              <Link to="/profile" className="text-gray-600 hover:text-primary-700">
+                שלום, {user.name}
+              </Link>
             </div>
           </div>
         </div>
       </nav>
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        {/* שאר הקוד שלך נשאר כפי שהיה */}
         <div className="px-4 py-6 sm:px-0">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900">דוחות התקדמות</h2>
@@ -181,4 +206,4 @@ const Reports = () => {
   );
 };
 
-export default Reports; 
+export default Reports;

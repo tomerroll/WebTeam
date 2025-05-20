@@ -12,6 +12,7 @@ import ManageExercises from './components/ManageExercises';
 import Reports from './components/Reports';
 import Rewards from './components/Rewards';
 import TeacherHelpForum from './components/TeacherHelpForum'; 
+import Profile from './components/Profile'; // Assuming you have a Profile component
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
         <Route path="/rewards" element={<Rewards />} />
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/teacher-help-forum" element={<TeacherHelpForum />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   );

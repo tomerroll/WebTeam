@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 const Rewards = () => {
   const [rewards, setRewards] = useState([]);
 
+  // הוספת מצב עבור המשתמש
+  const [user, setUser] = useState(null);
+
   useEffect(() => {
     const fetchRewards = async () => {
       try {
@@ -16,6 +19,16 @@ const Rewards = () => {
     };
 
     fetchRewards();
+
+    // טעינת המשתמש מ-localStorage
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Error parsing user from localStorage", error);
+      }
+    }
   }, []);
 
   const [studentRewards, setStudentRewards] = useState([
@@ -83,13 +96,21 @@ const Rewards = () => {
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <Link to="/teacher-dashboard" className="text-primary-600 hover:text-primary-700">
-                  חזרה לדף הבית
+          <div className="flex justify-between h-16 items-center">
+            {/* כאן כל הלינקים בצד שמאל, קרובים אחד לשני */}
+            <div className="flex items-center space-x-4">
+              <Link to="/teacher-dashboard" className="text-primary-600 hover:text-primary-700">
+                חזרה לדף הבית
+              </Link>
+              <h1>   </h1>
+              {user && (
+                <Link
+                  to="/profile"
+                  className="btn btn-ghost text-gray-600 hover:text-primary-700"
+                >
+                  שלום, {user.name}
                 </Link>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -175,7 +196,7 @@ const Rewards = () => {
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {rewards.map((reward) => (
-              <div key={reward._id} className="bg-white overflow-hidden shadow rounded-lg">
+              <div key={reward.id || reward._id} className="bg-white overflow-hidden shadow rounded-lg">
                 <div className="px-4 py-5 sm:p-6">
                   <h3 className="text-lg font-medium text-gray-900">{reward.title}</h3>
                   <p className="mt-1 text-sm text-gray-500">{reward.description}</p>
