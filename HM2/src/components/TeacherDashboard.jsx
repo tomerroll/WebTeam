@@ -48,7 +48,7 @@ const TeacherDashboard = () => {
       title: 'מערכת תגמולים',
       description: 'נהל תגמולים והתקדמות תלמידים',
       icon: '🏆',
-      path: '/rewards',
+      path: '/leaderboard',
     },
     {
       title: 'פורום',

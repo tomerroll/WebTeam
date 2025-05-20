@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AddExercise from './AddExercise';
+import EditExercise from './EditExercise';
 
 const ManageExercises = () => {
   const [user, setUser] = useState(null);
   const [exercises, setExercises] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editExercise, setEditExercise] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -26,6 +29,7 @@ const ManageExercises = () => {
       try {
         const res = await fetch('http://localhost:5000/api/exercises');
         const data = await res.json();
+        console.log('Fetched exercises:', data);
         setExercises(data);
       } catch (err) {
         console.error('Error fetching exercises:', err);
@@ -45,6 +49,11 @@ const ManageExercises = () => {
       setError('שגיאה במחיקת תרגיל');
     }
     setLoading(false);
+  };
+
+  const handleEditExercise = (exercise) => {
+    setEditExercise(exercise);
+    setShowEditForm(true);
   };
 
   if (!user) {
@@ -95,6 +104,16 @@ const ManageExercises = () => {
             />
           )}
 
+          {editExercise && (
+            <EditExercise
+              exercise={editExercise}
+              onClose={() => setEditExercise(null)}
+              onUpdate={(updated) => {
+                setExercises(exercises.map(ex => ex._id === updated._id ? updated : ex));
+              }}
+            />
+          )}
+
           <div className="bg-white shadow rounded-lg overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -138,6 +157,13 @@ const ManageExercises = () => {
                       {exercise.points}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <button
+                        onClick={() => setEditExercise(exercise)}
+                        className="text-blue-600 hover:text-blue-900 ml-2"
+                        disabled={loading}
+                      >
+                        ערוך
+                      </button>
                       <button
                         onClick={() => handleDeleteExercise(exercise._id)}
                         className="text-red-600 hover:text-red-900"

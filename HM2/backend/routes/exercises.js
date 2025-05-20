@@ -2,16 +2,36 @@ const express = require('express');
 const router = express.Router();
 const Exercise = require('../models/Exercise'); // שימוש במודל החיצוני
 
-// קבלת כל התרגילים
+// קבלת כל התרגילים ממוינים לפי רמת קושי
 router.get('/', async (req, res) => {
   try {
-    const exercises = await Exercise.find();
+    // מיון לפי difficulty (סדר עולה: קל -> בינוני -> קשה)
+    const difficultyOrder = { 'קל': 1, 'בינוני': 2, 'קשה': 3 };
+    const exercises = await Exercise.find().lean();
+
+    // מיון ידני לפי סדר difficulty בעברית
+    exercises.sort((a, b) => (difficultyOrder[a.difficulty] || 99) - (difficultyOrder[b.difficulty] || 99));
+
     res.json(exercises);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
+// קבלת תרגילים לפי subject (נושא)
+router.get('/subject/:subject', async (req, res) => {
+  try {
+    const subject = req.params.subject;
+    const exercises = await Exercise.find({ subject }).lean();
+
+    const difficultyOrder = { 'קל': 1, 'בינוני': 2, 'קשה': 3 };
+    exercises.sort((a, b) => (difficultyOrder[a.difficulty] || 99) - (difficultyOrder[b.difficulty] || 99));
+
+    res.json(exercises);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 
 // הוספת תרגיל עם ולידציה

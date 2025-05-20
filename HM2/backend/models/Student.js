@@ -6,7 +6,9 @@ const studentSchema = new mongoose.Schema({
   class: { type: String, required: true },
   progress: { type: Number, default: 0 },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
+  password: { type: String, required: true },
+  points: { type: Number, default: 0 },
+  crowns: { type: Number, default: 0 },
 });
 
 module.exports = mongoose.models.Student || mongoose.model('Student', studentSchema);
