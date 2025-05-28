@@ -105,24 +105,34 @@ const PracticeSubject = () => {
     }
   };
 
-  const handleNext = () => {
-    const nextIndex = current + 1;
-    const isFinished = nextIndex >= exercises.length;
+ const handleNext = () => {
+  const nextIndex = current + 1;
+  const isFinished = nextIndex >= exercises.length;
 
-    updateProgress(nextIndex, isFinished);
-    setCurrent(nextIndex);
+  updateProgress(nextIndex, isFinished);
+  setCurrent(nextIndex);
+
+  // טען את התשובה אם כבר קיימת (ולא אפס ישר)
+  const nextAnswer = answers.find(a => a.questionIndex === nextIndex);
+  if (nextAnswer) {
+    const selectedIdx = exercises[nextIndex]?.options.indexOf(nextAnswer.selectedAnswer);
+    setSelected(selectedIdx);
+    setIsCorrect(nextAnswer.isCorrect);
+  } else {
     setSelected(null);
     setIsCorrect(null);
+  }
 
-    if (isFinished) {
-      const correctCount = answers.filter(a => a.isCorrect).length;
-      if (correctCount === exercises.length) {
-        addCrown();
-        setFullyCompleted(true);
-      }
-      setCompleted(true);
+  if (isFinished) {
+    const correctCount = answers.filter(a => a.isCorrect).length;
+    if (correctCount === exercises.length) {
+      addCrown();
+      setFullyCompleted(true);
     }
-  };
+    setCompleted(true);
+  }
+};
+
 
   const handlePrevious = () => {
     if (current > 0) {
