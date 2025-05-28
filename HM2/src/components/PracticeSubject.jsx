@@ -12,6 +12,7 @@ const PracticeSubject = () => {
   const [selected, setSelected] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
   const [points, setPoints] = useState(0);
+  const [crowns, setCrowns] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [answers, setAnswers] = useState([]);
   const [fullyCompleted, setFullyCompleted] = useState(false);
@@ -55,6 +56,7 @@ const PracticeSubject = () => {
         setCurrent(0);
         setCompleted(false);
         setPoints(studentData?.points || 0);
+        setCrowns(studentData?.crowns || 0);
         setAnswers([]);
       })
       .catch(err => {
@@ -229,7 +231,7 @@ const PracticeSubject = () => {
           <h1 className="text-xl font-bold cursor-pointer" onClick={() => window.location.href = '/student-dashboard'}>MathDuo</h1>
           <div className="flex items-center gap-4">
             <span className="text-lg font-bold">{points} {coin}</span>
-            <span className="text-lg font-bold">{user.crowns} {crown}</span>
+              <span className="text-lg font-bold">{crowns} {crown}</span>
             {completed && <span className="text-2xl">{crown}</span>}
             <Link to="/practice" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">חזור לנושאים</Link>
           </div>
