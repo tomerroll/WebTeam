@@ -41,6 +41,17 @@ const PracticeSubject = () => {
         setCurrent(progressData?.currentIndex || 0);
         setCompleted(progressData?.completed || false);
         setPoints(studentData?.points || 0);
+        setAnswers(progressData?.answers || []);
+
+        // Set the selected answer and correctness for the last question
+        if (progressData?.answers?.length > 0) {
+          const lastAnswer = progressData.answers[progressData.currentIndex];
+          if (lastAnswer) {
+            const selectedIndex = exerciseData[progressData.currentIndex]?.options.indexOf(lastAnswer.selectedAnswer);
+            setSelected(selectedIndex);
+            setIsCorrect(lastAnswer.isCorrect);
+          }
+        }
       })
       .catch(err => {
         console.error("Error loading data:", err);
@@ -92,13 +103,38 @@ const PracticeSubject = () => {
 
   const handleNext = () => {
     const nextIndex = current + 1;
-    setSelected(null);
-    setIsCorrect(null);
     setCurrent(nextIndex);
+
+    // Check if the next question has a saved answer
+    const nextAnswer = answers[nextIndex];
+    if (nextAnswer) {
+      const selectedIndex = exercises[nextIndex]?.options.indexOf(nextAnswer.selectedAnswer);
+      setSelected(selectedIndex);
+      setIsCorrect(nextAnswer.isCorrect);
+    } else {
+      setSelected(null);
+      setIsCorrect(null);
+    }
+
     updateProgress(nextIndex, nextIndex >= exercises.length);
     if (nextIndex >= exercises.length) {
       setCompleted(true);
       addCrown();
+    }
+  };
+
+  const handlePrevious = () => {
+    if (current > 0) {
+      setCurrent(current - 1);
+      const previousAnswer = answers[current - 1];
+      if (previousAnswer) {
+        const selectedIndex = exercises[current - 1].options.indexOf(previousAnswer.selectedAnswer);
+        setSelected(selectedIndex);
+        setIsCorrect(previousAnswer.isCorrect);
+      } else {
+        setSelected(null);
+        setIsCorrect(null);
+      }
     }
   };
 
@@ -213,12 +249,22 @@ const PracticeSubject = () => {
               <span className={isCorrect ? "text-green-600 font-bold" : "text-red-600 font-bold"}>
                 {isCorrect ? "תשובה נכונה!" : "תשובה שגויה"}
               </span>
-              <button
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-                onClick={handleNext}
-              >
-                {current < exercises.length - 1 ? "הבא" : "סיום"}
-              </button>
+              <div className="flex gap-2">
+                <button
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                  onClick={handleNext}
+                >
+                  {current < exercises.length - 1 ? "הבא" : "סיום"}
+                </button>
+                {current > 0 && (
+                  <button
+                    className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded mr-2"
+                    onClick={handlePrevious}
+                  >
+                    חזור
+                  </button>
+                )}
+              </div>
             </div>
           )}
         </div>
