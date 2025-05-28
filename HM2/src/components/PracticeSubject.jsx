@@ -118,8 +118,17 @@ const PracticeSubject = () => {
 
     updateProgress(nextIndex, nextIndex >= exercises.length);
     if (nextIndex >= exercises.length) {
+      const correctAnswersCount = answers.filter(answer => answer.isCorrect).length;
+      const allCorrect = correctAnswersCount === exercises.length;
+
       setCompleted(true);
-      addCrown();
+
+      if (allCorrect) {
+        addCrown();
+      } else {
+        // Reset currentIndex for users who did not answer all questions correctly
+        console.log("User did not answer all questions correctly. Resetting currentIndex.");
+      }
     }
   };
 
@@ -162,14 +171,53 @@ const PracticeSubject = () => {
   }
 
   if (current >= exercises.length) {
+    const correctAnswersCount = answers.filter(answer => answer.isCorrect).length;
+    const allCorrect = correctAnswersCount === exercises.length;
+
     return (
       <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
         <div className="bg-white rounded-lg shadow p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">כל הכבוד! {crown}</h2>
-          <p className="mb-4">סיימת את כל התרגילים בנושא: {subject}</p>
-          <div className="text-xl font-bold mb-2">
-            סה"כ ניקוד: {points} {coin}
-          </div>
+          {allCorrect ? (
+            <>
+              <h2 className="text-2xl font-bold mb-4">כל הכבוד! {crown}</h2>
+              <p className="mb-4">סיימת את כל התרגילים בנושא: {subject}</p>
+              <div className="text-xl font-bold mb-2">
+                סה"כ ניקוד: {points} {coin}
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold mb-4">הצלחת ב-{correctAnswersCount} מתוך {exercises.length} שאלות</h2>
+              <p className="mb-4">נסה שוב את התרגילים בנושא: {subject}</p>
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                onClick={() => {
+                  // Reset progress in the database
+                  fetch('http://localhost:5000/api/progress', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      student: user._id,
+                      subject,
+                      currentIndex: 0,
+                      completed: false,
+                      answers: []
+                    })
+                  })
+                    .then(() => {
+                      // Reset local state
+                      setCurrent(0);
+                      setAnswers([]);
+                      setSelected(null);
+                      setIsCorrect(null);
+                    })
+                    .catch(err => console.error("Error resetting progress:", err));
+                }}
+              >
+                נסה שוב
+              </button>
+            </>
+          )}
           <Link
             to="/practice"
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
