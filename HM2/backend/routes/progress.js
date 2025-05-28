@@ -11,10 +11,10 @@ router.get('/:studentId/:subject', async (req, res) => {
 
 // עדכון/שמירת התקדמות
 router.post('/', async (req, res) => {
-  const { student, subject, currentIndex, completed } = req.body;
+  const { student, subject, currentIndex, completed, answers } = req.body;
   const progress = await StudentProgress.findOneAndUpdate(
     { student, subject },
-    { currentIndex, completed, lastAttempt: new Date() },
+    { currentIndex, completed, lastAttempt: new Date(), answers },
     { upsert: true, new: true }
   );
   res.json(progress);

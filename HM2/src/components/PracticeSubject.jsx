@@ -13,6 +13,7 @@ const PracticeSubject = () => {
   const [isCorrect, setIsCorrect] = useState(null);
   const [points, setPoints] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [answers, setAnswers] = useState([]);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -72,7 +73,8 @@ const PracticeSubject = () => {
         student: user._id,
         subject,
         currentIndex: newIndex,
-        completed
+        completed,
+        answers
       })
     });
   };
@@ -80,8 +82,10 @@ const PracticeSubject = () => {
   const handleSelect = idx => {
     if (selected !== null) return;
     setSelected(idx);
-    setIsCorrect(idx === exercises[current].correctOption);
-    if (idx === exercises[current].correctOption) {
+    const isCorrect = idx === exercises[current].correctOption;
+    setIsCorrect(isCorrect);
+    handleAnswer(current, exercises[current].options[idx], isCorrect);
+    if (isCorrect) {
       addPoints(exercises[current].points);
     }
   };
@@ -96,6 +100,13 @@ const PracticeSubject = () => {
       setCompleted(true);
       addCrown();
     }
+  };
+
+  const handleAnswer = (questionIndex, answer, isCorrect) => {
+    setAnswers((prevAnswers) => [
+      ...prevAnswers,
+      { questionIndex, selectedAnswer: answer, isCorrect },
+    ]);
   };
 
   if (loading) {
