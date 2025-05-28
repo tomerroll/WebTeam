@@ -189,33 +189,6 @@ const PracticeSubject = () => {
             <>
               <h2 className="text-2xl font-bold mb-4">הצלחת ב-{correctAnswersCount} מתוך {exercises.length} שאלות</h2>
               <p className="mb-4">נסה שוב את התרגילים בנושא: {subject}</p>
-              <button
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-                onClick={() => {
-                  // Reset progress in the database
-                  fetch('http://localhost:5000/api/progress', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      student: user._id,
-                      subject,
-                      currentIndex: 0,
-                      completed: false,
-                      answers: []
-                    })
-                  })
-                    .then(() => {
-                      // Reset local state
-                      setCurrent(0);
-                      setAnswers([]);
-                      setSelected(null);
-                      setIsCorrect(null);
-                    })
-                    .catch(err => console.error("Error resetting progress:", err));
-                }}
-              >
-                נסה שוב
-              </button>
             </>
           )}
           <Link
@@ -235,9 +208,10 @@ const PracticeSubject = () => {
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
-          <h1 className="text-xl font-bold text-primary-600">MathDuo</h1>
+          <h1 className="text-xl font-bold text-primary-600 cursor-pointer" onClick={() => window.location.href='/student-dashboard'}>MathDuo</h1>
           <div className="flex items-center gap-4">
             <span className="text-lg font-bold">{points} {coin}</span>
+            <span className="text-lg font-bold">{user.crowns} {crown}</span>
             {completed && <span className="text-2xl">{crown}</span>}
             <Link
               to="/practice"
