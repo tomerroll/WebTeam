@@ -41,13 +41,11 @@ const PracticeSubject = () => {
 
         let newExercises = [];
 
-        // אם יש טעויות – תרגל רק אותן
-        if (progressData?.completed && incorrectIds.size > 0) {
-          newExercises = exerciseData.filter(ex => incorrectIds.has(ex._id.toString()));
-        } else {
-          // אחרת: תרגל רק שאלות חדשות שלא הופיעו קודם
-          newExercises = exerciseData.filter(ex => !answeredIds.has(ex._id.toString()));
-        }
+        // תרגל גם שאלות שטעה בהן וגם שאלות חדשות
+        newExercises = exerciseData.filter(ex => incorrectIds.has(ex._id.toString()) || !answeredIds.has(ex._id.toString()));
+
+        // Sort exercises by difficulty after filtering
+        newExercises.sort((a, b) => a.difficulty - b.difficulty);
 
         const fullyCompleted = progressData?.completed && newExercises.length === 0;
         setFullyCompleted(fullyCompleted);
