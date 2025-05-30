@@ -133,10 +133,6 @@ const TeacherHelpForum = () => {
               <Link to="/teacher-dashboard" className="text-primary-600 hover:text-primary-700">
                 חזרה לדף הבית
               </Link>
-              <h1> </h1>
-              <Link to="/profile" className="text-gray-600 hover:text-primary-700">
-                שלום, {user.name}
-              </Link>
             </div>
           </div>
         </div>

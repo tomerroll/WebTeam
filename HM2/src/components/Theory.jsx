@@ -46,12 +46,6 @@ const Theory = () => {
               </Link>
             </div>
             <div className="flex items-center">
-              <Link
-                to="/profile"
-                className="text-sm font-medium text-gray-600 hover:text-primary-900"
-              >
-                שלום, {userName}
-              </Link>
             </div>
           </div>
         </div>
