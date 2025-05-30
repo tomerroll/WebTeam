@@ -154,6 +154,11 @@ const Help = () => {
                         <div className="mt-4 p-3 bg-primary-100 text-primary-800 rounded-md">
                           <h5 className="font-semibold">תשובת המורה:</h5>
                           <p>{help.answer}</p>
+                          {help.answeredBy && (
+                            <p className="mt-1 text-sm text-green-700 font-medium">
+                              נענה על ידי: {help.answeredBy}
+                            </p>
+                          )}
                         </div>
                       )}
                     </li>

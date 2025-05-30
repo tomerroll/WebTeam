@@ -8,23 +8,36 @@ const jwt = require('jsonwebtoken');
 // הרשמה
 router.post('/register', async (req, res) => {
   const { name, email, password, userType, grade, class: className } = req.body;
+
   try {
+    // בדיקה אם האימייל קיים כבר אצל תלמידים או מורים
+    const existingStudent = await Student.findOne({ email });
+    const existingTeacher = await Teacher.findOne({ email });
+
+    if (existingStudent || existingTeacher) {
+      return res.status(400).json({ error: 'לא ניתן להירשם – אימייל זה כבר רשום במערכת.' });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     let user;
+
     if (userType === 'student') {
       user = new Student({ name, email, password: hashedPassword, grade, class: className });
-      await user.save();
     } else if (userType === 'teacher') {
       user = new Teacher({ name, email, password: hashedPassword });
-      await user.save();
     } else {
-      return res.status(400).json({ error: 'Invalid user type' });
+      return res.status(400).json({ error: 'סוג משתמש לא תקין' });
     }
+
+    await user.save();
     res.json({ success: true });
+
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ error: 'אירעה שגיאה בעת ההרשמה. נסה שוב מאוחר יותר.' });
   }
 });
+
 
 // התחברות
 router.post('/login', async (req, res) => {
