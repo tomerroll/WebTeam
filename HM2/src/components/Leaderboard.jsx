@@ -42,7 +42,14 @@ const Leaderboard = () => {
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
       <nav className="bg-white shadow-sm w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
-          <h1 className="text-xl font-bold text-primary-600 cursor-pointer" onClick={() => window.location.href='/student-dashboard'}>MathDuo</h1>
+          <h1 className="text-xl font-bold text-primary-600 cursor-pointer" onClick={() => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  if (user.grade) {
+    window.location.href = '/student-dashboard';
+  } else {
+    window.location.href = '/teacher-dashboard';
+  }
+}}>MathDuo</h1>
           <div className="flex items-center gap-4">
             {/* ...existing code... */}
           </div>
