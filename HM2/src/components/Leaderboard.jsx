@@ -51,9 +51,17 @@ const Leaderboard = () => {
     window.location.href = '/teacher-dashboard';
   }
 }}>MathDuo</h1>
-          <div className="flex items-center gap-4">
-            {/* ...existing code... */}
-          </div>
+           <div className="flex items-center gap-6">
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  navigate('/');
+                }}
+                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                התנתק
+              </button>
+            </div>
         </div>
       </nav>
       {showConfetti && <Confetti />}
