@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const StudentProgress = require('../models/StudentProgress');
+const Exercise = require('../models/Exercise'); // נדרש כדי לבדוק כמה שאלות יש בנושא
 
 // קבלת רשימת נושאים וסטטוס completed עבור סטודנט
 router.get('/completed/:studentId', async (req, res) => {
@@ -37,11 +38,23 @@ router.post('/', async (req, res) => {
 
     const existingProgress = await StudentProgress.findOne({ student, subject });
 
-    // חישוב מחדש של completed: כל השאלות שנענו הן נכונות
-    const allCorrect = answers.length > 0 && answers.every(a => a.isCorrect);
+    // שלב 1: שלוף את כל מזהי השאלות של הנושא הזה
+    const allExercises = await Exercise.find({ subject }, '_id');
+    const totalQuestions = allExercises.length;
+    const allQuestionIds = allExercises.map(q => q._id.toString());
+
+    // שלב 2: האם כל השאלות נענו?
+    const answeredIds = answers.map(a => a.questionId?.toString());
+    const hasAnsweredAll = allQuestionIds.every(qid => answeredIds.includes(qid));
+
+    // שלב 3: האם כולן נכונות?
+    const answeredCorrectly = answers.length > 0 && answers.every(a => a.isCorrect);
+
+    // תנאי הסיום התקין
+    const allCorrect = answeredCorrectly && hasAnsweredAll;
 
     if (!existingProgress) {
-      // יצירה ראשונית של התקדמות
+      // יצירת התקדמות חדשה
       const newProgress = new StudentProgress({
         student,
         subject,
@@ -54,7 +67,7 @@ router.post('/', async (req, res) => {
       return res.status(201).json(newProgress);
     }
 
-    // עדכון של existing progress
+    // עדכון תשובות קיימות
     const updatedAnswers = [...existingProgress.answers];
 
     for (const newAns of answers) {
@@ -67,13 +80,15 @@ router.post('/', async (req, res) => {
     }
 
     existingProgress.currentIndex = currentIndex;
-    existingProgress.completed = updatedAnswers.length > 0 && updatedAnswers.every(a => a.isCorrect);
+    existingProgress.completed = updatedAnswers.length > 0 &&
+      allQuestionIds.every(qid => updatedAnswers.some(a => a.questionId?.toString() === qid && a.isCorrect));
     existingProgress.lastAttempt = new Date();
     existingProgress.answers = updatedAnswers;
 
     await existingProgress.save();
     res.json(existingProgress);
   } catch (err) {
+    console.error('Progress Update Error:', err);
     res.status(500).json({ error: err.message });
   }
 });

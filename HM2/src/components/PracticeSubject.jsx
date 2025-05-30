@@ -16,6 +16,8 @@ const PracticeSubject = () => {
   const [completed, setCompleted] = useState(false);
   const [answers, setAnswers] = useState([]);
   const [fullyCompleted, setFullyCompleted] = useState(false);
+  const [previousAnswers, setPreviousAnswers] = useState([]);
+  const [earnedPoints, setEarnedPoints] = useState(0);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -39,12 +41,7 @@ const PracticeSubject = () => {
         const incorrectAnswers = answersFromProgress.filter(a => !a.isCorrect);
         const incorrectIds = new Set(incorrectAnswers.map(a => a.questionId?.toString()));
 
-        let newExercises = [];
-
-        // תרגל גם שאלות שטעה בהן וגם שאלות חדשות
-        newExercises = exerciseData.filter(ex => incorrectIds.has(ex._id.toString()) || !answeredIds.has(ex._id.toString()));
-
-        // Sort exercises by difficulty after filtering
+        let newExercises = exerciseData.filter(ex => incorrectIds.has(ex._id.toString()) || !answeredIds.has(ex._id.toString()));
         newExercises.sort((a, b) => a.difficulty - b.difficulty);
 
         const fullyCompleted = progressData?.completed && newExercises.length === 0;
@@ -56,6 +53,7 @@ const PracticeSubject = () => {
         setPoints(studentData?.points || 0);
         setCrowns(studentData?.crowns || 0);
         setAnswers([]);
+        setPreviousAnswers(answersFromProgress);
       })
       .catch(err => {
         console.error("Error loading data:", err);
@@ -94,7 +92,6 @@ const PracticeSubject = () => {
     });
   };
 
-
   const handleSelect = idx => {
     if (selected !== null) return;
     setSelected(idx);
@@ -103,52 +100,54 @@ const PracticeSubject = () => {
     setIsCorrect(correct);
 
     const selectedAnswer = exercises[current].options[idx];
-    const questionId = exercises[current]._id;
+    const questionId = exercises[current]._id.toString();
 
-    // עדכן את מערך התשובות
+    const alreadyAnsweredBefore = previousAnswers.some(a => a.questionId?.toString() === questionId);
+    const questionPoints = exercises[current].points;
+
+    if (correct && !alreadyAnsweredBefore) {
+      addPoints(questionPoints);
+      setEarnedPoints(questionPoints);
+    } else {
+      setEarnedPoints(0);
+    }
+
     const updatedAnswers = [
       ...answers.filter(a => a.questionId !== questionId),
       { questionIndex: current, questionId, selectedAnswer, isCorrect: correct }
     ];
     setAnswers(updatedAnswers);
 
-    // עדכן ניקוד
-    if (correct) {
-      addPoints(exercises[current].points);
-    }
-
-    // שמור לשרת
-    updateProgress(current + 1, false, updatedAnswers); // ✅ newIndex=current+1
+    updateProgress(current + 1, false, updatedAnswers);
   };
 
+  const handleNext = () => {
+    const nextIndex = current + 1;
+    const isFinished = nextIndex >= exercises.length;
 
- const handleNext = () => {
-  const nextIndex = current + 1;
-  const isFinished = nextIndex >= exercises.length;
+    setCurrent(nextIndex);
 
-  setCurrent(nextIndex);
-
-  // טען את התשובה אם כבר קיימת (ולא אפס ישר)
-  const nextAnswer = answers.find(a => a.questionIndex === nextIndex);
-  if (nextAnswer) {
-    const selectedIdx = exercises[nextIndex]?.options.indexOf(nextAnswer.selectedAnswer);
-    setSelected(selectedIdx);
-    setIsCorrect(nextAnswer.isCorrect);
-  } else {
-    setSelected(null);
-    setIsCorrect(null);
-  }
-
-  if (isFinished) {
-    const correctCount = answers.filter(a => a.isCorrect).length;
-    if (correctCount === exercises.length) {
-      addCrown();
-      setFullyCompleted(true);
+    const nextAnswer = answers.find(a => a.questionIndex === nextIndex);
+    if (nextAnswer) {
+      const selectedIdx = exercises[nextIndex]?.options.indexOf(nextAnswer.selectedAnswer);
+      setSelected(selectedIdx);
+      setIsCorrect(nextAnswer.isCorrect);
+      setEarnedPoints(0);
+    } else {
+      setSelected(null);
+      setIsCorrect(null);
+      setEarnedPoints(0);
     }
-    setCompleted(true);
-  }
-};
 
+    if (isFinished) {
+      const correctCount = answers.filter(a => a.isCorrect).length;
+      if (correctCount === exercises.length) {
+        addCrown();
+        setFullyCompleted(true);
+      }
+      setCompleted(true);
+    }
+  };
 
   const handlePrevious = () => {
     if (current > 0) {
@@ -158,19 +157,13 @@ const PracticeSubject = () => {
         const selectedIndex = exercises[current - 1].options.indexOf(previousAnswer.selectedAnswer);
         setSelected(selectedIndex);
         setIsCorrect(previousAnswer.isCorrect);
+        setEarnedPoints(0);
       } else {
         setSelected(null);
         setIsCorrect(null);
+        setEarnedPoints(0);
       }
     }
-  };
-
-  const handleAnswer = (questionIndex, answer, isCorrect) => {
-    const questionId = exercises[questionIndex]._id;
-    setAnswers(prev => [
-      ...prev,
-      { questionIndex, questionId, selectedAnswer: answer, isCorrect }
-    ]);
   };
 
   if (loading) {
@@ -184,12 +177,9 @@ const PracticeSubject = () => {
           <h2 className="text-2xl font-bold mb-4">כל הכבוד! {crown}</h2>
           <p className="mb-4">סיימת את כל התרגילים בנושא: {subject}</p>
           <div className="text-xl font-bold mb-2">
-            סה"כ ניקוד: {points} {coin}
+            סה\"כ ניקוד: {points} {coin}
           </div>
-          <Link
-            to="/practice"
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-          >
+          <Link to="/practice" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
             חזור לנושאים
           </Link>
         </div>
@@ -209,7 +199,7 @@ const PracticeSubject = () => {
               <h2 className="text-2xl font-bold mb-4">כל הכבוד! {crown}</h2>
               <p className="mb-4">סיימת את כל התרגילים בנושא: {subject}</p>
               <div className="text-xl font-bold mb-2">
-                סה"כ ניקוד: {points} {coin}
+                סה\"כ ניקוד: {points} {coin}
               </div>
             </>
           ) : (
@@ -218,10 +208,7 @@ const PracticeSubject = () => {
               <p className="mb-4">נסה שוב את התרגילים בנושא: {subject}</p>
             </>
           )}
-          <Link
-            to="/practice"
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-          >
+          <Link to="/practice" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
             חזור לנושאים
           </Link>
         </div>
@@ -242,10 +229,10 @@ const PracticeSubject = () => {
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
-          <h1 className="text-xl font-bold cursor-pointer" onClick={() => window.location.href = '/student-dashboard'}>MathDuo</h1>
+          <Link to="/student-dashboard" className="text-xl font-bold">MathDuo</Link>
           <div className="flex items-center gap-4">
             <span className="text-lg font-bold">{points} {coin}</span>
-              <span className="text-lg font-bold">{crowns} {crown}</span>
+            <span className="text-lg font-bold">{crowns} {crown}</span>
             {completed && <span className="text-2xl">{crown}</span>}
             <Link to="/practice" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">חזור לנושאים</Link>
           </div>
@@ -285,9 +272,14 @@ const PracticeSubject = () => {
           </ul>
           {selected !== null && (
             <div className="mt-4 flex justify-between items-center">
-              <span className={isCorrect ? "text-green-600 font-bold" : "text-red-600 font-bold"}>
-                {isCorrect ? "תשובה נכונה!" : "תשובה שגויה"}
-              </span>
+              <div>
+                <span className={isCorrect ? "text-green-600 font-bold" : "text-red-600 font-bold"}>
+                  {isCorrect ? "תשובה נכונה!" : "תשובה שגויה"}
+                </span>
+                <div className="text-sm text-gray-600">
+                  {earnedPoints > 0 ? `הרווחת ${earnedPoints} נקודות` : "לא קיבלת נקודות"}
+                </div>
+              </div>
               <div className="flex gap-2">
                 <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" onClick={handleNext}>
                   {current < exercises.length - 1 ? "הבא" : "סיום"}
