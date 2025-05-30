@@ -71,7 +71,7 @@ const Reports = () => {
             <div className="flex items-center space-x-4">
               <h1
                 className="text-xl font-bold text-primary-600 cursor-pointer"
-                onClick={() => window.location.href = '/student-dashboard'}
+                onClick={() => window.location.href = '/teacher-dashboard'}
               >
                 MathDuo
               </h1>

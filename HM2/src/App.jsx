@@ -12,29 +12,60 @@ import ManageStudents from './components/ManageStudents';
 import ManageExercises from './components/ManageExercises';
 import Reports from './components/Reports';
 import TeacherHelpForum from './components/TeacherHelpForum'; 
-import Profile from './components/Profile'; // Assuming you have a Profile component
+import Profile from './components/Profile';
 import Leaderboard from './components/Leaderboard';
-
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* דף ההתחברות פתוח */}
         <Route path="/login" element={<Login />} />
-        <Route path="/student-dashboard" element={<StudentDashboard />} />
-        <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
-        <Route path="/practice" element={<Practice />} />
-        <Route path="/practice/:subject" element={<PracticeSubject />} />
-        <Route path="/theory" element={<Theory />} />
-        <Route path="/help" element={<Help />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/manage-students" element={<ManageStudents />} />
-        <Route path="/manage-exercises" element={<ManageExercises />} />
-        <Route path="/reports" element={<Reports />} />
+
+        {/* כל שאר הדפים מוגנים */}
+        <Route path="/student-dashboard" element={
+          <PrivateRoute><StudentDashboard /></PrivateRoute>
+        } />
+        <Route path="/teacher-dashboard" element={
+          <PrivateRoute><TeacherDashboard /></PrivateRoute>
+        } />
+        <Route path="/practice" element={
+          <PrivateRoute><Practice /></PrivateRoute>
+        } />
+        <Route path="/practice/:subject" element={
+          <PrivateRoute><PracticeSubject /></PrivateRoute>
+        } />
+        <Route path="/theory" element={
+          <PrivateRoute><Theory /></PrivateRoute>
+        } />
+        <Route path="/help" element={
+          <PrivateRoute><Help /></PrivateRoute>
+        } />
+        <Route path="/settings" element={
+          <PrivateRoute><Settings /></PrivateRoute>
+        } />
+        <Route path="/manage-students" element={
+          <PrivateRoute><ManageStudents /></PrivateRoute>
+        } />
+        <Route path="/manage-exercises" element={
+          <PrivateRoute><ManageExercises /></PrivateRoute>
+        } />
+        <Route path="/reports" element={
+          <PrivateRoute><Reports /></PrivateRoute>
+        } />
+        <Route path="/teacher-help-forum" element={
+          <PrivateRoute><TeacherHelpForum /></PrivateRoute>
+        } />
+        <Route path="/profile" element={
+          <PrivateRoute><Profile /></PrivateRoute>
+        } />
+        <Route path="/leaderboard" element={
+          <PrivateRoute><Leaderboard /></PrivateRoute>
+        } />
+
+        {/* ברירת מחדל מפנה להתחברות */}
         <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/teacher-help-forum" element={<TeacherHelpForum />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
       </Routes>
     </Router>
   );

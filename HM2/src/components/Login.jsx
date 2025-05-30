@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -13,11 +13,15 @@ const Login = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-    
+
     if (isLogin) {
       // התחברות
       try {
@@ -27,19 +31,14 @@ const Login = () => {
           body: JSON.stringify({
             email: username,
             password,
-            userType
-          })
+          }),
         });
         const data = await res.json();
         if (data.token) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
-          localStorage.setItem('userType', userType);
-          if (userType === 'student') {
-            navigate('/student-dashboard');
-          } else {
-            navigate('/teacher-dashboard');
-          }
+          localStorage.setItem('userType', data.userType); // שמירת userType
+          navigate(data.userType === 'student' ? '/student-dashboard' : '/teacher-dashboard');
         } else {
           setError(data.error || 'שגיאה בהתחברות');
         }
@@ -57,8 +56,8 @@ const Login = () => {
             email: username,
             password,
             userType,
-            ...(userType === 'student' && { grade, class: className })
-          })
+            ...(userType === 'student' && { grade, class: className }),
+          }),
         });
         const data = await res.json();
         if (data.success) {
@@ -78,26 +77,20 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            {isLogin ? 'התחברות למערכת' : 'הרשמה למערכת'}
-          </h2>
-        </div>
+        <h2 className="text-center text-3xl font-extrabold text-gray-900">
+          {isLogin ? 'התחברות למערכת' : 'הרשמה למערכת'}
+        </h2>
 
         <div className="flex justify-center space-x-4">
           <button
             onClick={() => setIsLogin(true)}
-            className={`px-4 py-2 rounded-md ${
-              isLogin ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-700'
-            }`}
+            className={`px-4 py-2 rounded-md ${isLogin ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-700'}`}
           >
             התחברות
           </button>
           <button
             onClick={() => setIsLogin(false)}
-            className={`px-4 py-2 rounded-md ${
-              !isLogin ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-700'
-            }`}
+            className={`px-4 py-2 rounded-md ${!isLogin ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-700'}`}
           >
             הרשמה
           </button>
@@ -109,63 +102,45 @@ const Login = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {!isLogin && (
             <>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">שם מלא</label>
+              <div>
+                <label className="block text-sm font-medium">שם מלא</label>
                 <input
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                  placeholder="הכנס את שמך המלא"
                   required
+                  className="w-full px-3 py-2 border rounded-md"
                 />
               </div>
-              <div className="flex justify-center space-x-4 mb-4">
+              <div className="flex justify-center space-x-4">
                 <button
                   type="button"
                   onClick={() => setUserType('student')}
-                  className={`px-4 py-2 rounded-md ${
-                    userType === 'student'
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-gray-200 text-gray-700'
-                  }`}
+                  className={`px-4 py-2 rounded-md ${userType === 'student' ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-700'}`}
                 >
-                  הרשמה כתלמיד
+                  תלמיד
                 </button>
                 <button
                   type="button"
                   onClick={() => setUserType('teacher')}
-                  className={`px-4 py-2 rounded-md ${
-                    userType === 'teacher'
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-gray-200 text-gray-700'
-                  }`}
+                  className={`px-4 py-2 rounded-md ${userType === 'teacher' ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-700'}`}
                 >
-                  הרשמה כמורה
+                  מורה
                 </button>
               </div>
+
               {userType === 'student' && (
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">כיתה</label>
-                    <select
-                      value={grade}
-                      onChange={(e) => setGrade(e.target.value)}
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                      required
-                    >
+                    <label>כיתה</label>
+                    <select value={grade} onChange={(e) => setGrade(e.target.value)} className="w-full px-3 py-2 border rounded-md">
                       <option value="ז">ז</option>
                       <option value="ח">ח</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">קבוצה</label>
-                    <select
-                      value={className}
-                      onChange={(e) => setClassName(e.target.value)}
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                      required
-                    >
+                    <label>קבוצה</label>
+                    <select value={className} onChange={(e) => setClassName(e.target.value)} className="w-full px-3 py-2 border rounded-md">
                       <option value="א">א</option>
                       <option value="ב">ב</option>
                       <option value="ג">ג</option>
@@ -176,44 +151,32 @@ const Login = () => {
             </>
           )}
 
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="username" className="sr-only">שם משתמש</label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="שם משתמש או אימייל"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">סיסמה</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="סיסמה"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+          <div>
+            <input
+              type="text"
+              placeholder="אימייל"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="w-full px-3 py-2 border rounded-md mt-2"
+            />
+            <input
+              type="password"
+              placeholder="סיסמה"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-3 py-2 border rounded-md mt-2"
+            />
           </div>
 
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-              disabled={loading}
-            >
-              {isLogin ? 'התחבר' : 'הירשם'}
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-2 px-4 bg-primary-600 hover:bg-primary-700 text-white rounded-md"
+          >
+            {isLogin ? 'התחבר' : 'הירשם'}
+          </button>
         </form>
       </div>
     </div>
