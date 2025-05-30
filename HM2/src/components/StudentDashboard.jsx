@@ -32,14 +32,6 @@ const StudentDashboard = () => {
             <div className="flex items-center space-x-4">
               <h1 className="text-xl font-bold text-primary-600">MathDuo</h1>
               <h1>   </h1>
-              {user && (
-                <Link
-                  to="/profile"
-                  className="text-sm text-gray-600 hover:text-primary-600"
-                >
-                  שלום, {user.name}
-                </Link>
-              )}
             </div>
 
             <div>
@@ -94,6 +86,17 @@ const StudentDashboard = () => {
               <div className="px-4 py-5 sm:p-6">
                 <h3 className="text-lg font-medium text-gray-900">הישגים🏆</h3>
                 <p className="mt-1 text-sm text-gray-500">צפה בטבלת ההישגים של כל התלמידים</p>
+              </div>
+            </Link>
+
+            {/* ריבוע פרופיל אישי */}
+            <Link
+              to="/profile"
+              className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow duration-300"
+            >
+              <div className="px-4 py-5 sm:p-6">
+                <h3 className="text-lg font-medium text-gray-900">פרופיל אישי👤</h3>
+                <p className="mt-1 text-sm text-gray-500">צפייה ועריכת פרטים אישיים</p>
               </div>
             </Link>
           </div>

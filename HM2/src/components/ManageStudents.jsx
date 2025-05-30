@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; 
 
 const ManageStudents = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [students, setStudents] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -15,20 +16,21 @@ const ManageStudents = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // טען את המשתמש מה-localStorage בפעם הראשונה
+  // פילטרים
+  const [filterGrade, setFilterGrade] = useState('');
+  const [filterClass, setFilterClass] = useState('');
+
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
       } catch {
-        // אם יש תקלה בפירוס json
         setUser(null);
       }
     }
   }, []);
 
-  // טען את רשימת התלמידים
   useEffect(() => {
     const fetchStudents = async () => {
       try {
@@ -79,6 +81,14 @@ const ManageStudents = () => {
     setLoading(false);
   };
 
+  // סינון התלמידים לפי פילטרים
+  const filteredStudents = students.filter(student => {
+    return (
+      (filterGrade === '' || student.grade === filterGrade) &&
+      (filterClass === '' || student.class === filterClass)
+    );
+  });
+
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -92,14 +102,24 @@ const ManageStudents = () => {
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
-            <div className="flex space-x-4">
-              <Link to="/teacher-dashboard" className="text-primary-600 hover:text-primary-700">
-                חזרה לדף הבית
-              </Link>
-              <h1>   </h1>
-              <Link to="/profile" className="text-gray-600 hover:text-primary-700">
-                שלום, {user.name}
-              </Link>
+            <div className="flex items-center space-x-4">
+              <h1
+                className="text-xl font-bold text-primary-600 cursor-pointer"
+                onClick={() => window.location.href = '/teacher-dashboard'}
+              >
+                MathDuo
+              </h1>
+            </div>
+            <div className="flex items-center gap-6">
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  navigate('/');
+                }}
+                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                התנתק
+              </button>
             </div>
           </div>
         </div>
@@ -107,8 +127,43 @@ const ManageStudents = () => {
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">ניהול תלמידים</h2>
+
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <h2 className="text-2xl font-bold text-gray-900">ניהול תלמידים</h2>
+
+              <select
+                value={filterGrade}
+                onChange={(e) => setFilterGrade(e.target.value)}
+                className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+              >
+                <option value="">כל השכבות</option>
+                <option value="ז">ז</option>
+                <option value="ח">ח</option>
+              </select>
+
+              <select
+                value={filterClass}
+                onChange={(e) => setFilterClass(e.target.value)}
+                className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+              >
+                <option value="">כל הקבוצות</option>
+                <option value="א">א</option>
+                <option value="ב">ב</option>
+                <option value="ג">ג</option>
+              </select>
+
+              <button
+                onClick={() => {
+                  setFilterGrade('');
+                  setFilterClass('');
+                }}
+                className="bg-gray-200 text-gray-700 px-3 py-2 rounded-md hover:bg-gray-300 text-sm"
+              >
+                נקה סינון
+              </button>
+            </div>
+
             <button
               onClick={() => setShowAddForm(true)}
               className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700"
@@ -213,7 +268,7 @@ const ManageStudents = () => {
                     קבוצה
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    התקדמות
+                    ניקוד
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     אימייל
@@ -224,7 +279,7 @@ const ManageStudents = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {students.map((student) => (
+                {filteredStudents.map((student) => (
                   <tr key={student._id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {student.name}
@@ -235,13 +290,8 @@ const ManageStudents = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {student.class}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="w-full bg-gray-200 rounded-full h-2.5">
-                        <div
-                          className="bg-primary-600 h-2.5 rounded-full"
-                          style={{ width: `${student.progress || 0}%` }}
-                        ></div>
-                      </div>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {student.points ?? 0}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {student.email}
@@ -250,16 +300,23 @@ const ManageStudents = () => {
                       <button
                         onClick={() => handleDeleteStudent(student._id)}
                         className="text-red-600 hover:text-red-900"
-                        disabled={loading}
                       >
                         מחק
                       </button>
                     </td>
                   </tr>
                 ))}
+                {filteredStudents.length === 0 && (
+                  <tr>
+                    <td colSpan="6" className="text-center py-4 text-gray-500">
+                      לא נמצאו תלמידים לפי הקריטריונים שנבחרו.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
+
         </div>
       </main>
     </div>
