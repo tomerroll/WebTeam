@@ -6,9 +6,8 @@ const helpSchema = new mongoose.Schema({
   studentEmail: { type: String, required: true },
   studentName: { type: String, required: true },
   answer: { type: String, default: '' },
+  answeredBy: { type: String, default: '' }, 
   createdAt: { type: Date, default: Date.now },
 });
-
-
 
 module.exports = mongoose.model('Help', helpSchema);

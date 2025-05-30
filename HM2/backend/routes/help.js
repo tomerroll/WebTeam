@@ -46,10 +46,14 @@ router.post('/', async (req, res) => {
 // עדכון תשובת מורה לפנייה
 router.put('/:id/answer', async (req, res) => {
   const { id } = req.params;
-  const { answer } = req.body;
+  const { answer, answeredBy } = req.body;
 
-  if (typeof answer !== 'string') {
+  if (typeof answer !== 'string' || answer.trim() === '') {
     return res.status(400).json({ error: 'חובה לספק תשובה תקינה' });
+  }
+
+  if (typeof answeredBy !== 'string' || answeredBy.trim() === '') {
+    return res.status(400).json({ error: 'חובה לציין את שם המורה העונה' });
   }
 
   try {
@@ -59,6 +63,7 @@ router.put('/:id/answer', async (req, res) => {
     }
 
     help.answer = answer;
+    help.answeredBy = answeredBy; // הוספת שם המורה
     await help.save();
 
     res.json({ message: 'התשובה עודכנה בהצלחה', help });
@@ -68,13 +73,15 @@ router.put('/:id/answer', async (req, res) => {
   }
 });
 
+
 // מחיקת תשובה בלבד
 router.delete('/:id/answer', async (req, res) => {
   try {
     const help = await Help.findById(req.params.id);
     if (!help) return res.status(404).json({ error: 'לא נמצאה הפנייה' });
 
-    help.answer = undefined;
+    help.answer = ''; // או undefined אם אתה מעדיף
+    help.answeredBy = ''; // איפוס שם המורה שענה
     await help.save();
 
     res.json({ message: 'התשובה נמחקה בהצלחה' });
@@ -83,6 +90,7 @@ router.delete('/:id/answer', async (req, res) => {
     res.status(500).json({ error: 'שגיאה במחיקת התשובה' });
   }
 });
+
 
 // *** מחיקת פנייה מלאה ***
 router.delete('/:id', async (req, res) => {

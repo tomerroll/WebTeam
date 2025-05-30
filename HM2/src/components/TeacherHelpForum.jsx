@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 const TeacherHelpForum = () => {
@@ -46,11 +45,16 @@ const TeacherHelpForum = () => {
       return;
     }
 
+    // שליפת שם המורה מה-localStorage
+    const storedUser = localStorage.getItem('user');
+    const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+    const teacherName = parsedUser?.name || 'מורה לא ידוע';
+
     try {
       const res = await fetch(`http://localhost:5000/api/help/${id}/answer`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answer }),
+        body: JSON.stringify({ answer, answeredBy: teacherName }),
       });
 
       const data = await res.json();
@@ -183,23 +187,34 @@ const TeacherHelpForum = () => {
                       <div className="mt-4 p-3 bg-green-100 text-green-800 rounded-md">
                         <h5 className="font-semibold">תשובת המורה:</h5>
                         <p>{help.answer}</p>
-                        <div className="mt-2 flex space-x-2 rtl:space-x-reverse">
-                          <button
-                            onClick={() => {
-                              setEditing((prev) => ({ ...prev, [help._id]: true }));
-                              setAnswerInputs((prev) => ({ ...prev, [help._id]: help.answer }));
-                            }}
-                            className="text-sm text-blue-600 hover:underline"
-                          >
-                            ערוך
-                          </button>
-                          <button
-                            onClick={() => deleteAnswer(help._id)}
-                            className="text-sm text-red-600 hover:underline"
-                          >
-                            מחק תשובה
-                          </button>
-                        </div>
+                        {/* הצגת שם המורה אם קיים */}
+                        {help.answeredBy && (
+                          <p className="mt-1 text-sm text-green-700 font-medium">
+                            נענה על ידי: {help.answeredBy}
+                          </p>
+                        )}
+
+                        {/* בדיקה האם להציג את כפתורי עריכה ומחיקה של תשובה */}
+                        {( !help.answeredBy || help.answeredBy === user.name ) && (
+                          <div className="mt-2 flex space-x-2 rtl:space-x-reverse">
+                            <button
+                              onClick={() => {
+                                setEditing((prev) => ({ ...prev, [help._id]: true }));
+                                setAnswerInputs((prev) => ({ ...prev, [help._id]: help.answer }));
+                              }}
+                              className="text-sm text-blue-600 hover:underline"
+                            >
+                              ערוך
+                            </button>
+                            <button
+                              onClick={() => deleteAnswer(help._id)}
+                              className="text-sm text-red-600 hover:underline"
+                            >
+                              מחק תשובה
+                            </button>
+                          </div>
+                        )}
+
                       </div>
                     ) : (
                       <div className="mt-4">
