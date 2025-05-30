@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const Profile = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  const userType = localStorage.getItem('userType'); // לקיחת סוג המשתמש
+  const userType = localStorage.getItem('userType');
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -26,7 +26,7 @@ const Profile = () => {
 
     setName(storedUser.name);
     setEmail(storedUser.email);
-  }, [token, navigate]); // בלי storedUser בתלות
+  }, [token, navigate]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -62,63 +62,85 @@ const Profile = () => {
     } else if (userType === 'student') {
       navigate('/student-dashboard');
     } else {
-      navigate('/'); // ברירת מחדל
+      navigate('/');
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white shadow p-6 rounded">
-      {/* כפתור חזרה בדשבורד */}
-      <button
-        onClick={handleBackClick}
-        className="mb-6 text-primary-600 hover:text-primary-700 font-medium"
-      >
-        חזרה לדף הבית
-      </button>
-
-      <h2 className="text-2xl font-bold mb-4 text-center">פרופיל אישי</h2>
-
-      {message && <div className="text-green-600 text-center mb-2">{message}</div>}
-      {error && <div className="text-red-600 text-center mb-2">{error}</div>}
-
-      <form onSubmit={handleUpdate} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">שם מלא</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-            required
-          />
+    <div className="min-h-screen bg-gray-100">
+      {/* סרגל עליון */}
+      <nav className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex items-center space-x-4">
+              <h1
+                className="text-xl font-bold text-primary-600 cursor-pointer"
+                onClick={handleBackClick}
+              >
+                MathDuo
+              </h1>
+            </div>
+            <div className="flex items-center gap-6">
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  navigate('/');
+                }}
+                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                התנתק
+              </button>
+            </div>
+          </div>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">אימייל</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">סיסמה חדשה (אופציונלי)</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-            placeholder="השאר ריק אם אינך רוצה לשנות"
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full py-2 px-4 bg-primary-600 hover:bg-primary-700 text-white rounded-md"
-        >
-          עדכן פרטים
-        </button>
-      </form>
+      </nav>
+
+      {/* תוכן עיקרי */}
+      <main className="max-w-md mx-auto mt-10 bg-white shadow p-6 rounded">
+        <h2 className="text-2xl font-bold mb-4 text-center">פרופיל אישי</h2>
+
+        {message && <div className="text-green-600 text-center mb-2">{message}</div>}
+        {error && <div className="text-red-600 text-center mb-2">{error}</div>}
+
+        <form onSubmit={handleUpdate} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">שם מלא</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">אימייל</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">סיסמה חדשה (אופציונלי)</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+              placeholder="השאר ריק אם אינך רוצה לשנות"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-primary-600 hover:bg-primary-700 text-white rounded-md"
+          >
+            עדכן פרטים
+          </button>
+        </form>
+      </main>
     </div>
   );
 };

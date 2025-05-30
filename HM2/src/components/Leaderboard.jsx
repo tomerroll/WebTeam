@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
-
+import { useNavigate } from 'react-router-dom';
 const podiumColors = [
   'bg-yellow-300', // מקום ראשון
   'bg-gray-300',   // מקום שני
@@ -8,6 +8,7 @@ const podiumColors = [
 ];
 
 const Leaderboard = () => {
+  const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [showConfetti, setShowConfetti] = useState(true);
 
@@ -50,9 +51,17 @@ const Leaderboard = () => {
     window.location.href = '/teacher-dashboard';
   }
 }}>MathDuo</h1>
-          <div className="flex items-center gap-4">
-            {/* ...existing code... */}
-          </div>
+<div className="flex items-center gap-6">
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  navigate('/');
+                }}
+                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                התנתק
+              </button>
+            </div>
         </div>
       </nav>
       {showConfetti && <Confetti />}

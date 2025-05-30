@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 const Reports = () => {
+  const navigate = useNavigate();
   const [reports, setReports] = useState([]);
   const [filters, setFilters] = useState({
     subject: '',
@@ -68,10 +68,24 @@ const Reports = () => {
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
-            <div className="flex space-x-4">
-              <Link to="/teacher-dashboard" className="text-primary-600 hover:text-primary-700">
-                חזרה לדף הבית
-              </Link>
+            <div className="flex items-center space-x-4">
+              <h1
+                className="text-xl font-bold text-primary-600 cursor-pointer"
+                onClick={() => window.location.href = '/student-dashboard'}
+              >
+                MathDuo
+              </h1>
+            </div>
+            <div className="flex items-center gap-6">
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  navigate('/');
+                }}
+                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                התנתק
+              </button>
             </div>
           </div>
         </div>

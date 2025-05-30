@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import AddExercise from './AddExercise';
 import EditExercise from './EditExercise';
 
 const ManageExercises = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [exercises, setExercises] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -11,6 +12,11 @@ const ManageExercises = () => {
   const [editExercise, setEditExercise] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // פילטרים
+  const [filterSubject, setFilterSubject] = useState('');
+  const [filterGrade, setFilterGrade] = useState('');
+  const [filterDifficulty, setFilterDifficulty] = useState('');
 
   // טען את המשתמש מה-localStorage בפעם הראשונה
   useEffect(() => {
@@ -51,10 +57,19 @@ const ManageExercises = () => {
     setLoading(false);
   };
 
-  const handleEditExercise = (exercise) => {
-    setEditExercise(exercise);
-    setShowEditForm(true);
-  };
+  // סינון התרגילים לפי הפילטרים
+  const filteredExercises = exercises.filter(exercise => {
+    return (
+      (filterSubject === '' || exercise.subject === filterSubject) &&
+      (filterGrade === '' || exercise.grade === filterGrade) &&
+      (filterDifficulty === '' || exercise.difficulty === filterDifficulty)
+    );
+  });
+
+  // מציאת ערכים ייחודיים לפילטרים מתוך התרגילים
+  const uniqueSubjects = [...new Set(exercises.map(ex => ex.subject))].sort();
+  const uniqueGrades = [...new Set(exercises.map(ex => ex.grade))].sort();
+  const uniqueDifficulties = [...new Set(exercises.map(ex => ex.difficulty))].sort();
 
   if (!user) {
     return (
@@ -69,10 +84,24 @@ const ManageExercises = () => {
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
-            <div className="flex space-x-4">
-              <Link to="/teacher-dashboard" className="text-primary-600 hover:text-primary-700">
-                חזרה לדף הבית
-              </Link>
+             <div className="flex items-center space-x-4">
+              <h1
+                className="text-xl font-bold text-primary-600 cursor-pointer"
+                onClick={() => window.location.href = '/teacher-dashboard'}
+              >
+                MathDuo
+              </h1>
+            </div>
+            <div className="flex items-center gap-6">
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  navigate('/');
+                }}
+                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                התנתק
+              </button>
             </div>
           </div>
         </div>
@@ -80,14 +109,64 @@ const ManageExercises = () => {
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <h2 className="text-2xl font-bold text-gray-900">ניהול תרגילים</h2>
-            <button
-              onClick={() => setShowAddForm(true)}
-              className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700"
-            >
-              הוסף תרגיל
-            </button>
+              <select
+                value={filterSubject}
+                onChange={(e) => setFilterSubject(e.target.value)}
+                className="border border-gray-300 rounded px-3 py-1 text-sm"
+              >
+                <option value="">כל הנושאים</option>
+                {uniqueSubjects.map(subject => (
+                  <option key={subject} value={subject}>{subject}</option>
+                ))}
+              </select>
+
+              {/* פילטר כיתה */}
+              <select
+                value={filterGrade}
+                onChange={(e) => setFilterGrade(e.target.value)}
+                className="border border-gray-300 rounded px-3 py-1 text-sm"
+              >
+                <option value="">כל הכיתות</option>
+                {uniqueGrades.map(grade => (
+                  <option key={grade} value={grade}>{grade}</option>
+                ))}
+              </select>
+
+              {/* פילטר רמת קושי */}
+              <select
+                value={filterDifficulty}
+                onChange={(e) => setFilterDifficulty(e.target.value)}
+                className="border border-gray-300 rounded px-3 py-1 text-sm"
+              >
+                <option value="">כל רמות הקושי</option>
+                {uniqueDifficulties.map(diff => (
+                  <option key={diff} value={diff}>{diff}</option>
+                ))}
+              </select>
+
+              {/* כפתור ניקוי סינון */}
+              <button
+                onClick={() => {
+                  setFilterSubject('');
+                  setFilterGrade('');
+                  setFilterDifficulty('');
+                }}
+                className="bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded text-sm"
+              >
+                נקה סינון
+              </button>
+              </div>
+
+              {/* כפתור הוספה */}
+              <button
+                onClick={() => setShowAddForm(true)}
+                className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700"
+              >
+                הוסף תרגיל
+              </button>
           </div>
 
           {error && <div className="text-red-600 text-center mb-4">{error}</div>}
@@ -135,7 +214,7 @@ const ManageExercises = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {exercises.map((exercise) => (
+                {filteredExercises.map((exercise) => (
                   <tr key={exercise._id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {exercise.title}
