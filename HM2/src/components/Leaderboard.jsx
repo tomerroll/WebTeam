@@ -40,7 +40,22 @@ const Leaderboard = () => {
   const rest = sorted.slice(3);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+      <nav className="bg-white shadow-sm w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+          <h1 className="text-xl font-bold text-primary-600 cursor-pointer" onClick={() => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  if (user.grade) {
+    window.location.href = '/student-dashboard';
+  } else {
+    window.location.href = '/teacher-dashboard';
+  }
+}}>MathDuo</h1>
+          <div className="flex items-center gap-4">
+            {/* ...existing code... */}
+          </div>
+        </div>
+      </nav>
       {showConfetti && <Confetti />}
       <div className="max-w-2xl w-full mt-8 mb-4 bg-white rounded-lg shadow p-4">
         <h2 className="text-3xl font-bold mb-8 text-center flex items-center justify-center gap-2">
