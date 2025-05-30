@@ -1,4 +1,3 @@
-// TeacherDashboard.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -56,6 +55,12 @@ const TeacherDashboard = () => {
       icon: '💬',
       path: '/teacher-help-forum',
     },
+    {
+      title: 'פרופיל אישי',
+      description: 'צפייה ועריכת פרטים אישיים',
+      icon: '👤',
+      path: '/profile',
+    },
   ];
 
   return (
@@ -67,15 +72,6 @@ const TeacherDashboard = () => {
               <h1 className="text-xl font-bold text-gray-900">
                 MathDuo - לוח בקרה למורה
               </h1>
-              <h1>   </h1>
-              {user && (
-                <Link
-                  to="/profile"
-                  className="text-sm text-gray-600 hover:text-primary-600"
-                >
-                  שלום, {user.name}
-                </Link>
-              )}
             </div>
 
             <div>
