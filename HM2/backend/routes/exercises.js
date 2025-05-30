@@ -1,17 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const Exercise = require('../models/Exercise'); // שימוש במודל החיצוני
+const Exercise = require('../models/Exercise');
+const StudentProgress = require('../models/StudentProgress');
 
 // קבלת כל התרגילים ממוינים לפי רמת קושי
 router.get('/', async (req, res) => {
   try {
-    // מיון לפי difficulty (סדר עולה: קל -> בינוני -> קשה)
     const difficultyOrder = { 'קל': 1, 'בינוני': 2, 'קשה': 3 };
     const exercises = await Exercise.find().lean();
-
-    // מיון ידני לפי סדר difficulty בעברית
     exercises.sort((a, b) => (difficultyOrder[a.difficulty] || 99) - (difficultyOrder[b.difficulty] || 99));
-
     res.json(exercises);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -33,20 +30,19 @@ router.get('/subject/:subject', async (req, res) => {
   }
 });
 
-
-// הוספת תרגיל עם ולידציה
+// הוספת תרגיל עם ולידציה + עדכון completed=false לכל התלמידים שעשו את הנושא הזה
 router.post('/add', async (req, res) => {
-const {
-  title,
-  description,
-  options,
-  correctOption,
-  subject,
-  grade,
-  difficulty,
-  points,
-  teacherId
-} = req.body;
+  const {
+    title,
+    description,
+    options,
+    correctOption,
+    subject,
+    grade,
+    difficulty,
+    points,
+    teacherId
+  } = req.body;
 
   if (!title || !description || !options || correctOption === undefined) {
     return res.status(400).json({ error: 'All fields are required' });
@@ -61,20 +57,26 @@ const {
   }
 
   try {
-      const exercise = new Exercise({
-        title,
-        description,
-        options,
-        correctOption,
-        subject,
-        grade,
-        difficulty,
-        points,
-        createdBy: teacherId,
+    const exercise = new Exercise({
+      title,
+      description,
+      options,
+      correctOption,
+      subject,
+      grade,
+      difficulty,
+      points,
+      createdBy: teacherId,
     });
 
-
     await exercise.save();
+
+    // עדכון כל תלמיד שהנושא שלו היה מסומן כהושלם ל-completed: false
+    await StudentProgress.updateMany(
+      { subject, completed: true },
+      { $set: { completed: false } }
+    );
+
     res.status(201).json({ success: true, exercise });
   } catch (err) {
     res.status(500).json({ error: err.message });

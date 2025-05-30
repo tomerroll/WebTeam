@@ -2,6 +2,23 @@ const express = require('express');
 const router = express.Router();
 const StudentProgress = require('../models/StudentProgress');
 
+// קבלת רשימת נושאים וסטטוס completed עבור סטודנט
+router.get('/completed/:studentId', async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const progresses = await StudentProgress.find({ student: studentId });
+
+    const subjectStatus = progresses.map(p => ({
+      subject: p.subject,
+      completed: p.completed
+    }));
+
+    res.json(subjectStatus);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // קבלת התקדמות של תלמיד בנושא מסוים
 router.get('/:studentId/:subject', async (req, res) => {
   try {
@@ -16,9 +33,12 @@ router.get('/:studentId/:subject', async (req, res) => {
 // עדכון/שמירת התקדמות
 router.post('/', async (req, res) => {
   try {
-    const { student, subject, currentIndex, completed, answers } = req.body;
+    const { student, subject, currentIndex, answers } = req.body;
 
     const existingProgress = await StudentProgress.findOne({ student, subject });
+
+    // חישוב מחדש של completed: כל השאלות שנענו הן נכונות
+    const allCorrect = answers.length > 0 && answers.every(a => a.isCorrect);
 
     if (!existingProgress) {
       // יצירה ראשונית של התקדמות
@@ -26,7 +46,7 @@ router.post('/', async (req, res) => {
         student,
         subject,
         currentIndex,
-        completed,
+        completed: allCorrect,
         lastAttempt: new Date(),
         answers,
       });
@@ -35,7 +55,6 @@ router.post('/', async (req, res) => {
     }
 
     // עדכון של existing progress
-    // 1. שילוב של תשובות חדשות עם קיימות תוך מניעת כפילויות לפי questionId
     const updatedAnswers = [...existingProgress.answers];
 
     for (const newAns of answers) {
@@ -47,9 +66,8 @@ router.post('/', async (req, res) => {
       }
     }
 
-    // 2. עדכון הנתונים במסד
     existingProgress.currentIndex = currentIndex;
-    existingProgress.completed = completed;
+    existingProgress.completed = updatedAnswers.length > 0 && updatedAnswers.every(a => a.isCorrect);
     existingProgress.lastAttempt = new Date();
     existingProgress.answers = updatedAnswers;
 
@@ -59,6 +77,5 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 module.exports = router;

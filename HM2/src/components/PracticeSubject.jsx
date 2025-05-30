@@ -80,7 +80,7 @@ const PracticeSubject = () => {
     });
   };
 
-  const updateProgress = (newIndex, isComplete = false) => {
+  const updateProgress = (newIndex, isComplete = false, updatedAnswers = answers) => {
     fetch('http://localhost:5000/api/progress', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -89,27 +89,43 @@ const PracticeSubject = () => {
         subject,
         currentIndex: newIndex,
         completed: isComplete,
-        answers
+        answers: updatedAnswers
       })
     });
   };
 
+
   const handleSelect = idx => {
     if (selected !== null) return;
     setSelected(idx);
-    const isCorrect = idx === exercises[current].correctOption;
-    setIsCorrect(isCorrect);
-    handleAnswer(current, exercises[current].options[idx], isCorrect);
-    if (isCorrect) {
+
+    const correct = idx === exercises[current].correctOption;
+    setIsCorrect(correct);
+
+    const selectedAnswer = exercises[current].options[idx];
+    const questionId = exercises[current]._id;
+
+    // עדכן את מערך התשובות
+    const updatedAnswers = [
+      ...answers.filter(a => a.questionId !== questionId),
+      { questionIndex: current, questionId, selectedAnswer, isCorrect: correct }
+    ];
+    setAnswers(updatedAnswers);
+
+    // עדכן ניקוד
+    if (correct) {
       addPoints(exercises[current].points);
     }
+
+    // שמור לשרת
+    updateProgress(current + 1, false, updatedAnswers); // ✅ newIndex=current+1
   };
+
 
  const handleNext = () => {
   const nextIndex = current + 1;
   const isFinished = nextIndex >= exercises.length;
 
-  updateProgress(nextIndex, isFinished);
   setCurrent(nextIndex);
 
   // טען את התשובה אם כבר קיימת (ולא אפס ישר)
