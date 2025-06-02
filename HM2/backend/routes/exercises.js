@@ -6,14 +6,19 @@ const StudentProgress = require('../models/StudentProgress');
 // קבלת כל התרגילים ממוינים לפי רמת קושי
 router.get('/', async (req, res) => {
   try {
+    const { grade } = req.query;
     const difficultyOrder = { 'קל': 1, 'בינוני': 2, 'קשה': 3 };
-    const exercises = await Exercise.find().lean();
+
+    const query = grade ? { grade } : {};
+    const exercises = await Exercise.find(query).lean();
+
     exercises.sort((a, b) => (difficultyOrder[a.difficulty] || 99) - (difficultyOrder[b.difficulty] || 99));
     res.json(exercises);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // קבלת תרגילים לפי subject (נושא)
 router.get('/subject/:subject', async (req, res) => {
