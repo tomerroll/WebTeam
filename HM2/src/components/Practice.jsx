@@ -17,7 +17,7 @@ const Practice = () => {
   useEffect(() => {
     if (!user || !user._id) return;
 
-    const fetchExercises = fetch('http://localhost:5000/api/exercises').then(res => res.json());
+    const fetchExercises = fetch(`http://localhost:5000/api/exercises?grade=${encodeURIComponent(user.grade)}`).then(res => res.json());
     const fetchStudent = fetch(`http://localhost:5000/api/students/${user._id}`).then(res => res.json());
     const fetchCompletionStatus = fetch(`http://localhost:5000/api/progress/completed/${user._id}`).then(res => res.json());
 

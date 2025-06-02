@@ -287,16 +287,22 @@ const PracticeSubject = () => {
                   {earnedPoints > 0 ? `הרווחת ${earnedPoints} נקודות` : " "}
                 </div>
               </div>
-              <div className="flex gap-2">
-                <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" onClick={handleNext}>
-                  {current < exercises.length - 1 ? "הבא" : "סיום"}
-                </button>
-                {current > 0 && (
-                  <button className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded mr-2" onClick={handlePrevious}>
-                    חזור
+                <div className="flex gap-2">
+                  {current > 0 && (
+                    <button
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                      onClick={handlePrevious}
+                    >
+                      חזור
+                    </button>
+                  )}
+                  <button
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                    onClick={handleNext}
+                  >
+                    {current < exercises.length - 1 ? "הבא" : "סיום"}
                   </button>
-                )}
-              </div>
+                </div>
             </div>
           )}
         </div>
