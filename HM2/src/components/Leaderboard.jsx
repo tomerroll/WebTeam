@@ -43,7 +43,7 @@ const Leaderboard = () => {
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
       <nav className="bg-white shadow-sm w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
-          <h1 className="text-xl font-bold text-primary-600 cursor-pointer" onClick={() => {
+          <h1 className="text-xl font-bold text-primary-600 cursor-pointer transition-all duration-300 hover:text-white hover:bg-primary-600 hover:shadow-lg hover:px-3 hover:rounded-full" onClick={() => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   if (user.grade) {
     window.location.href = '/student-dashboard';

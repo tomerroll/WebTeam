@@ -137,7 +137,7 @@ const TeacherHelpForum = () => {
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center space-x-4">
               <h1
-                className="text-xl font-bold text-primary-600 cursor-pointer"
+                className="text-xl font-bold text-primary-600 cursor-pointer transition-all duration-300 hover:text-white hover:bg-primary-600 hover:shadow-lg hover:px-3 hover:rounded-full"
                 onClick={() => window.location.href = '/teacher-dashboard'}
               >
                 MathDuo
