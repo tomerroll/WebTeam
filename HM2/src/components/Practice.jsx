@@ -76,9 +76,12 @@ const Practice = () => {
                 const completedObj = completedSubjects.find(s => s.subject === subject);
                 const isCompleted = completedObj?.completed;
 
-                const cardClasses = `overflow-hidden shadow rounded-lg transition-shadow duration-300 flex items-center justify-center ${
-                  isCompleted ? 'bg-yellow-100 cursor-not-allowed opacity-80' : 'bg-white hover:shadow-md'
+                const cardClasses = `overflow-hidden shadow rounded-2xl transition-all duration-300 transform text-center ${
+                  isCompleted
+                    ? 'bg-yellow-100 cursor-not-allowed opacity-80'
+                    : 'bg-white hover:shadow-xl hover:scale-105 hover:ring-2 hover:ring-primary-500'
                 }`;
+
 
                 const content = (
                   <div className="px-4 py-8 sm:p-8 w-full text-center">
