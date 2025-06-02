@@ -105,12 +105,19 @@ const PracticeSubject = () => {
     const alreadyAnsweredBefore = previousAnswers.some(a => a.questionId?.toString() === questionId);
     const questionPoints = exercises[current].points;
 
-    if (correct && !alreadyAnsweredBefore) {
-      addPoints(questionPoints);
-      setEarnedPoints(questionPoints);
+    if (correct) {
+      if (!alreadyAnsweredBefore) {
+        addPoints(questionPoints);
+        setEarnedPoints(questionPoints);
+      } else {
+        const halfPoints = Math.floor(questionPoints / 2);
+        addPoints(halfPoints);
+        setEarnedPoints(halfPoints);
+      }
     } else {
       setEarnedPoints(0);
-    }
+}
+
 
     const updatedAnswers = [
       ...answers.filter(a => a.questionId !== questionId),
@@ -277,7 +284,7 @@ const PracticeSubject = () => {
                   {isCorrect ? "תשובה נכונה!" : "תשובה שגויה"}
                 </span>
                 <div className="text-sm text-gray-600">
-                  {earnedPoints > 0 ? `הרווחת ${earnedPoints} נקודות` : "לא קיבלת נקודות"}
+                  {earnedPoints > 0 ? `הרווחת ${earnedPoints} נקודות` : " "}
                 </div>
               </div>
               <div className="flex gap-2">
