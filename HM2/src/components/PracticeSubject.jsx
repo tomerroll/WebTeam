@@ -229,7 +229,7 @@ const PracticeSubject = () => {
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
-          <Link to="/student-dashboard" className="text-xl font-bold">MathDuo</Link>
+          <Link to="/student-dashboard" className="text-xl font-bold text-primary-600 cursor-pointer transition-all duration-300 hover:text-white hover:bg-primary-600 hover:shadow-lg hover:px-3 hover:rounded-full">MathDuo</Link>
           <div className="flex items-center gap-4">
             <span className="text-lg font-bold">{points} {coin}</span>
             <span className="text-lg font-bold">{crowns} {crown}</span>

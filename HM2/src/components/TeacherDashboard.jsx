@@ -69,7 +69,7 @@ const TeacherDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center space-x-4">
-              <h1 className="text-xl font-bold text-gray-900">
+              <h1 className="text-xl font-bold text-primary-600 cursor-pointer transition-all duration-300 hover:text-white hover:bg-primary-600 hover:shadow-lg hover:px-3 hover:rounded-full">
                 MathDuo - לוח בקרה למורה
               </h1>
             </div>
