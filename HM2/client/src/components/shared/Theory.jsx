@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { fetchTheoryContent } from '../../services/theoryService';
+
 const Theory = () => {
   const navigate = useNavigate();
   const [theoryContent, setTheoryContent] = useState([]);
@@ -16,18 +18,18 @@ const Theory = () => {
   }, []);
 
   useEffect(() => {
-    const fetchTheoryContent = async () => {
+    const loadTheory = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/theory');
-        const data = await res.json();
+        const data = await fetchTheoryContent();
         setTheoryContent(data);
       } catch (err) {
-        console.error('Error fetching theory content:', err);
+        console.error('שגיאה בטעינת תיאוריה:', err);
       }
     };
-
-    fetchTheoryContent();
+  
+    loadTheory();
   }, []);
+  
 
   const toggleContent = (id) => {
     setExpandedItems((prev) => ({

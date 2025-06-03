@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchHelpMessages, answerHelpRequest, deleteHelpAnswer, deleteHelpRequest } from '../../services/helpService';
 
 const TeacherHelpForum = () => {
   const navigate = useNavigate();
@@ -19,16 +20,15 @@ const TeacherHelpForum = () => {
       }
     }
   }, []);
-
   const fetchHelps = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/help');
-      const data = await res.json();
+      const data = await fetchHelpMessages();
       setHelps(data);
     } catch (err) {
       console.error('שגיאה בקבלת הפניות:', err);
     }
   };
+  
 
   useEffect(() => {
     fetchHelps();
@@ -44,82 +44,54 @@ const TeacherHelpForum = () => {
       alert('אנא הזן תשובה לפני השליחה');
       return;
     }
-
-    // שליפת שם המורה מה-localStorage
+  
     const storedUser = localStorage.getItem('user');
     const parsedUser = storedUser ? JSON.parse(storedUser) : null;
     const teacherName = parsedUser?.name || 'מורה לא ידוע';
-
+  
     try {
-      const res = await fetch(`http://localhost:5000/api/help/${id}/answer`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answer, answeredBy: teacherName }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        alert('התשובה נשמרה בהצלחה');
-        setAnswerInputs((prev) => ({ ...prev, [id]: '' }));
-        setEditing((prev) => ({ ...prev, [id]: false }));
-        fetchHelps();
-      } else {
-        alert(`שגיאה: ${data.error}`);
-      }
+      await answerHelpRequest(id, answer, teacherName);
+      alert('התשובה נשמרה בהצלחה');
+      setAnswerInputs((prev) => ({ ...prev, [id]: '' }));
+      setEditing((prev) => ({ ...prev, [id]: false }));
+      fetchHelps();
     } catch (err) {
       console.error('שגיאה בשליחת תשובה:', err);
       alert('אירעה שגיאה בעת שליחת התשובה');
     }
   };
+  
 
   const deleteAnswer = async (id) => {
     const confirmDelete = window.confirm('האם אתה בטוח שברצונך למחוק את התשובה?');
     if (!confirmDelete) return;
-
+  
     try {
-      const res = await fetch(`http://localhost:5000/api/help/${id}/answer`, {
-        method: 'DELETE',
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        alert('התשובה נמחקה בהצלחה');
-        fetchHelps();
-      } else {
-        alert(`שגיאה: ${data.error}`);
-      }
+      await deleteHelpAnswer(id);
+      alert('התשובה נמחקה בהצלחה');
+      fetchHelps();
     } catch (err) {
       console.error('שגיאה במחיקת תשובה:', err);
       alert('אירעה שגיאה בעת מחיקת התשובה');
     }
   };
+  
 
   // פונקציה למחיקת פנייה מלאה
   const deleteHelp = async (id) => {
     const confirmDelete = window.confirm('האם אתה בטוח שברצונך למחוק את הפנייה הזו?');
     if (!confirmDelete) return;
-
+  
     try {
-      const res = await fetch(`http://localhost:5000/api/help/${id}`, {
-        method: 'DELETE',
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        alert('הפנייה נמחקה בהצלחה');
-        fetchHelps();
-      } else {
-        alert(`שגיאה: ${data.error}`);
-      }
+      await deleteHelpRequest(id);
+      alert('הפנייה נמחקה בהצלחה');
+      fetchHelps();
     } catch (err) {
       console.error('שגיאה במחיקת הפנייה:', err);
       alert('אירעה שגיאה בעת מחיקת הפנייה');
     }
   };
-
+  
   if (!user) {
     // אפשר להוסיף טעינת משתמש במידה ועדיין לא טען
     return (

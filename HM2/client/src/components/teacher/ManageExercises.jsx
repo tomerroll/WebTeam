@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AddExercise from './AddExercise';
 import EditExercise from './EditExercise';
-
+import { fetchAllExercises, deleteExercise } from '../../services/exerciseService';
 const ManageExercises = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -33,10 +33,9 @@ const ManageExercises = () => {
   useEffect(() => {
     const fetchExercises = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/exercises');
-        const data = await res.json();
-        console.log('Fetched exercises:', data);
+        const data = await fetchAllExercises();
         setExercises(data);
+        
       } catch (err) {
         console.error('Error fetching exercises:', err);
       }
@@ -49,8 +48,9 @@ const ManageExercises = () => {
     setError('');
     setLoading(true);
     try {
-      await fetch(`http://localhost:5000/api/exercises/${id}`, { method: 'DELETE' });
-      setExercises(exercises.filter(exercise => exercise._id !== id));
+      await deleteExercise(id);
+      setExercises(exercises.filter(ex => ex._id !== id));
+      
     } catch (err) {
       setError('שגיאה במחיקת תרגיל');
     }

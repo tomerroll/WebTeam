@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  fetchExercisesByGrade,
+  fetchCompletedSubjects
+} from '../../services/exerciseService';
+import { fetchStudentById } from '../../services/studentService';
 
 const coin = "🪙";
 const crown = "👑";
@@ -17,22 +22,27 @@ const Practice = () => {
   useEffect(() => {
     if (!user || !user._id) return;
 
-    const fetchExercises = fetch(`http://localhost:5000/api/exercises?grade=${encodeURIComponent(user.grade)}`).then(res => res.json());
-    const fetchStudent = fetch(`http://localhost:5000/api/students/${user._id}`).then(res => res.json());
-    const fetchCompletionStatus = fetch(`http://localhost:5000/api/progress/completed/${user._id}`).then(res => res.json());
+    const loadData = async () => {
+      try {
+        const [exerciseData, studentData, completionData] = await Promise.all([
+          fetchExercisesByGrade(user.grade),
+          fetchStudentById(user._id),
+          fetchCompletedSubjects(user._id)
+        ]);
 
-    Promise.all([fetchExercises, fetchStudent, fetchCompletionStatus])
-      .then(([exerciseData, studentData, completionData]) => {
         const uniqueSubjects = [...new Set(exerciseData.map(ex => ex.subject))];
         setSubjects(uniqueSubjects);
         setPoints(studentData.points || 0);
         setCrowns(studentData.crowns || 0);
         setCompletedSubjects(completionData || []);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error("Error loading practice data:", err);
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, [user]);
 
   return (
@@ -81,7 +91,6 @@ const Practice = () => {
                     ? 'bg-yellow-100 cursor-not-allowed opacity-80'
                     : 'bg-white hover:shadow-xl hover:scale-105 hover:ring-2 hover:ring-primary-500'
                 }`;
-
 
                 const content = (
                   <div className="px-4 py-8 sm:p-8 w-full text-center">

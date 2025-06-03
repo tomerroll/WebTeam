@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+// StudentDashboard.jsx
+import { fetchCurrentStudent } from '../../services/studentService';
 
 const StudentDashboard = () => {
   const [studentData, setStudentData] = useState(null);
@@ -10,19 +12,19 @@ const StudentDashboard = () => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-
-    const fetchStudentData = async () => {
+  
+    const loadData = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/students/me');
-        const data = await res.json();
+        const data = await fetchCurrentStudent();
         setStudentData(data);
       } catch (err) {
         console.error('Error fetching student data:', err);
       }
     };
-
-    fetchStudentData();
+  
+    loadData();
   }, []);
+  
 
   return (
     <div className="min-h-screen bg-gray-100">

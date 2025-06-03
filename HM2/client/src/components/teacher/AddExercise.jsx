@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { addExercise } from '../../services/exerciseService';
 const AddExercise = ({ onClose, onAdd }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -16,36 +16,29 @@ const AddExercise = ({ onClose, onAdd }) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
+  
     try {
-      const res = await fetch('http://localhost:5000/api/exercises/add', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title,
-          description,
-          options,
-          correctOption,
-          subject,
-          grade,
-          difficulty,
-          points,
-          teacherId: '66493cfa2e4f0b9bfb32a3a8', // החלף ל־ObjectId אמיתי של המורה
-        }),
+      const newExercise = await addExercise({
+        title,
+        description,
+        options,
+        correctOption,
+        subject,
+        grade,
+        difficulty,
+        points,
+        teacherId: '66493cfa2e4f0b9bfb32a3a8' // תחליף ב-ID דינמי אם יש צורך
       });
-
-      const data = await res.json();
-      if (data.success) {
-        onAdd(data.exercise);
-        onClose();
-      } else {
-        setError(data.error || 'Failed to add exercise');
-      }
+  
+      onAdd(newExercise);
+      onClose();
     } catch (err) {
-      setError('Server error');
+      setError(err.message || 'שגיאה בשרת');
     }
+  
     setLoading(false);
   };
+  
 
   return (
     <div className="bg-white shadow rounded-lg p-6 mb-6">

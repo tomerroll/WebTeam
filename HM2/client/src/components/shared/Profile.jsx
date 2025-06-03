@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { updateUserProfile } from '../../services/authService';
 const Profile = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -34,16 +34,8 @@ const Profile = () => {
     setError('');
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ name, email, password }),
-      });
+      const data = await updateUserProfile(token, { name, email, password });
 
-      const data = await res.json();
       if (data.success) {
         setMessage('הפרטים עודכנו בהצלחה');
         localStorage.setItem('user', JSON.stringify(data.user));
