@@ -1,20 +1,20 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/Login';
-import StudentDashboard from './components/StudentDashboard';
-import TeacherDashboard from './components/TeacherDashboard';
-import Practice from './components/Practice';
-import PracticeSubject from './components/PracticeSubject';
-import Theory from './components/Theory';
-import Help from './components/Help';
-import Settings from './components/Settings';
-import ManageStudents from './components/ManageStudents';
-import ManageExercises from './components/ManageExercises';
-import Reports from './components/Reports';
-import TeacherHelpForum from './components/TeacherHelpForum'; 
-import Profile from './components/Profile';
-import Leaderboard from './components/Leaderboard';
-import PrivateRoute from './components/PrivateRoute';
+import Login from './components/shared/Login';
+import StudentDashboard from './components/student/StudentDashboard';
+import TeacherDashboard from './components/teacher/TeacherDashboard';
+import Practice from './components/student/Practice';
+import PracticeSubject from './components/student/PracticeSubject';
+import Theory from './components/shared/Theory';
+import Help from './components/student/Help';
+import Settings from './components/shared/Settings';
+import ManageStudents from './components/teacher/ManageStudents';
+import ManageExercises from './components/teacher/ManageExercises';
+import Reports from './components/teacher/Reports';
+import TeacherHelpForum from './components/teacher/TeacherHelpForum'; 
+import Profile from './components/shared/Profile';
+import Leaderboard from './components/shared/Leaderboard';
+import PrivateRoute from './components/shared/PrivateRoute';
 
 function App() {
   return (

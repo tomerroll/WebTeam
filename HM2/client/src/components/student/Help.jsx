@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { sendHelpRequest, fetchHelpMessages } from '../../services/helpService';
+
 const Help = () => {
   const navigate = useNavigate();
   const [message, setMessage] = useState('');
   const [subject, setSubject] = useState('');
   const [helpContent, setHelpContent] = useState([]);
-  const [userName, setUserName] = useState('');
-
-  // שליפת המשתמש מ-localStorage
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) {
-      setUserName(storedUser.name || 'משתמש לא מזוהה');
-    }
-  }, []);
 
   const user = JSON.parse(localStorage.getItem('user'));
   const studentEmail = user?.email || null;
@@ -26,42 +18,31 @@ const Help = () => {
       alert('אירעה שגיאה: לא נמצא מייל תלמיד. אנא התחבר מחדש.');
       return;
     }
-
+  
     try {
-      const res = await fetch('http://localhost:5000/api/help', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subject, message, studentEmail, studentName }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        alert('הבקשה נשלחה בהצלחה');
-        setMessage('');
-        setSubject('');
-        fetchHelpContent();
-      } else {
-        alert(`שגיאה: ${data.error}`);
-      }
+      await sendHelpRequest({ subject, message, studentEmail, studentName });
+      alert('הבקשה נשלחה בהצלחה');
+      setMessage('');
+      setSubject('');
+      loadHelpMessages();
     } catch (err) {
       console.error('שגיאה בשליחת בקשת העזרה:', err);
-      alert('אירעה שגיאה בעת שליחת הבקשה');
+      alert(`שגיאה: ${err.message}`);
     }
   };
+  
 
-  const fetchHelpContent = async () => {
+  const loadHelpMessages = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/help');
-      const data = await res.json();
+      const data = await fetchHelpMessages();
       setHelpContent(data);
     } catch (err) {
-      console.error('שגיאה בהבאת תוכן עזרה:', err);
+      console.error('שגיאה בטעינת הודעות:', err);
     }
   };
-
+  
   useEffect(() => {
-    fetchHelpContent();
+    loadHelpMessages();
   }, []);
 
   return (

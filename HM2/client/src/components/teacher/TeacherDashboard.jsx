@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import { fetchCurrentTeacher } from '../../services/teacherService';
 const TeacherDashboard = () => {
   const [teacherData, setTeacherData] = useState(null);
   const [user, setUser] = useState(null);
@@ -13,9 +13,9 @@ const TeacherDashboard = () => {
 
     const fetchTeacherData = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/teachers/me');
-        const data = await res.json();
+        const data = await fetchCurrentTeacher();
         setTeacherData(data);
+        
       } catch (err) {
         console.error('Error fetching teacher data:', err);
       }

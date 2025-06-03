@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { updateExercise } from '../../services/exerciseService';
 const EditExercise = ({ exercise, onClose, onUpdate }) => {
   const [title, setTitle] = useState(exercise.title);
   const [description, setDescription] = useState(exercise.description);
@@ -16,35 +16,28 @@ const EditExercise = ({ exercise, onClose, onUpdate }) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
+  
     try {
-      const res = await fetch(`http://localhost:5000/api/exercises/${exercise._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title,
-          description,
-          options,
-          correctOption,
-          subject,
-          grade,
-          difficulty,
-          points,
-        }),
+      const updated = await updateExercise(exercise._id, {
+        title,
+        description,
+        options,
+        correctOption,
+        subject,
+        grade,
+        difficulty,
+        points,
       });
-
-      const data = await res.json();
-      if (data._id) {
-        onUpdate(data);
-        onClose();
-      } else {
-        setError(data.error || 'שגיאה בעדכון תרגיל');
-      }
+  
+      onUpdate(updated);
+      onClose();
     } catch (err) {
-      setError('שגיאת שרת');
+      setError(err.message || 'שגיאת שרת');
     }
+  
     setLoading(false);
   };
+  
 
   return (
     <div className="bg-white shadow rounded-lg p-6 mb-6">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchReports } from '../../services/reportService';
 const Reports = () => {
   const navigate = useNavigate();
   const [reports, setReports] = useState([]);
@@ -27,9 +28,9 @@ const Reports = () => {
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/reports');
-        const data = await res.json();
+        const data = await fetchReports();
         setReports(data);
+        
       } catch (err) {
         console.error('Error fetching reports:', err);
       }
@@ -38,7 +39,7 @@ const Reports = () => {
     fetchReports();
   }, []);
 
-  const filteredReports = reports.filter(report => {
+  const filteredReports = (reports || []).filter(report => {
     return (
       (!filters.subject || report.subject === filters.subject) &&
       (!filters.grade || report.grade === filters.grade) &&

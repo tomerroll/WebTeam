@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
 import { useNavigate } from 'react-router-dom';
+import { fetchAllStudents } from '../../services/studentService';
+
 const podiumColors = [
   'bg-yellow-300', // מקום ראשון
   'bg-gray-300',   // מקום שני
@@ -13,16 +15,16 @@ const Leaderboard = () => {
   const [showConfetti, setShowConfetti] = useState(true);
 
   useEffect(() => {
-    const fetchAllStudents = async () => {
+    const loadStudents = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/students');
-        const data = await res.json();
+        const data = await fetchAllStudents();
         setStudents(data);
       } catch (err) {
         console.error('Error fetching students:', err);
       }
     };
-    fetchAllStudents();
+    
+    loadStudents();
 
     setShowConfetti(true);
     const timer = setTimeout(() => setShowConfetti(false), 10000);

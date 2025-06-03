@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import {
+  fetchExercisesBySubject,
+  fetchProgressBySubject,
+  updateProgress
+} from '../../services/exerciseService';
+import {
+  fetchStudentById,
+  addPoints,
+  addCrown
+} from '../../services/studentService';
+
 
 const coin = "🪙";
 const crown = "👑";
@@ -30,9 +41,10 @@ const PracticeSubject = () => {
 
     setLoading(true);
 
-    const fetchExercises = fetch(`http://localhost:5000/api/exercises/subject/${encodeURIComponent(subject)}`).then(res => res.json());
-    const fetchProgress = fetch(`http://localhost:5000/api/progress/${user._id}/${subject}`).then(res => res.json());
-    const fetchStudent = fetch(`http://localhost:5000/api/students/${user._id}`).then(res => res.json());
+    const fetchExercises = fetchExercisesBySubject(subject);
+    const fetchProgress = fetchProgressBySubject(user._id, subject);
+    const fetchStudent = fetchStudentById(user._id);
+    
 
     Promise.all([fetchExercises, fetchProgress, fetchStudent])
       .then(([exerciseData, progressData, studentData]) => {
@@ -59,38 +71,8 @@ const PracticeSubject = () => {
         console.error("Error loading data:", err);
       })
       .finally(() => setLoading(false));
-  }, [subject]);
+  }, [subject, user._id]);
 
-  const addPoints = (amount) => {
-    setPoints(prev => prev + amount);
-    fetch(`http://localhost:5000/api/students/addPoints`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ studentId: user._id, points: amount })
-    });
-  };
-
-  const addCrown = () => {
-    fetch(`http://localhost:5000/api/students/addCrown`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ studentId: user._id })
-    });
-  };
-
-  const updateProgress = (newIndex, isComplete = false, updatedAnswers = answers) => {
-    fetch('http://localhost:5000/api/progress', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        student: user._id,
-        subject,
-        currentIndex: newIndex,
-        completed: isComplete,
-        answers: updatedAnswers
-      })
-    });
-  };
 
   const handleSelect = idx => {
     if (selected !== null) return;
@@ -107,11 +89,11 @@ const PracticeSubject = () => {
 
     if (correct) {
       if (!alreadyAnsweredBefore) {
-        addPoints(questionPoints);
+        addPoints(user._id, questionPoints);
         setEarnedPoints(questionPoints);
       } else {
         const halfPoints = Math.floor(questionPoints / 2);
-        addPoints(halfPoints);
+        addPoints(user._id, halfPoints);
         setEarnedPoints(halfPoints);
       }
     } else {
@@ -125,7 +107,14 @@ const PracticeSubject = () => {
     ];
     setAnswers(updatedAnswers);
 
-    updateProgress(current + 1, false, updatedAnswers);
+    updateProgress({
+      student: user._id,
+      subject,
+      currentIndex: current + 1,
+      completed: false,
+      answers: updatedAnswers
+    });
+    
   };
 
   const handleNext = () => {
@@ -149,7 +138,7 @@ const PracticeSubject = () => {
     if (isFinished) {
       const correctCount = answers.filter(a => a.isCorrect).length;
       if (correctCount === exercises.length) {
-        addCrown();
+        addCrown(user._id);
         setFullyCompleted(true);
       }
       setCompleted(true);

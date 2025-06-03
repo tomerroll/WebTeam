@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
+import { fetchAllStudents, addStudent, deleteStudent } from '../../services/studentService';
 
 const ManageStudents = () => {
   const navigate = useNavigate();
@@ -32,54 +33,48 @@ const ManageStudents = () => {
   }, []);
 
   useEffect(() => {
-    const fetchStudents = async () => {
+    const loadStudents = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/students');
-        const data = await res.json();
+        const data = await fetchAllStudents();
         setStudents(data);
       } catch (err) {
-        console.error('Error fetching students:', err);
+        console.error('שגיאה בשליפת תלמידים:', err);
       }
     };
-
-    fetchStudents();
+    loadStudents();
   }, []);
+  
 
   const handleAddStudent = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/students', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newStudent)
-      });
-      const data = await res.json();
-      if (data.error) {
-        setError(data.error);
-      } else {
-        setStudents([...students, data]);
-        setShowAddForm(false);
-        setNewStudent({ name: '', grade: 'ז', class: 'א', email: '', password: '' });
-      }
+      const data = await addStudent(newStudent);
+      setStudents([...students, data]);
+      setShowAddForm(false);
+      setNewStudent({ name: '', grade: 'ז', class: 'א', email: '', password: '' });
     } catch (err) {
-      setError('שגיאה בהוספת תלמיד');
+      setError(err.message || 'שגיאה בהוספת תלמיד');
     }
     setLoading(false);
   };
+  
+  
 
   const handleDeleteStudent = async (id) => {
     setError('');
     setLoading(true);
     try {
-      await fetch(`http://localhost:5000/api/students/${id}`, { method: 'DELETE' });
+      await deleteStudent(id);
       setStudents(students.filter(student => student._id !== id));
     } catch (err) {
-      setError('שגיאה במחיקת תלמיד');
+      setError(err.message || 'שגיאה במחיקת תלמיד');
     }
     setLoading(false);
   };
+  
+  
 
   // סינון התלמידים לפי פילטרים
   const filteredStudents = students.filter(student => {

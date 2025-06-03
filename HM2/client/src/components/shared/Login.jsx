@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loginUser, registerUser } from '../../services/authService';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -25,15 +26,7 @@ const Login = () => {
     if (isLogin) {
       // התחברות
       try {
-        const res = await fetch('http://localhost:5000/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: username,
-            password,
-          }),
-        });
-        const data = await res.json();
+        const data = await loginUser(username, password);
         if (data.token) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
@@ -48,18 +41,14 @@ const Login = () => {
     } else {
       // הרשמה
       try {
-        const res = await fetch('http://localhost:5000/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: fullName,
-            email: username,
-            password,
-            userType,
-            ...(userType === 'student' && { grade, class: className }),
-          }),
+        const data = await registerUser({
+          name: fullName,
+          email: username,
+          password,
+          userType,
+          ...(userType === 'student' && { grade, class: className }),
         });
-        const data = await res.json();
+        
         if (data.success) {
           alert('נרשמת בהצלחה! כעת תוכל להתחבר');
           setIsLogin(true);

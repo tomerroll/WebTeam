@@ -11,7 +11,6 @@ app.use(express.json());
 const authRoutes = require('./routes/auth');
 const exerciseRoutes = require('./routes/exercises');
 const studentsRoutes = require('./routes/students');
-const rewardsRoutes = require('./routes/rewards');
 const theoryRoutes = require('./routes/theory'); 
 const helpRoutes = require('./routes/help');
 const progressRoutes = require('./routes/progress');
@@ -21,9 +20,8 @@ const progressRoutes = require('./routes/progress');
 app.use('/api/auth', authRoutes);
 app.use('/api/exercises', exerciseRoutes);
 app.use('/api/students', studentsRoutes);
-app.use('/api/rewards', rewardsRoutes);
-app.use('/api/theory', theoryRoutes); 
-app.use('/api/help', helpRoutes); 
+app.use('/api/theory', theoryRoutes);
+app.use('/api/help', helpRoutes);
 app.use('/api/progress', progressRoutes);
 
 // חיבור למסד נתונים
