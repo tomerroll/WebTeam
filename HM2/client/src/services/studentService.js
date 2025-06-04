@@ -46,8 +46,12 @@ export const addPoints = async (studentId, amount) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ studentId, points: amount }),
   });
-  if (!res.ok) throw new Error('שגיאה בהוספת נקודות');
-  return await res.json();
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || 'שגיאה בהוספת נקודות');
+  }
+  const data = await res.json();
+  return data;  // השרת מחזיר את ה-points החדש
 };
 
 // 7. הוספת כתר
@@ -57,6 +61,10 @@ export const addCrown = async (studentId) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ studentId }),
   });
-  if (!res.ok) throw new Error('שגיאה בהוספת כתר');
-  return await res.json();
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || 'שגיאה בהוספת כתר');
+  }
+  const data = await res.json();
+  return data;  // השרת מחזיר את ה-crowns החדש
 };
