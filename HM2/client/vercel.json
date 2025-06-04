@@ -1,7 +1,10 @@
 {
     "version": 2,
     "rewrites": [
-      { "source": "/api/(.)", "destination": "https://mathdou-2ptg.vercel.app/api/$1" },
-      { "source": "/(.)", "destination": "public/index.html" }
+      {
+        "source": "/api/(.*)",
+        "destination": "https://mathdou-2ptg.vercel.app/api/$1"
+      }
     ]
   }
+  
