@@ -74,7 +74,7 @@ const PracticeSubject = () => {
   }, [subject, user._id]);
 
 
-  const handleSelect = idx => {
+  const handleSelect = async idx => {
     if (selected !== null) return;
     setSelected(idx);
 
@@ -87,37 +87,41 @@ const PracticeSubject = () => {
     const alreadyAnsweredBefore = previousAnswers.some(a => a.questionId?.toString() === questionId);
     const questionPoints = exercises[current].points;
 
-    if (correct) {
-      if (!alreadyAnsweredBefore) {
-        addPoints(user._id, questionPoints);
-        setEarnedPoints(questionPoints);
+    try {
+      if (correct) {
+        let pointsToAdd;
+        if (!alreadyAnsweredBefore) {
+          pointsToAdd = questionPoints;
+        } else {
+          pointsToAdd = Math.floor(questionPoints / 2);
+        }
+        
+        const response = await addPoints(user._id, pointsToAdd);
+        setPoints(response.points);
+        setEarnedPoints(pointsToAdd);
       } else {
-        const halfPoints = Math.floor(questionPoints / 2);
-        addPoints(user._id, halfPoints);
-        setEarnedPoints(halfPoints);
+        setEarnedPoints(0);
       }
-    } else {
-      setEarnedPoints(0);
-}
 
+      const updatedAnswers = [
+        ...answers.filter(a => a.questionId !== questionId),
+        { questionIndex: current, questionId, selectedAnswer, isCorrect: correct }
+      ];
+      setAnswers(updatedAnswers);
 
-    const updatedAnswers = [
-      ...answers.filter(a => a.questionId !== questionId),
-      { questionIndex: current, questionId, selectedAnswer, isCorrect: correct }
-    ];
-    setAnswers(updatedAnswers);
-
-    updateProgress({
-      student: user._id,
-      subject,
-      currentIndex: current + 1,
-      completed: false,
-      answers: updatedAnswers
-    });
-    
+      await updateProgress({
+        student: user._id,
+        subject,
+        currentIndex: current + 1,
+        completed: false,
+        answers: updatedAnswers
+      });
+    } catch (err) {
+      console.error('Error updating points or progress:', err);
+    }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const nextIndex = current + 1;
     const isFinished = nextIndex >= exercises.length;
 
@@ -138,8 +142,13 @@ const PracticeSubject = () => {
     if (isFinished) {
       const correctCount = answers.filter(a => a.isCorrect).length;
       if (correctCount === exercises.length) {
-        addCrown(user._id);
-        setFullyCompleted(true);
+        try {
+          const response = await addCrown(user._id);
+          setCrowns(response.crowns);
+          setFullyCompleted(true);
+        } catch (err) {
+          console.error('Error adding crown:', err);
+        }
       }
       setCompleted(true);
     }

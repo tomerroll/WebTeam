@@ -3,7 +3,7 @@
     "rewrites": [
       {
         "source": "/api/(.*)",
-        "destination": "https://mathdou-2ptg.vercel.app/api/$1"
+        "destination": "https://web-team-mb6m.vercel.app/api/$1"
       }
     ]
   }
