@@ -42,33 +42,10 @@ const Leaderboard = () => {
   const rest = sorted.slice(3);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
-      <nav className="bg-white shadow-sm w-full">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
-          <h1 className="text-xl font-bold text-primary-600 cursor-pointer transition-all duration-300 hover:text-white hover:bg-primary-600 hover:shadow-lg hover:px-3 hover:rounded-full" onClick={() => {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  if (user.grade) {
-    window.location.href = '/student-dashboard';
-  } else {
-    window.location.href = '/teacher-dashboard';
-  }
-}}>MathDuo</h1>
-           <div className="flex items-center gap-6">
-              <button
-                onClick={() => {
-                  localStorage.clear();
-                  navigate('/');
-                }}
-                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                התנתק
-              </button>
-            </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center">
       {showConfetti && <Confetti />}
-      <div className="max-w-2xl w-full mt-8 mb-4 bg-white rounded-lg shadow p-4">
-        <h2 className="text-3xl font-bold mb-8 text-center flex items-center justify-center gap-2">
+      <div className="max-w-2xl w-full mt-8 mb-4 bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+        <h2 className="text-3xl font-bold mb-8 text-center flex items-center justify-center gap-2 text-gray-900 dark:text-yellow-300">
           <span role="img" aria-label="trophy">🏆</span> טבלת הישגים
         </h2>
 
@@ -77,16 +54,16 @@ const Leaderboard = () => {
           {podium.map((s, idx) => (
             <div
               key={s._id}
-              className={`flex flex-col items-center rounded-lg shadow-lg transition-transform duration-200 hover:scale-105 ${podiumColors[idx]} ${idx === 0 ? 'h-48 w-32' : 'h-40 w-28'}`}
+              className={`flex flex-col items-center rounded-lg shadow-lg transition-transform duration-200 hover:scale-105 ${podiumColors[idx]} ${idx === 0 ? 'h-48 w-32' : 'h-40 w-28'} ${idx === 0 ? 'dark:bg-yellow-700' : idx === 1 ? 'dark:bg-gray-500' : 'dark:bg-orange-700'}`}
               style={{ zIndex: 3 - idx, marginTop: idx === 1 ? '24px' : '0' }}
             >
               <div className="text-4xl mt-4">{idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}</div>
-              <div className="font-bold text-lg mt-2">{s.name}</div>
+              <div className="font-bold text-lg mt-2 text-gray-900 dark:text-white">{s.name}</div>
               <div className="flex gap-2 mt-2">
-                <span className="text-yellow-700 font-bold">👑 {s.crowns || 0}</span>
-                <span className="text-yellow-600 font-bold">🪙 {s.points || 0}</span>
+                <span className="text-yellow-700 dark:text-yellow-300 font-bold">👑 {s.crowns || 0}</span>
+                <span className="text-yellow-600 dark:text-yellow-200 font-bold">🪙 {s.points || 0}</span>
               </div>
-              <div className="text-sm text-gray-600 mt-2 mb-4">מקום {idx + 1}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300 mt-2 mb-4">מקום {idx + 1}</div>
             </div>
           ))}
         </div>
@@ -96,15 +73,15 @@ const Leaderboard = () => {
           {rest.map((s, idx) => (
             <div
               key={s._id}
-              className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-2 shadow hover:bg-blue-100 transition-colors duration-200"
+              className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg px-4 py-2 shadow hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors duration-200"
             >
               <div className="flex items-center gap-3">
-                <span className="text-lg font-bold text-blue-700">{idx + 4}</span>
-                <span className="font-semibold">{s.name}</span>
+                <span className="text-lg font-bold text-blue-700 dark:text-blue-300">{idx + 4}</span>
+                <span className="font-semibold text-gray-900 dark:text-white">{s.name}</span>
               </div>
               <div className="flex gap-4">
-                <span className="text-yellow-700 font-bold">👑 {s.crowns || 0}</span>
-                <span className="text-yellow-600 font-bold">🪙 {s.points || 0}</span>
+                <span className="text-yellow-700 dark:text-yellow-300 font-bold">👑 {s.crowns || 0}</span>
+                <span className="text-yellow-600 dark:text-yellow-200 font-bold">🪙 {s.points || 0}</span>
               </div>
             </div>
           ))}

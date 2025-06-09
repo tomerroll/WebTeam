@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchReports } from '../../services/reportService';
+
 const Reports = () => {
   const navigate = useNavigate();
   const [reports, setReports] = useState([]);
@@ -65,38 +66,11 @@ const Reports = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center space-x-4">
-              <h1
-                className="text-xl font-bold text-primary-600 cursor-pointer transition-all duration-300 hover:text-white hover:bg-primary-600 hover:shadow-lg hover:px-3 hover:rounded-full"
-                onClick={() => window.location.href = '/teacher-dashboard'}
-              >
-                MathDuo
-              </h1>
-            </div>
-            <div className="flex items-center gap-6">
-              <button
-                onClick={() => {
-                  localStorage.clear();
-                  navigate('/');
-                }}
-                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                התנתק
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {/* שאר הקוד שלך נשאר כפי שהיה */}
         <div className="px-4 py-6 sm:px-0">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">דוחות התקדמות</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">דוחות התקדמות</h2>
             <button
               onClick={() => window.print()}
               className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700"
@@ -108,16 +82,16 @@ const Reports = () => {
           {error && <div className="text-red-600 text-center mb-4">{error}</div>}
           {loading && <div className="text-center">טוען...</div>}
 
-          <div className="bg-white shadow rounded-lg p-6 mb-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">סינון דוחות</h3>
+          <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">סינון דוחות</h3>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">נושא</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">נושא</label>
                 <select
                   name="subject"
                   value={filters.subject}
                   onChange={handleFilterChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                 >
                   <option value="">הכל</option>
                   <option value="אלגברה">אלגברה</option>
@@ -126,12 +100,12 @@ const Reports = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">כיתה</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">כיתה</label>
                 <select
                   name="grade"
                   value={filters.grade}
                   onChange={handleFilterChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                 >
                   <option value="">הכל</option>
                   <option value="ז">ז</option>
@@ -139,12 +113,12 @@ const Reports = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">קבוצה</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">קבוצה</label>
                 <select
                   name="class"
                   value={filters.class}
                   onChange={handleFilterChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                 >
                   <option value="">הכל</option>
                   <option value="א">א</option>
@@ -155,55 +129,55 @@ const Reports = () => {
             </div>
           </div>
 
-          <div className="bg-white shadow rounded-lg overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     שם התלמיד
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     נושא
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     כיתה
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     קבוצה
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     תרגילים שהושלמו
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     ציון ממוצע
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     פעילות אחרונה
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredReports.map((report) => (
                   <tr key={report._id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                       {report.studentId && report.studentId.name ? report.studentId.name : ''}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                       {report.subject}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                       {report.grade}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                       {report.class}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                       {report.completedExercises}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                       {report.averageScore}%
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                       {report.lastActivity ? new Date(report.lastActivity).toLocaleDateString() : ''}
                     </td>
                   </tr>

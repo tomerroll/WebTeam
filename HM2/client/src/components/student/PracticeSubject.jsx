@@ -99,6 +99,9 @@ const PracticeSubject = () => {
         const response = await addPoints(user._id, pointsToAdd);
         setPoints(response.points);
         setEarnedPoints(pointsToAdd);
+        window.dispatchEvent(new CustomEvent('pointsUpdated', {
+          detail: { points: response.points }
+        }));
       } else {
         setEarnedPoints(0);
       }
@@ -146,6 +149,9 @@ const PracticeSubject = () => {
           const response = await addCrown(user._id);
           setCrowns(response.crowns);
           setFullyCompleted(true);
+          window.dispatchEvent(new CustomEvent('crownsUpdated', {
+            detail: { crowns: response.crowns }
+          }));
         } catch (err) {
           console.error('Error adding crown:', err);
         }
@@ -172,16 +178,16 @@ const PracticeSubject = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">טוען תרגילים...</div>;
+    return <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">טוען תרגילים...</div>;
   }
 
   if (fullyCompleted) {
     return (
-      <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
-        <div className="bg-white rounded-lg shadow p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">כל הכבוד! {crown}</h2>
-          <p className="mb-4">סיימת את כל התרגילים בנושא: {subject}</p>
-          <div className="text-xl font-bold mb-2">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-8 text-center">
+          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-yellow-300">כל הכבוד! {crown}</h2>
+          <p className="mb-4 text-gray-800 dark:text-gray-200">סיימת את כל התרגילים בנושא: {subject}</p>
+          <div className="text-xl font-bold mb-2 text-yellow-700 dark:text-yellow-300">
             סה\"כ ניקוד: {points} {coin}
           </div>
           <Link to="/practice" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
@@ -231,80 +237,73 @@ const PracticeSubject = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
-          <Link to="/student-dashboard" className="text-xl font-bold text-primary-600 cursor-pointer transition-all duration-300 hover:text-white hover:bg-primary-600 hover:shadow-lg hover:px-3 hover:rounded-full">MathDuo</Link>
-          <div className="flex items-center gap-4">
-            <span className="text-lg font-bold">{points} {coin}</span>
-            <span className="text-lg font-bold">{crowns} {crown}</span>
-            {completed && <span className="text-2xl">{crown}</span>}
-            <Link to="/practice" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">חזור לנושאים</Link>
-          </div>
-        </div>
-      </nav>
-      <main className="max-w-2xl mx-auto py-8 px-4">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col items-center py-8">
+      <div className="w-full max-w-2xl mx-auto mb-8">
         <div className="w-full bg-gray-200 rounded-full h-4 mb-6">
           <div className="bg-blue-500 h-4 rounded-full transition-all duration-300" style={{ width: `${((current + 1) / exercises.length) * 100}%` }}></div>
         </div>
-        <h2 className="text-2xl font-bold mb-8 text-center">תרגיל {current + 1} מתוך {exercises.length} בנושא: {subject}</h2>
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h3 className="text-lg font-bold mb-2">{ex.title}</h3>
-          <p className="mb-4">{ex.description}</p>
-          <ul>
-            {ex.options.map((opt, idx) => {
-              let btnClass = "w-full text-right px-4 py-2 mb-2 rounded border transition-colors duration-200";
-              if (selected !== null) {
-                if (idx === selected) {
-                  btnClass += isCorrect ? " bg-green-200 border-green-500" : " bg-red-200 border-red-500";
-                } else if (idx === ex.correctOption) {
-                  btnClass += " bg-green-100 border-green-400";
-                } else {
-                  btnClass += " bg-gray-100 border-gray-200";
-                }
-              } else {
-                btnClass += " bg-gray-50 border-gray-200 hover:bg-blue-100";
-              }
-
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white text-center">
+            תרגיל {current + 1} מתוך {exercises.length} בנושא: {subject}
+          </h2>
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2 text-right">
+              {ex.title}
+            </h3>
+            <p className="text-gray-700 dark:text-gray-300 text-right">
+              {ex.description}
+            </p>
+          </div>
+          <div className="grid gap-4 mb-6">
+            {ex.options.map((option, idx) => {
+              const isSelected = selected === idx;
+              const isCorrectAnswer = isCorrect && isSelected;
+              const isWrongAnswer = isSelected && isCorrect === false;
               return (
-                <li key={idx}>
-                  <button className={btnClass} disabled={selected !== null} onClick={() => handleSelect(idx)}>
-                    {opt}
-                  </button>
-                </li>
+                <button
+                  key={idx}
+                  onClick={() => handleSelect(idx)}
+                  disabled={selected !== null}
+                  className={`w-full text-right px-4 py-3 rounded-lg border transition-colors duration-200
+                    bg-gray-100 dark:bg-gray-700
+                    text-gray-900 dark:text-white
+                    border-gray-300 dark:border-gray-600
+                    shadow-sm
+                    ${isCorrectAnswer ? 'bg-green-200 dark:bg-green-700 border-green-500 dark:border-green-400 text-green-900 dark:text-green-200 font-bold' : ''}
+                    ${isWrongAnswer ? 'bg-red-200 dark:bg-red-700 border-red-500 dark:border-red-400 text-red-900 dark:text-red-200 font-bold' : ''}
+                    ${isSelected && !isCorrectAnswer && !isWrongAnswer ? 'ring-2 ring-primary-500' : ''}
+                    hover:bg-primary-100 dark:hover:bg-primary-800
+                    disabled:opacity-70
+                  `}
+                >
+                  {option}
+                </button>
               );
             })}
-          </ul>
+          </div>
           {selected !== null && (
-            <div className="mt-4 flex justify-between items-center">
-              <div>
-                <span className={isCorrect ? "text-green-600 font-bold" : "text-red-600 font-bold"}>
-                  {isCorrect ? "תשובה נכונה!" : "תשובה שגויה"}
-                </span>
-                <div className="text-sm text-gray-600">
-                  {earnedPoints > 0 ? `הרווחת ${earnedPoints} נקודות` : " "}
-                </div>
-              </div>
-                <div className="flex gap-2">
-                  {current > 0 && (
-                    <button
-                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
-                      onClick={handlePrevious}
-                    >
-                      חזור
-                    </button>
-                  )}
-                  <button
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-                    onClick={handleNext}
-                  >
-                    {current < exercises.length - 1 ? "הבא" : "סיום"}
-                  </button>
-                </div>
+            <div className={`mb-4 text-center text-lg font-bold ${isCorrect ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+              {isCorrect ? 'נכון!' : 'לא נכון'} {earnedPoints > 0 && `+${earnedPoints} ${coin}`}
             </div>
           )}
+          <div className="flex justify-between mt-6">
+            <button
+              onClick={handlePrevious}
+              disabled={current === 0}
+              className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
+            >
+              קודם
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={selected === null}
+              className="px-4 py-2 rounded bg-primary-600 hover:bg-primary-700 text-white disabled:opacity-50"
+            >
+              {current === exercises.length - 1 ? 'סיים' : 'הבא'}
+            </button>
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };
