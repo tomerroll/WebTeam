@@ -6,6 +6,8 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "framer-motion": "^12.16.0",
+    "lucide-react": "^0.513.0",
     "mongodb": "^6.16.0",
     "react": "^18.2.0",
     "react-confetti": "^6.4.0",

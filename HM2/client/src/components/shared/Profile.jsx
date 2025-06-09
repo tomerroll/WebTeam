@@ -59,69 +59,42 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* סרגל עליון */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center space-x-4">
-              <h1
-                className="text-xl font-bold text-primary-600 cursor-pointer transition-all duration-300 hover:text-white hover:bg-primary-600 hover:shadow-lg hover:px-3 hover:rounded-full"
-                onClick={handleBackClick}
-              >
-                MathDuo
-              </h1>
-            </div>
-            <div className="flex items-center gap-6">
-              <button
-                onClick={() => {
-                  localStorage.clear();
-                  navigate('/');
-                }}
-                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                התנתק
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       {/* תוכן עיקרי */}
-      <main className="max-w-md mx-auto mt-10 bg-white shadow p-6 rounded">
-        <h2 className="text-2xl font-bold mb-4 text-center">פרופיל אישי</h2>
+      <main className="max-w-md mx-auto mt-10 bg-white dark:bg-gray-800 shadow p-6 rounded">
+        <h2 className="text-2xl font-bold mb-4 text-center text-gray-900 dark:text-white">פרופיל אישי</h2>
 
-        {message && <div className="text-green-600 text-center mb-2">{message}</div>}
-        {error && <div className="text-red-600 text-center mb-2">{error}</div>}
+        {message && <div className="text-green-600 dark:text-green-400 text-center mb-2">{message}</div>}
+        {error && <div className="text-red-600 dark:text-red-400 text-center mb-2">{error}</div>}
 
         <form onSubmit={handleUpdate} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">שם מלא</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">שם מלא</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+              className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">אימייל</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">אימייל</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+              className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">סיסמה חדשה (אופציונלי)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">סיסמה חדשה (אופציונלי)</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+              className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               placeholder="השאר ריק אם אינך רוצה לשנות"
             />
           </div>

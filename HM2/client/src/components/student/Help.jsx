@@ -46,41 +46,15 @@ const Help = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center space-x-4">
-              <h1
-                className="text-xl font-bold text-primary-600 cursor-pointer transition-all duration-300 hover:text-white hover:bg-primary-600 hover:shadow-lg hover:px-3 hover:rounded-full"
-                onClick={() => window.location.href = '/student-dashboard'}
-              >
-                MathDuo
-              </h1>
-            </div>
-            <div className="flex items-center gap-6">
-              <button
-                onClick={() => {
-                  localStorage.clear();
-                  navigate('/');
-                }}
-                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                התנתק
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="bg-white shadow rounded-lg p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">בקשת עזרה</h2>
+          <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">בקשת עזרה</h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                   נושא
                 </label>
                 <input
@@ -88,13 +62,13 @@ const Help = () => {
                   id="subject"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                   הודעה
                 </label>
                 <textarea
@@ -102,7 +76,7 @@ const Help = () => {
                   rows={4}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+                  className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
                   required
                 />
               </div>
@@ -118,25 +92,25 @@ const Help = () => {
             </form>
 
             <div className="mt-8">
-              <h3 className="text-xl font-semibold text-gray-800">הודעות עזרה</h3>
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-white">הודעות עזרה</h3>
               <ul className="space-y-4 mt-4">
                 {helpContent.length > 0 ? (
                   helpContent.map((help) => (
-                    <li key={help._id} className="p-4 bg-gray-50 rounded-lg shadow-md">
-                      <h4 className="font-medium text-gray-800">{help.subject}</h4>
-                      <p className="mt-2 text-gray-700">{help.message}</p>
-                      <p className="mt-2 text-sm text-gray-500">
+                    <li key={help._id} className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-md">
+                      <h4 className="font-medium text-gray-800 dark:text-white">{help.subject}</h4>
+                      <p className="mt-2 text-gray-700 dark:text-gray-200">{help.message}</p>
+                      <p className="mt-2 text-sm text-gray-500 dark:text-gray-300">
                         {new Date(help.createdAt).toLocaleString()}
                       </p>
-                      <p className="mt-1 text-sm text-gray-600 font-semibold">
+                      <p className="mt-1 text-sm text-gray-600 dark:text-gray-300 font-semibold">
                         שם התלמיד: {help.studentName || help.studentEmail}
                       </p>
                       {help.answer && help.answer.trim() !== '' && (
-                        <div className="mt-4 p-3 bg-primary-100 text-primary-800 rounded-md">
+                        <div className="mt-4 p-3 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 rounded-md">
                           <h5 className="font-semibold">תשובת המורה:</h5>
                           <p>{help.answer}</p>
                           {help.answeredBy && (
-                            <p className="mt-1 text-sm text-green-700 font-medium">
+                            <p className="mt-1 text-sm text-green-700 dark:text-green-400 font-medium">
                               נענה על ידי: {help.answeredBy}
                             </p>
                           )}
@@ -145,7 +119,7 @@ const Help = () => {
                     </li>
                   ))
                 ) : (
-                  <p className="text-gray-500">לא נמצאו הודעות עזרה.</p>
+                  <p className="text-gray-500 dark:text-gray-300">לא נמצאו הודעות עזרה.</p>
                 )}
               </ul>
             </div>

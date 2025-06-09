@@ -102,45 +102,18 @@ const TeacherHelpForum = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Navbar עם שם המשתמש */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center space-x-4">
-              <h1
-                className="text-xl font-bold text-primary-600 cursor-pointer transition-all duration-300 hover:text-white hover:bg-primary-600 hover:shadow-lg hover:px-3 hover:rounded-full"
-                onClick={() => window.location.href = '/teacher-dashboard'}
-              >
-                MathDuo
-              </h1>
-            </div>
-            <div className="flex items-center gap-6">
-              <button
-                onClick={() => {
-                  localStorage.clear();
-                  navigate('/');
-                }}
-                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                התנתק
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="bg-white shadow rounded-lg p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">פורום פניות תלמידים</h2>
+          <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">פורום פניות תלמידים</h2>
 
             {helps.length === 0 ? (
               <p className="text-gray-500">אין פניות להצגה.</p>
             ) : (
               <ul className="space-y-6">
                 {helps.map((help) => (
-                  <li key={help._id} className="relative p-4 bg-gray-50 rounded-lg shadow-md">
+                  <li key={help._id} className="relative p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-md">
                     {/* כפתור מחיקת הפנייה בפינה שמאלית עליונה */}
                     <button
                       onClick={() => deleteHelp(help._id)}
@@ -148,10 +121,10 @@ const TeacherHelpForum = () => {
                     >
                       מחק פנייה
                     </button>
-                    <h4 className="font-medium text-gray-800">{help.subject}</h4>
-                    <p className="mt-2 text-gray-700">{help.message}</p>
-                    <p className="mt-2 text-sm text-gray-500">{new Date(help.createdAt).toLocaleString()}</p>
-                    <p className="mt-1 text-sm text-gray-600 font-semibold">
+                    <h4 className="font-medium text-gray-800 dark:text-white">{help.subject}</h4>
+                    <p className="mt-2 text-gray-700 dark:text-gray-200">{help.message}</p>
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-300">{new Date(help.createdAt).toLocaleString()}</p>
+                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-300 font-semibold">
                       שם התלמיד: {help.studentName || help.studentEmail}
                     </p>
 
@@ -195,7 +168,7 @@ const TeacherHelpForum = () => {
                           placeholder="כתוב תשובה כאן..."
                           value={answerInputs[help._id] || ''}
                           onChange={(e) => handleAnswerChange(help._id, e.target.value)}
-                          className="w-full border border-gray-300 rounded-md p-2 shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                          className="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                         />
                         <div className="mt-2 flex space-x-2 rtl:space-x-reverse">
                           <button
