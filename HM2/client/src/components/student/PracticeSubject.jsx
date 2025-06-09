@@ -204,7 +204,7 @@ const PracticeSubject = () => {
 
     return (
       <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
-        <div className="bg-white rounded-lg shadow p-8 text-center">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-8 text-center">
           {allCorrect ? (
             <>
               <h2 className="text-2xl font-bold mb-4">כל הכבוד! {crown}</h2>
