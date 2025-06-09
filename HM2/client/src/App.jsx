@@ -8,7 +8,6 @@ import Practice from './components/student/Practice';
 import PracticeSubject from './components/student/PracticeSubject';
 import Theory from './components/shared/Theory';
 import Help from './components/student/Help';
-import Settings from './components/shared/Settings';
 import ManageStudents from './components/teacher/ManageStudents';
 import ManageExercises from './components/teacher/ManageExercises';
 import Reports from './components/teacher/Reports';
@@ -43,9 +42,6 @@ function App() {
           } />
           <Route path="/help" element={
             <PrivateRoute><Help /></PrivateRoute>
-          } />
-          <Route path="/settings" element={
-            <PrivateRoute><Settings /></PrivateRoute>
           } />
           <Route path="/manage-students" element={
             <PrivateRoute><ManageStudents /></PrivateRoute>
