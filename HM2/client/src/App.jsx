@@ -15,6 +15,8 @@ import TeacherHelpForum from './components/teacher/TeacherHelpForum';
 import Profile from './components/shared/Profile';
 import Leaderboard from './components/shared/Leaderboard';
 import PrivateRoute from './components/shared/PrivateRoute';
+import TheorySubject from './components/shared/Theorysubject';
+import ManageTheory from './components/teacher/ManageTheory';
 
 function App() {
   return (
@@ -40,8 +42,12 @@ function App() {
           <Route path="/theory" element={
             <PrivateRoute><Theory /></PrivateRoute>
           } />
+          <Route path="/theory/:subject" element={<PrivateRoute><TheorySubject /></PrivateRoute>} />
           <Route path="/help" element={
             <PrivateRoute><Help /></PrivateRoute>
+          } />
+          <Route path="/manage-theory" element={
+            <PrivateRoute><ManageTheory /></PrivateRoute>
           } />
           <Route path="/manage-students" element={
             <PrivateRoute><ManageStudents /></PrivateRoute>
