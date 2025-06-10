@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchCurrentTeacher } from '../../services/teacherService';
 const TeacherDashboard = () => {
-  const [teacherData, setTeacherData] = useState(null);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -10,18 +9,6 @@ const TeacherDashboard = () => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-
-    const fetchTeacherData = async () => {
-      try {
-        const data = await fetchCurrentTeacher();
-        setTeacherData(data);
-        
-      } catch (err) {
-        console.error('Error fetching teacher data:', err);
-      }
-    };
-
-    fetchTeacherData();
   }, []);
 
   const menuItems = [

@@ -1,3 +1,5 @@
+// server.js או app.js
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -11,20 +13,21 @@ app.use(express.json());
 const authRoutes = require('./routes/auth');
 const exerciseRoutes = require('./routes/exercises');
 const studentsRoutes = require('./routes/students');
-const theoryRoutes = require('./routes/theory'); 
+const theoryRoutes = require('./routes/theory');
 const helpRoutes = require('./routes/help');
 const progressRoutes = require('./routes/progress');
+const reportsRoutes = require('./routes/reports');  
 
-
-// חיבור הנתיבים
+// חיבור הנתיבים לשרת
 app.use('/api/auth', authRoutes);
 app.use('/api/exercises', exerciseRoutes);
 app.use('/api/students', studentsRoutes);
 app.use('/api/theory', theoryRoutes);
 app.use('/api/help', helpRoutes);
 app.use('/api/progress', progressRoutes);
+app.use('/api', reportsRoutes);  
 
-// חיבור למסד נתונים
+// חיבור למסד הנתונים MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -32,7 +35,7 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log('MongoDB connected!'))
 .catch((err) => console.error('MongoDB connection error:', err));
 
-// ברירת מחדל
+// נתיב ברירת מחדל לבדיקה
 app.get('/', (req, res) => {
   res.send('API is running');
 });

@@ -1,194 +1,175 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useMemo } from 'react';
 import { fetchReports } from '../../services/reportService';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  Legend,
+} from 'recharts';
 
-const Reports = () => {
-  const navigate = useNavigate();
-  const [reports, setReports] = useState([]);
-  const [filters, setFilters] = useState({
-    subject: '',
-    grade: '',
-    class: '',
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [user, setUser] = useState(null);
+const COLORS = ['#00C49F', '#FF8042'];
 
-  // טען את המשתמש מה-localStorage בפעם הראשונה
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch {
-        setUser(null);
-      }
+// פונקציה שמקבצת דוחות לפי נושא ומחשבת סה"כ תשובות נכונות וסך הכל תשובות לכל נושא
+const aggregateBySubject = (reports) => {
+  const map = {};
+  reports.forEach(({ subject, correctAnswers, totalAnswered }) => {
+    if (!map[subject]) {
+      map[subject] = { subject, correctAnswers: 0, totalAnswered: 0 };
     }
-  }, []);
+    map[subject].correctAnswers += correctAnswers;
+    map[subject].totalAnswered += totalAnswered;
+  });
+  return Object.values(map);
+};
+
+const ReportsList = () => {
+  const [reports, setReports] = useState([]);
+  const [error, setError] = useState(null);
+  const [selectedSubject, setSelectedSubject] = useState('כל הנושאים');
 
   useEffect(() => {
-    const fetchReports = async () => {
-      try {
-        const data = await fetchReports();
-        setReports(data);
-        
-      } catch (err) {
-        console.error('Error fetching reports:', err);
-      }
-    };
-
-    fetchReports();
+    fetchReports()
+      .then(data => setReports(data))
+      .catch(err => setError(err.message));
   }, []);
 
-  const filteredReports = (reports || []).filter(report => {
-    return (
-      (!filters.subject || report.subject === filters.subject) &&
-      (!filters.grade || report.grade === filters.grade) &&
-      (!filters.class || report.class === filters.class)
-    );
-  });
+  // רשימת נושאים ייחודיים
+  const subjects = useMemo(() => {
+    const uniqueSubjects = Array.from(new Set(reports.map(r => r.subject)));
+    uniqueSubjects.sort();
+    return ['כל הנושאים', ...uniqueSubjects];
+  }, [reports]);
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // סינון דוחות לפי נושא נבחר
+  const filteredReports = useMemo(() => {
+    if (selectedSubject === 'כל הנושאים') return reports;
+    return reports.filter(r => r.subject === selectedSubject);
+  }, [reports, selectedSubject]);
 
-  if (!user) {
-    // אפשר להוסיף טעינת משתמש במידה ועדיין לא טען
+  // נתונים ל-BarChart - תמיד מציג את כל הנושאים (לא תלוי בבורר)
+  const barData = useMemo(() => {
+    return aggregateBySubject(reports);
+  }, [reports]);
+
+  if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>טוען משתמש...</p>
+      <div style={{ color: 'red', textAlign: 'center', marginTop: 20 }}>
+        שגיאה: {error}
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">דוחות התקדמות</h2>
-            <button
-              onClick={() => window.print()}
-              className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700"
-            >
-              הדפס דוח
-            </button>
-          </div>
+    <div dir="rtl" style={{ padding: 20, fontFamily: 'Arial, sans-serif', maxWidth: 900, margin: '0 auto' }}>
+      <h2 style={{ textAlign: 'center', marginBottom: 30 }}>📊 דוחות התקדמות תלמידים</h2>
 
-          {error && <div className="text-red-600 text-center mb-4">{error}</div>}
-          {loading && <div className="text-center">טוען...</div>}
+      {/* בורר נושאים */}
+      <div style={{ marginBottom: 20, textAlign: 'center' }}>
+        <label htmlFor="subjectSelect" style={{ marginRight: 10, fontWeight: 'bold', fontSize: 16 }}>
+          סינון לפי נושא:
+        </label>
+        <select
+          id="subjectSelect"
+          value={selectedSubject}
+          onChange={e => setSelectedSubject(e.target.value)}
+          style={{
+            padding: '6px 12px',
+            fontSize: 16,
+            borderRadius: 5,
+            border: '1px solid #ccc',
+            minWidth: 180,
+            cursor: 'pointer',
+          }}
+        >
+          {subjects.map((subject, i) => (
+            <option key={i} value={subject}>
+              {subject}
+            </option>
+          ))}
+        </select>
+      </div>
 
-          <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">סינון דוחות</h3>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">נושא</label>
-                <select
-                  name="subject"
-                  value={filters.subject}
-                  onChange={handleFilterChange}
-                  className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                >
-                  <option value="">הכל</option>
-                  <option value="אלגברה">אלגברה</option>
-                  <option value="גיאומטריה">גיאומטריה</option>
-                  <option value="חשבון">חשבון</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">כיתה</label>
-                <select
-                  name="grade"
-                  value={filters.grade}
-                  onChange={handleFilterChange}
-                  className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                >
-                  <option value="">הכל</option>
-                  <option value="ז">ז</option>
-                  <option value="ח">ח</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">קבוצה</label>
-                <select
-                  name="class"
-                  value={filters.class}
-                  onChange={handleFilterChange}
-                  className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                >
-                  <option value="">הכל</option>
-                  <option value="א">א</option>
-                  <option value="ב">ב</option>
-                  <option value="ג">ג</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-900">
-                <tr>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    שם התלמיד
+      {filteredReports.length === 0 ? (
+        <p style={{ textAlign: 'center', fontSize: 18 }}>אין דוחות להצגה עבור הנושא שנבחר</p>
+      ) : (
+        <>
+          {/* טבלת דוחות */}
+          <table style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            marginBottom: 40,
+            boxShadow: '0 0 12px rgba(0,0,0,0.1)',
+            fontSize: 14,
+          }}>
+            <thead style={{ backgroundColor: '#f2f2f2' }}>
+              <tr>
+                {['תלמיד', 'נושא', 'הושלם', 'סה״כ תשובות', 'תשובות נכונות', 'תאריך אחרון'].map((header, i) => (
+                  <th
+                    key={i}
+                    style={{
+                      padding: '10px 8px',
+                      borderBottom: '2px solid #ddd',
+                      textAlign: 'center',
+                      fontWeight: 'bold',
+                      color: '#333',
+                    }}
+                  >
+                    {header}
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    נושא
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    כיתה
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    קבוצה
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    תרגילים שהושלמו
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    ציון ממוצע
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    פעילות אחרונה
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {filteredReports.map((report) => (
-                  <tr key={report._id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                      {report.studentId && report.studentId.name ? report.studentId.name : ''}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {report.subject}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {report.grade}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {report.class}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {report.completedExercises}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {report.averageScore}%
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {report.lastActivity ? new Date(report.lastActivity).toLocaleDateString() : ''}
-                    </td>
-                  </tr>
                 ))}
-              </tbody>
-            </table>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredReports.map((report, index) => (
+                <tr
+                  key={index}
+                  style={{
+                    backgroundColor: report.completed ? '#e8f5e9' : '#ffebee',
+                    borderBottom: '1px solid #ddd',
+                    textAlign: 'center',
+                    transition: 'background-color 0.3s',
+                    userSelect: 'none',
+                  }}
+                >
+                  <td>{report.studentName}</td>
+                  <td>{report.subject}</td>
+                  <td style={{ fontSize: 20 }}>{report.completed ? '✅' : '❌'}</td>
+                  <td>{report.totalAnswered}</td>
+                  <td>{report.correctAnswers}</td>
+                  <td>{report.lastAttempt ? new Date(report.lastAttempt).toLocaleDateString() : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Bar Chart */}
+          <div style={{ flex: '1 1 600px', minWidth: 300, height: 300, background: '#fafafa', padding: 20, borderRadius: 10, boxShadow: '0 0 12px rgba(0,0,0,0.1)' }}>
+            <h3 style={{ textAlign: 'center', marginBottom: 15, color: '#444' }}>תשובות נכונות מתוך סה"כ לפי נושא</h3>
+            <ResponsiveContainer width="100%" height={500}>
+              <BarChart
+                data={barData}
+                margin={{ top: 5, right: 30, left: 20, bottom: 180 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
+                <XAxis
+                  dataKey="subject"
+                  interval={0}
+                  angle={-45}
+                  textAnchor="end"
+                  height={180}
+                  tick={{ fontSize: 10, fill: '#555' }}
+                  dy={25}
+                />
+                <YAxis tick={{ fontSize: 14, fill: '#555' }} />
+                <Tooltip contentStyle={{ fontSize: 14 }} cursor={{ fill: 'rgba(0,0,0,0.1)' }} />
+                <Legend verticalAlign="top" wrapperStyle={{ fontSize: 14 }} />
+                <Bar dataKey="correctAnswers" fill="#4caf50" name="נכונות" barSize={30} />
+                <Bar dataKey="totalAnswered" fill="#2196f3" name="סך הכל תשובות" barSize={30} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-        </div>
-      </main>
+        </>
+      )}
     </div>
   );
 };
 
-export default Reports;
+export default ReportsList;
