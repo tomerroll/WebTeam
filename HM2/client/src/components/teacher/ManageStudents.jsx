@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import { fetchAllStudents, addStudent, deleteStudent } from '../../services/studentService';
 
 const ManageStudents = () => {
@@ -34,16 +34,20 @@ const ManageStudents = () => {
 
   useEffect(() => {
     const loadStudents = async () => {
+      setLoading(true); // Start loading when fetching students
+      setError('');
       try {
         const data = await fetchAllStudents();
         setStudents(data);
       } catch (err) {
         console.error('שגיאה בשליפת תלמידים:', err);
+        setError('שגיאה בטעינת רשימת התלמידים');
+      } finally {
+        setLoading(false); // End loading regardless of success or failure
       }
     };
     loadStudents();
   }, []);
-  
 
   const handleAddStudent = async (e) => {
     e.preventDefault();
@@ -59,10 +63,11 @@ const ManageStudents = () => {
     }
     setLoading(false);
   };
-  
-  
 
   const handleDeleteStudent = async (id) => {
+    if (!window.confirm('האם אתה בטוח שברצונך למחוק תלמיד זה?')) {
+      return;
+    }
     setError('');
     setLoading(true);
     try {
@@ -73,8 +78,6 @@ const ManageStudents = () => {
     }
     setLoading(false);
   };
-  
-  
 
   // סינון התלמידים לפי פילטרים
   const filteredStudents = students.filter(student => {
@@ -109,6 +112,7 @@ const ManageStudents = () => {
                 <option value="">כל השכבות</option>
                 <option value="ז">ז</option>
                 <option value="ח">ח</option>
+                {/* הוסף שכבות נוספות לפי הצורך */}
               </select>
 
               <select
@@ -120,6 +124,7 @@ const ManageStudents = () => {
                 <option value="א">א</option>
                 <option value="ב">ב</option>
                 <option value="ג">ג</option>
+                {/* הוסף קבוצות נוספות לפי הצורך */}
               </select>
 
               <button
@@ -158,7 +163,7 @@ const ManageStudents = () => {
                     required
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> {/* Adjusted for mobile */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">כיתה</label>
                     <select
@@ -223,7 +228,8 @@ const ManageStudents = () => {
             </div>
           )}
 
-          <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+          {/* Table for larger screens (md and up) */}
+          <div className="hidden md:block bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
@@ -248,35 +254,84 @@ const ManageStudents = () => {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                {filteredStudents.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-300">
+                      לא נמצאו תלמידים תואמים.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredStudents.map((student) => (
+                    <tr key={student._id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                        {student.name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                        {student.grade}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                        {student.class}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                        {student.points ?? 0}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                        {student.email}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={() => handleDeleteStudent(student._id)}
+                          className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
+                          disabled={loading}
+                        >
+                          מחק
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Card layout for small screens (below md) */}
+          <div className="md:hidden">
+            {filteredStudents.length === 0 ? (
+              <div className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-300 bg-white dark:bg-gray-800 shadow rounded-lg">
+                לא נמצאו תלמידים תואמים.
+              </div>
+            ) : (
+              <div className="grid gap-4">
                 {filteredStudents.map((student) => (
-                  <tr key={student._id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                      {student.name}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {student.grade}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {student.class}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {student.points ?? 0}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {student.email}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div key={student._id} className="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                        {student.name}
+                      </h3>
                       <button
                         onClick={() => handleDeleteStudent(student._id)}
-                        className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
+                        className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 text-sm"
+                        disabled={loading}
                       >
                         מחק
                       </button>
-                    </td>
-                  </tr>
+                    </div>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                      <span className="font-semibold">כיתה:</span> {student.grade}
+                    </p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                      <span className="font-semibold">קבוצה:</span> {student.class}
+                    </p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                      <span className="font-semibold">ניקוד:</span> {student.points ?? 0}
+                    </p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                      <span className="font-semibold">אימייל:</span> {student.email}
+                    </p>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            )}
           </div>
         </div>
       </main>

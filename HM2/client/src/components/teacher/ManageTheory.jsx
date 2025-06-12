@@ -6,18 +6,16 @@ import { fetchTheoryContent, deleteTheory } from '../../services/theoryService';
 
 const ManageTheory = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null); // Assuming user is needed for permissions/display
-  const [theoryList, setTheoryList] = useState([]); // Renamed for clarity vs. 'exercises'
+  const [user, setUser] = useState(null);
+  const [theoryList, setTheoryList] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [editTheory, setEditTheory] = useState(null); // Holds the theory item being edited
+  const [editTheory, setEditTheory] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [expandedContent, setExpandedContent] = useState({}); // State to manage expanded content by ID
+  const [expandedContent, setExpandedContent] = useState({});
 
-  // Filters (based on 'title' as the subject for now)
   const [filterTitle, setFilterTitle] = useState('');
 
-  // Load user from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -29,7 +27,6 @@ const ManageTheory = () => {
     }
   }, []);
 
-  // Fetch all theory content
   useEffect(() => {
     const loadTheory = async () => {
       setLoading(true);
@@ -44,7 +41,6 @@ const ManageTheory = () => {
         setLoading(false);
       }
     };
-
     loadTheory();
   }, []);
 
@@ -63,17 +59,14 @@ const ManageTheory = () => {
     setLoading(false);
   };
 
-  // Filter theory items by title (used as subject)
   const filteredTheory = theoryList.filter(item => {
     return (
       filterTitle === '' || item.title === filterTitle
     );
   });
 
-  // Get unique titles for filter dropdown
   const uniqueTitles = [...new Set(theoryList.map(item => item.title))].sort();
 
-  // Helper function to truncate text
   const truncateText = (text, maxLength) => {
     if (!text) return '';
     if (text.length <= maxLength) return text;
@@ -102,7 +95,6 @@ const ManageTheory = () => {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">ניהול תיאוריה</h2>
-              {/* Filter by Title (acting as subject) */}
               <select
                 value={filterTitle}
                 onChange={(e) => setFilterTitle(e.target.value)}
@@ -114,7 +106,6 @@ const ManageTheory = () => {
                 ))}
               </select>
 
-              {/* Clear Filter Button */}
               <button
                 onClick={() => setFilterTitle('')}
                 className="bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded text-sm"
@@ -123,11 +114,10 @@ const ManageTheory = () => {
               </button>
             </div>
 
-            {/* Add Theory Button */}
             <button
               onClick={() => {
                 setShowAddForm(true);
-                setEditTheory(null); // Close edit form if open
+                setEditTheory(null);
               }}
               className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700"
             >
@@ -144,7 +134,7 @@ const ManageTheory = () => {
                 onClose={() => setShowAddForm(false)}
                 onAdd={(newTheory) => {
                   setTheoryList([...theoryList, newTheory]);
-                  setShowAddForm(false); // Close form after add
+                  setShowAddForm(false);
                 }}
               />
             </div>
@@ -157,13 +147,14 @@ const ManageTheory = () => {
                 onClose={() => setEditTheory(null)}
                 onUpdate={(updated) => {
                   setTheoryList(theoryList.map(item => item._id === updated._id ? updated : item));
-                  setEditTheory(null); // Close form after update
+                  setEditTheory(null);
                 }}
               />
             </div>
           )}
 
-          <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+          {/* Table for larger screens (md and up) */}
+          <div className="hidden md:block bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-900">
                 <tr>
@@ -191,28 +182,28 @@ const ManageTheory = () => {
                 ) : (
                   filteredTheory.map((item) => (
                     <tr key={item._id}>
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white align-top whitespace-normal break-words">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white align-top whitespace-normal break-words w-1/5">
                         {item.title}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 align-top max-w-xs whitespace-normal break-words">
-                        {item.description}
+                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 align-top whitespace-normal break-words w-1/4">
+                        {truncateText(item.description, 100)}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 align-top max-w-sm whitespace-normal break-words">
+                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 align-top whitespace-normal break-words w-2/5">
                         {expandedContent[item._id] ? item.content : truncateText(item.content, 150)}
                         {item.content && item.content.length > 150 && (
                           <button
                             onClick={() => toggleExpand(item._id)}
-                            className="text-blue-600 dark:text-blue-400 hover:underline ml-1"
+                            className="text-blue-600 dark:text-blue-400 hover:underline mr-1"
                           >
                             {expandedContent[item._id] ? 'קרא פחות' : 'קרא עוד'}
                           </button>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 align-top whitespace-nowrap">
+                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 align-top whitespace-nowrap w-1/10">
                         <button
                           onClick={() => {
                             setEditTheory(item);
-                            setShowAddForm(false); // Close add form if open
+                            setShowAddForm(false);
                           }}
                           className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 ml-2"
                           disabled={loading}
@@ -232,6 +223,61 @@ const ManageTheory = () => {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Card layout for small screens (below md) */}
+          <div className="md:hidden">
+            {filteredTheory.length === 0 ? (
+              <div className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-300 bg-white dark:bg-gray-800 shadow rounded-lg">
+                לא נמצאו פריטי תיאוריה תואמים.
+              </div>
+            ) : (
+              <div className="grid gap-4">
+                {filteredTheory.map((item) => (
+                  <div key={item._id} className="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                        {item.title}
+                      </h3>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            setEditTheory(item);
+                            setShowAddForm(false);
+                          }}
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 text-sm"
+                          disabled={loading}
+                        >
+                          ערוך
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTheory(item._id)}
+                          className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 text-sm"
+                          disabled={loading}
+                        >
+                          מחק
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-2 whitespace-normal break-words">
+                      <span className="font-semibold">תיאור:</span> {item.description}
+                    </p>
+                    <div className="text-sm text-gray-700 dark:text-gray-300 whitespace-normal break-words">
+                      <span className="font-semibold">תוכן:</span>{' '}
+                      {expandedContent[item._id] ? item.content : truncateText(item.content, 150)}
+                      {item.content && item.content.length > 150 && (
+                        <button
+                          onClick={() => toggleExpand(item._id)}
+                          className="text-blue-600 dark:text-blue-400 hover:underline mr-1"
+                        >
+                          {expandedContent[item._id] ? 'קרא פחות' : 'קרא עוד'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </main>
