@@ -1,4 +1,3 @@
-// src/components/teacher/ManageTheory.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AddTheory from './AddTheory';
@@ -13,6 +12,7 @@ const ManageTheory = () => {
   const [editTheory, setEditTheory] = useState(null); // Holds the theory item being edited
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [expandedContent, setExpandedContent] = useState({}); // State to manage expanded content by ID
 
   // Filters (based on 'title' as the subject for now)
   const [filterTitle, setFilterTitle] = useState('');
@@ -72,6 +72,20 @@ const ManageTheory = () => {
 
   // Get unique titles for filter dropdown
   const uniqueTitles = [...new Set(theoryList.map(item => item.title))].sort();
+
+  // Helper function to truncate text
+  const truncateText = (text, maxLength) => {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  };
+
+  const toggleExpand = (id) => {
+    setExpandedContent(prevState => ({
+      ...prevState,
+      [id]: !prevState[id]
+    }));
+  };
 
   if (!user) {
     return (
@@ -177,18 +191,24 @@ const ManageTheory = () => {
                 ) : (
                   filteredTheory.map((item) => (
                     <tr key={item._id}>
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white align-top">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white align-top whitespace-normal break-words">
                         {item.title}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 align-top max-w-xs overflow-hidden" style={{ wordBreak: 'break-word' }}>
-                        {/* Show full description, allow wrapping */}
+                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 align-top max-w-xs whitespace-normal break-words">
                         {item.description}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 align-top max-w-sm" style={{ wordBreak: 'break-word', maxHeight: '150px', overflowY: 'auto' }}>
-                        {/* Allow content to wrap, and add internal scroll if too long */}
-                        {item.content}
+                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 align-top max-w-sm whitespace-normal break-words">
+                        {expandedContent[item._id] ? item.content : truncateText(item.content, 150)}
+                        {item.content && item.content.length > 150 && (
+                          <button
+                            onClick={() => toggleExpand(item._id)}
+                            className="text-blue-600 dark:text-blue-400 hover:underline ml-1"
+                          >
+                            {expandedContent[item._id] ? 'קרא פחות' : 'קרא עוד'}
+                          </button>
+                        )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 align-top">
+                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300 align-top whitespace-nowrap">
                         <button
                           onClick={() => {
                             setEditTheory(item);

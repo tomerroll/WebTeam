@@ -48,13 +48,6 @@ const TeacherDashboard = () => {
       icon: '📚', // A book icon is suitable for theory
       path: '/manage-theory', // This path points to the new ManageTheory component
     },
-    // --- NEW: Link for Theory (for the teacher to view it as a student would) ---
-    {
-      title: 'תיאוריה📚',
-      description: 'למד חומר חדש',
-      icon: '📖', // An open book icon
-      path: '/theory', // This path points to the student-facing Theory component
-    },
     {
       title: 'דוחות',
       description: 'צפה בדוחות התקדמות התלמידים',

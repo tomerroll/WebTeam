@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { fetchReports } from '../../services/reportService';
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  Legend,
-} from 'recharts';
+
 
 const COLORS = ['#00C49F', '#FF8042'];
 
