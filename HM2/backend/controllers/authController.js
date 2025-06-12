@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
-  const { name, email, password, userType, grade, class: className } = req.body;
+  const { name, email, password, userType, grade, class: className, teacherKey } = req.body;
 
   try {
     const existingStudent = await Student.findOne({ email });
@@ -12,6 +12,13 @@ exports.register = async (req, res) => {
 
     if (existingStudent || existingTeacher) {
       return res.status(400).json({ error: 'לא ניתן להירשם – אימייל זה כבר רשום במערכת.' });
+    }
+
+    // בדיקת קוד מורה
+    if (userType === 'teacher') {
+      if (!teacherKey || teacherKey !== process.env.TEACHER_SECRET_KEY) {
+        return res.status(400).json({ error: 'קוד מורה שגוי או חסר.' });
+      }
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -107,5 +114,3 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
-
-

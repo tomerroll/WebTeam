@@ -11,10 +11,13 @@ const Login = () => {
   const [userType, setUserType] = useState('student');
   const [grade, setGrade] = useState('ז');
   const [className, setClassName] = useState('א');
+  const [teacherKey, setTeacherKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
+
+
 
   useEffect(() => {
     localStorage.clear();
@@ -49,7 +52,9 @@ const Login = () => {
           password,
           userType,
           ...(userType === 'student' && { grade, class: className }),
+          ...(userType === 'teacher' && { teacherKey }),
         });
+
         
         if (data.success) {
           alert('נרשמת בהצלחה! כעת תוכל להתחבר');
@@ -149,6 +154,20 @@ const Login = () => {
                       <option value="ג">ג</option>
                     </select>
                   </div>
+                </div>
+              )}
+              {userType === 'teacher' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">קוד מורה</label>
+                  <input
+                    type="text"
+                    value={teacherKey}
+                    onChange={(e) => setTeacherKey(e.target.value)}
+                    required
+                    maxLength={6}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                    placeholder="הזן קוד בן 6 ספרות"
+                  />
                 </div>
               )}
             </>
