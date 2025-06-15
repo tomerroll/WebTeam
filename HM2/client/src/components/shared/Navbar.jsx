@@ -93,7 +93,7 @@ const Navbar = ({ userType }) => {
           {/* Logout Button */}
 <button
   onClick={handleLogout}
-  className={`px-6 py-2 md:px-7 md:py-3 text-lg rounded-xl font-semibold transition-all duration-300 shadow 
+  className={`px-3 py-1 text-sm sm:px-4 sm:py-2 sm:text-base md:px-7 md:py-3 md:text-lg rounded-xl font-semibold transition-all duration-300 shadow 
     ${
       isDarkMode
         ? 'bg-red-600 hover:bg-red-700 hover:shadow-lg text-white'
@@ -133,13 +133,13 @@ const Navbar = ({ userType }) => {
 
           {/* Student Stats */}
           {userType === 'student' && studentData && (
-            <div className="flex items-center gap-4 mr-2">
-                 <span className="flex items-center gap-1 px-3 py-1 border-2 border-yellow-400 bg-yellow-100 text-yellow-700 font-bold text-lg rounded-full shadow-sm">
+            <div className="flex items-center gap-2 mr-1 sm:gap-3 sm:mr-2 md:gap-4 md:mr-2">
+                 <span className="flex items-center gap-1 px-2 py-0.5 text-sm sm:px-3 sm:py-1 sm:text-base border-2 border-yellow-400 bg-yellow-100 text-yellow-700 font-bold rounded-full shadow-sm">
 
-                {studentData.crowns || 0} <span role="img" aria-label="crowns" className="text-xl align-middle">👑</span>
+                {studentData.crowns || 0} <span role="img" aria-label="crowns" className="text-lg sm:text-xl align-middle">👑</span>
               </span>
-              <span className="flex items-center gap-1 px-3 py-1 border-2 border-yellow-400 bg-yellow-100 text-yellow-700 font-bold text-lg rounded-full shadow-sm">
-                {studentData.points || 0} <span role="img" aria-label="coins" className="text-lg align-middle">🪙</span>
+              <span className="flex items-center gap-1 px-2 py-0.5 text-sm sm:px-3 sm:py-1 sm:text-base border-2 border-yellow-400 bg-yellow-100 text-yellow-700 font-bold rounded-full shadow-sm">
+                {studentData.points || 0} <span role="img" aria-label="coins" className="text-base sm:text-lg align-middle">🪙</span>
               </span>
             </div>
           )}
@@ -149,7 +149,7 @@ const Navbar = ({ userType }) => {
   onClick={handleLogoClick}
   className="text-xl font-bold text-primary-600 cursor-pointer transition-all duration-300 hover:text-white hover:bg-primary-300 hover:shadow-lg hover:px-3 hover:rounded-full">
   <div className="transform scale-125 origin-left">
-    <img src={logo} alt="MathDuo logo" className="h-20 w-auto" />
+    <img src={logo} alt="MathDuo logo" className="h-12 sm:h-16 md:h-20 w-auto max-w-full" />
   </div>
 </div>
 
