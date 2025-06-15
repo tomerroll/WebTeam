@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { updateExercise } from '../../services/exerciseService';
+
 const EditExercise = ({ exercise, onClose, onUpdate }) => {
   const [title, setTitle] = useState(exercise.title);
   const [description, setDescription] = useState(exercise.description);
@@ -16,7 +17,6 @@ const EditExercise = ({ exercise, onClose, onUpdate }) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-  
     try {
       const updated = await updateExercise(exercise._id, {
         title,
@@ -28,129 +28,129 @@ const EditExercise = ({ exercise, onClose, onUpdate }) => {
         difficulty,
         points,
       });
-  
       onUpdate(updated);
       onClose();
     } catch (err) {
       setError(err.message || 'שגיאת שרת');
     }
-  
     setLoading(false);
   };
-  
 
   return (
-    <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
-      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">עריכת תרגיל</h3>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="bg-gradient-to-b from-sky-50 to-cyan-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl shadow-2xl p-8 max-w-3xl mx-auto">
+      <h3 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">📝 עריכת תרגיל</h3>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* שדות בסיסיים */}
+        {[
+          { label: 'כותרת התרגיל', value: title, set: setTitle },
+          { label: 'תיאור',        value: description, set: setDescription, type: 'textarea' },
+          { label: 'נושא',          value: subject, set: setSubject },
+          { label: 'כיתה',          value: grade,   set: setGrade },
+        ].map(({ label, value, set, type }, i) => (
+          <div key={i}>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">{label}</label>
+            {type === 'textarea' ? (
+              <textarea
+                value={value}
+                onChange={(e) => set(e.target.value)}
+                required
+                className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2 text-gray-900 dark:text-white shadow focus:ring-2 focus:ring-sky-400 transition"
+              />
+            ) : (
+              <input
+                type="text"
+                value={value}
+                onChange={(e) => set(e.target.value)}
+                required
+                className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2 text-gray-900 dark:text-white shadow focus:ring-2 focus:ring-sky-400 transition"
+              />
+            )}
+          </div>
+        ))}
+
+        {/* רמת קושי */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">כותרת התרגיל</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">תיאור</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">נושא</label>
-          <input
-            type="text"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">כיתה</label>
-          <input
-            type="text"
-            value={grade}
-            onChange={(e) => setGrade(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">רמת קושי</label>
+          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">רמת קושי</label>
           <select
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-            required
+            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2 text-gray-900 dark:text-white shadow focus:ring-2 focus:ring-sky-400 transition"
           >
             <option value="קל">קל</option>
             <option value="בינוני">בינוני</option>
             <option value="קשה">קשה</option>
           </select>
         </div>
+
+        {/* נקודות */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">נקודות</label>
+          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">נקודות</label>
           <input
             type="number"
             value={points}
-            onChange={(e) => setPoints(Number(e.target.value))}
-            className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-            required
             min={1}
+            onChange={(e) => setPoints(Number(e.target.value))}
+            required
+            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2 text-gray-900 dark:text-white shadow focus:ring-2 focus:ring-sky-400 transition"
           />
         </div>
+
+        {/* אופציות */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">אופציות</label>
-          {options.map((option, index) => (
-            <input
-              key={index}
-              type="text"
-              value={option}
-              onChange={(e) => {
-                const newOptions = [...options];
-                newOptions[index] = e.target.value;
-                setOptions(newOptions);
-              }}
-              className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-              required
-            />
-          ))}
+          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">אופציות</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {options.map((opt, idx) => (
+              <input
+                key={idx}
+                type="text"
+                value={opt}
+                onChange={(e) => {
+                  const clone = [...options];
+                  clone[idx] = e.target.value;
+                  setOptions(clone);
+                }}
+                placeholder={`אופציה ${idx + 1}`}
+                required
+                className="rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2 text-gray-900 dark:text-white shadow focus:ring-2 focus:ring-sky-400 transition"
+              />
+            ))}
+          </div>
         </div>
+
+        {/* תשובה נכונה */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">תשובה נכונה</label>
+          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">תשובה נכונה</label>
           <select
             value={correctOption}
             onChange={(e) => setCorrectOption(Number(e.target.value))}
-            className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2 text-gray-900 dark:text-white shadow focus:ring-2 focus:ring-sky-400 transition"
           >
-            <option value={0}>אופציה 1</option>
-            <option value={1}>אופציה 2</option>
-            <option value={2}>אופציה 3</option>
-            <option value={3}>אופציה 4</option>
+            {options.map((_, i) => (
+              <option key={i} value={i}>{`אופציה ${i + 1}`}</option>
+            ))}
           </select>
         </div>
-        {error && <div className="text-red-600">{error}</div>}
-        <div className="flex justify-end space-x-3 rtl:space-x-reverse">
+
+        {/* הודעת שגיאה */}
+        {error && <p className="text-red-600 text-sm">{error}</p>}
+
+        {/* כפתורים */}
+        <div className="flex justify-end gap-4 mt-6">
           <button
             type="button"
             onClick={onClose}
-            className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600"
+            disabled={loading}
+            className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-5 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
           >
             ביטול
           </button>
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
             disabled={loading}
+            className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-6 py-2 rounded-lg shadow-md hover:scale-105 transition-all duration-300"
           >
-            שמור
+            {loading ? 'שומר...' : 'שמור'}
           </button>
         </div>
       </form>

@@ -1,3 +1,4 @@
+// גרסה עם עיצוב משופר ו-Hover Effects
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchAllStudents, addStudent, deleteStudent } from '../../services/studentService';
@@ -7,43 +8,30 @@ const ManageStudents = () => {
   const [user, setUser] = useState(null);
   const [students, setStudents] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newStudent, setNewStudent] = useState({
-    name: '',
-    grade: 'ז',
-    class: 'א',
-    email: '',
-    password: ''
-  });
+  const [newStudent, setNewStudent] = useState({ name: '', grade: 'ז', class: 'א', email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // פילטרים
   const [filterGrade, setFilterGrade] = useState('');
   const [filterClass, setFilterClass] = useState('');
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch {
-        setUser(null);
-      }
+      try { setUser(JSON.parse(storedUser)); } catch { setUser(null); }
     }
   }, []);
 
   useEffect(() => {
     const loadStudents = async () => {
-      setLoading(true); // Start loading when fetching students
+      setLoading(true);
       setError('');
       try {
         const data = await fetchAllStudents();
         setStudents(data);
       } catch (err) {
-        console.error('שגיאה בשליפת תלמידים:', err);
         setError('שגיאה בטעינת רשימת התלמידים');
       } finally {
-        setLoading(false); // End loading regardless of success or failure
+        setLoading(false);
       }
     };
     loadStudents();
@@ -65,274 +53,121 @@ const ManageStudents = () => {
   };
 
   const handleDeleteStudent = async (id) => {
-    if (!window.confirm('האם אתה בטוח שברצונך למחוק תלמיד זה?')) {
-      return;
-    }
-    setError('');
+    if (!window.confirm('האם אתה בטוח שברצונך למחוק תלמיד זה?')) return;
     setLoading(true);
     try {
       await deleteStudent(id);
-      setStudents(students.filter(student => student._id !== id));
+      setStudents(students.filter(s => s._id !== id));
     } catch (err) {
       setError(err.message || 'שגיאה במחיקת תלמיד');
     }
     setLoading(false);
   };
 
-  // סינון התלמידים לפי פילטרים
-  const filteredStudents = students.filter(student => {
-    return (
-      (filterGrade === '' || student.grade === filterGrade) &&
-      (filterClass === '' || student.class === filterClass)
-    );
-  });
+  const filteredStudents = students.filter(s =>
+    (filterGrade === '' || s.grade === filterGrade) &&
+    (filterClass === '' || s.class === filterClass)
+  );
 
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>טוען משתמש...</p>
-      </div>
-    );
-  }
+  if (!user) return <div className="min-h-screen flex items-center justify-center text-xl">טוען משתמש...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">ניהול תלמידים</h2>
-
-              <select
-                value={filterGrade}
-                onChange={(e) => setFilterGrade(e.target.value)}
-                className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-              >
-                <option value="">כל השכבות</option>
-                <option value="ז">ז</option>
-                <option value="ח">ח</option>
-                {/* הוסף שכבות נוספות לפי הצורך */}
-              </select>
-
-              <select
-                value={filterClass}
-                onChange={(e) => setFilterClass(e.target.value)}
-                className="border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-              >
-                <option value="">כל הקבוצות</option>
-                <option value="א">א</option>
-                <option value="ב">ב</option>
-                <option value="ג">ג</option>
-                {/* הוסף קבוצות נוספות לפי הצורך */}
-              </select>
-
-              <button
-                onClick={() => {
-                  setFilterGrade('');
-                  setFilterClass('');
-                }}
-                className="bg-gray-200 text-gray-700 px-3 py-2 rounded-md hover:bg-gray-300 text-sm"
-              >
-                נקה סינון
-              </button>
-            </div>
-
-            <button
-              onClick={() => setShowAddForm(true)}
-              className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700"
-            >
-              הוסף תלמיד
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sky-200 dark:from-gray-900 dark:to-gray-800">
+      <main className="max-w-6xl mx-auto py-8 px-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">ניהול תלמידים</h2>
+            <select value={filterGrade} onChange={(e) => setFilterGrade(e.target.value)}
+              className="rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600">
+              <option value="">כל השכבות</option>
+              <option value="ז">ז</option>
+              <option value="ח">ח</option>
+            </select>
+            <select value={filterClass} onChange={(e) => setFilterClass(e.target.value)}
+              className="rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-600">
+              <option value="">כל הקבוצות</option>
+              <option value="א">א</option>
+              <option value="ב">ב</option>
+              <option value="ג">ג</option>
+            </select>
+            <button onClick={() => { setFilterGrade(''); setFilterClass(''); }}
+              className="bg-gray-300 text-gray-800 dark:bg-gray-600 dark:text-white rounded-md px-3 py-2 hover:bg-gray-400 text-sm transition-all duration-300">
+              נקה סינון
             </button>
           </div>
 
-          {error && <div className="text-red-600 text-center mb-4">{error}</div>}
-          {loading && <div className="text-center">טוען...</div>}
+          <button onClick={() => setShowAddForm(true)}
+            className="bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 text-white px-5 py-2 rounded-lg shadow-md transition-all duration-300 hover:scale-105">
+            הוסף תלמיד
+          </button>
+        </div>
 
-          {showAddForm && (
-            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">הוספת תלמיד חדש</h3>
-              <form onSubmit={handleAddStudent} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">שם התלמיד</label>
-                  <input
-                    type="text"
-                    value={newStudent.name}
-                    onChange={(e) => setNewStudent({ ...newStudent, name: e.target.value })}
-                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                    required
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"> {/* Adjusted for mobile */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">כיתה</label>
-                    <select
-                      value={newStudent.grade}
-                      onChange={(e) => setNewStudent({ ...newStudent, grade: e.target.value })}
-                      className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                    >
-                      <option value="ז">ז</option>
-                      <option value="ח">ח</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">קבוצה</label>
-                    <select
-                      value={newStudent.class}
-                      onChange={(e) => setNewStudent({ ...newStudent, class: e.target.value })}
-                      className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                    >
-                      <option value="א">א</option>
-                      <option value="ב">ב</option>
-                      <option value="ג">ג</option>
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">אימייל</label>
-                  <input
-                    type="email"
-                    value={newStudent.email}
-                    onChange={(e) => setNewStudent({ ...newStudent, email: e.target.value })}
-                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">סיסמה</label>
-                  <input
-                    type="password"
-                    value={newStudent.password}
-                    onChange={(e) => setNewStudent({ ...newStudent, password: e.target.value })}
-                    className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                    required
-                  />
-                </div>
-                <div className="flex justify-end space-x-3 rtl:space-x-reverse">
-                  <button
-                    type="button"
-                    onClick={() => setShowAddForm(false)}
-                    className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600"
-                  >
-                    ביטול
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700"
-                    disabled={loading}
-                  >
-                    הוסף
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
+        {error && <div className="text-red-600 text-center mb-4">{error}</div>}
+        {loading && <div className="text-center">טוען...</div>}
 
-          {/* Table for larger screens (md and up) */}
-          <div className="hidden md:block bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-900">
-                <tr>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    שם התלמיד
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    כיתה
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    קבוצה
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    ניקוד
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    אימייל
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    פעולות
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {filteredStudents.length === 0 ? (
-                  <tr>
-                    <td colSpan="6" className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-300">
-                      לא נמצאו תלמידים תואמים.
-                    </td>
-                  </tr>
-                ) : (
-                  filteredStudents.map((student) => (
-                    <tr key={student._id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                        {student.name}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                        {student.grade}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                        {student.class}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                        {student.points ?? 0}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                        {student.email}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                          onClick={() => handleDeleteStudent(student._id)}
-                          className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
-                          disabled={loading}
-                        >
-                          מחק
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Card layout for small screens (below md) */}
-          <div className="md:hidden">
-            {filteredStudents.length === 0 ? (
-              <div className="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-300 bg-white dark:bg-gray-800 shadow rounded-lg">
-                לא נמצאו תלמידים תואמים.
-              </div>
-            ) : (
-              <div className="grid gap-4">
-                {filteredStudents.map((student) => (
-                  <div key={student._id} className="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                        {student.name}
-                      </h3>
-                      <button
-                        onClick={() => handleDeleteStudent(student._id)}
-                        className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 text-sm"
-                        disabled={loading}
-                      >
+        {/* הטבלה (למחשב) */}
+        <div className="hidden md:block bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+          <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+            <thead className="bg-blue-100 dark:bg-gray-900">
+              <tr className="text-gray-600 dark:text-gray-300 text-sm font-semibold text-right">
+                <th className="px-6 py-3">שם</th>
+                <th className="px-6 py-3">כיתה</th>
+                <th className="px-6 py-3">קבוצה</th>
+                <th className="px-6 py-3">ניקוד</th>
+                <th className="px-6 py-3">אימייל</th>
+                <th className="px-6 py-3">פעולות</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              {filteredStudents.length === 0 ? (
+                <tr><td colSpan="6" className="text-center py-4 text-gray-600 dark:text-gray-300">לא נמצאו תלמידים תואמים.</td></tr>
+              ) : (
+                filteredStudents.map(student => (
+                  <tr key={student._id} className="text-sm text-gray-700 dark:text-gray-200 text-right hover:bg-blue-50 dark:hover:bg-gray-700 transition-all duration-300">
+                    <td className="px-6 py-4">{student.name}</td>
+                    <td className="px-6 py-4">{student.grade}</td>
+                    <td className="px-6 py-4">{student.class}</td>
+                    <td className="px-6 py-4">{student.points ?? 0}</td>
+                    <td className="px-6 py-4">{student.email}</td>
+                    <td className="px-6 py-4">
+                      <button onClick={() => handleDeleteStudent(student._id)}
+                        className="text-red-600 hover:text-white hover:bg-red-600 border border-red-600 px-2 py-1 rounded-md text-sm transition-all duration-200"
+                        disabled={loading}>
                         מחק
                       </button>
-                    </div>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <span className="font-semibold">כיתה:</span> {student.grade}
-                    </p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <span className="font-semibold">קבוצה:</span> {student.class}
-                    </p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <span className="font-semibold">ניקוד:</span> {student.points ?? 0}
-                    </p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <span className="font-semibold">אימייל:</span> {student.email}
-                    </p>
-                  </div>
-                ))}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* כרטיסים לנייד */}
+        <div className="md:hidden grid gap-4 mt-6">
+          {filteredStudents.length === 0 ? (
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 text-center text-gray-600 dark:text-gray-300">
+              לא נמצאו תלמידים תואמים.
+            </div>
+          ) : (
+            filteredStudents.map(student => (
+              <div key={student._id}
+                className="bg-gradient-to-br from-sky-100 to-cyan-200 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-lg p-4 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{student.name}</h3>
+                  <button onClick={() => handleDeleteStudent(student._id)}
+                    className="text-red-600 hover:text-white hover:bg-red-600 border border-red-600 px-2 py-1 rounded-md text-xs transition-all duration-200"
+                    disabled={loading}>
+                    מחק
+                  </button>
+                </div>
+                <p className="text-sm text-gray-700 dark:text-gray-300">כיתה: {student.grade}</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300">קבוצה: {student.class}</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300">ניקוד: {student.points ?? 0}</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300">אימייל: {student.email}</p>
               </div>
-            )}
-          </div>
+            ))
+          )}
         </div>
       </main>
     </div>

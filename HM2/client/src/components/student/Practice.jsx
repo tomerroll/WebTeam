@@ -6,8 +6,6 @@ import {
 } from '../../services/exerciseService';
 import { fetchStudentById } from '../../services/studentService';
 
-const coin = "🪙";
-const crown = "👑";
 const star = "⭐";
 
 const Practice = () => {
@@ -46,52 +44,61 @@ const Practice = () => {
   }, [user]);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <h2 className="text-2xl font-bold mb-8 text-center text-gray-900 dark:text-white">בחר נושא לתרגול</h2>
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sky-200 dark:from-gray-900 dark:to-gray-800 py-10 px-4">
+      <main className="max-w-6xl mx-auto">
+        <h2 className="text-3xl font-bold mb-10 text-center text-blue-800 dark:text-white drop-shadow">
+          איזה נושא תרצה לתרגל?
+        </h2>
 
-          {loading ? (
-            <div className="text-center text-lg font-semibold text-gray-700 dark:text-gray-200">טוען נושאים...</div>
-          ) : subjects.length === 0 ? (
-            <div className="text-center text-gray-500 dark:text-gray-400">לא נמצאו נושאים לתרגול</div>
-          ) : (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
-              {subjects.map(subject => {
-                const completedObj = completedSubjects.find(s => s.subject === subject);
-                const isCompleted = completedObj?.completed;
+        {loading ? (
+          <div className="text-center text-lg font-semibold text-gray-700 dark:text-gray-200">
+            טוען נושאים...
+          </div>
+        ) : subjects.length === 0 ? (
+          <div className="text-center text-gray-500 dark:text-gray-400">
+            לא נמצאו נושאים לתרגול
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {subjects.map(subject => {
+              const completedObj = completedSubjects.find(s => s.subject === subject);
+              const isCompleted = completedObj?.completed;
 
-                const cardClasses = `overflow-hidden shadow rounded-2xl transition-all duration-300 transform text-center ${
-                  isCompleted
-                    ? 'bg-yellow-100 dark:bg-yellow-900 cursor-not-allowed opacity-80'
-                    : 'bg-white dark:bg-gray-800 hover:shadow-xl hover:scale-105 hover:ring-2 hover:ring-primary-500'
-                }`;
+              const bg = isCompleted
+                ? 'bg-yellow-400 dark:bg-yellow-500'
+                : 'bg-gradient-to-r from-blue-400 to-cyan-400 dark:from-blue-700 dark:to-cyan-600';
 
-                const content = (
-                  <div className="px-4 py-8 sm:p-8 w-full text-center">
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                      {subject} {isCompleted && <span title="הושלם">{star}</span>}
-                    </h3>
-                  </div>
-                );
+              const cardClasses = `relative rounded-2xl text-white text-center p-6 h-36 flex flex-col justify-center items-center shadow-lg transition duration-300 transform ${bg} ${
+                isCompleted
+                  ? 'cursor-not-allowed opacity-80 ring-2 ring-red-500'
+                  : 'hover:scale-105 hover:shadow-2xl'
+              }`;
 
-                return isCompleted ? (
-                  <div key={subject} className={cardClasses}>
-                    {content}
-                  </div>
-                ) : (
-                  <Link
-                    to={`/practice/${encodeURIComponent(subject)}`}
-                    key={subject}
-                    className={cardClasses}
-                  >
-                    {content}
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </div>
+              const content = (
+                <>
+                  <h3 className="text-2xl font-bold z-10">{subject}</h3>
+                  {isCompleted && (
+                    <p className="mt-1 text-base z-10">{star} הושלם</p>
+                  )}
+                </>
+              );
+
+              return isCompleted ? (
+                <div key={subject} className={cardClasses}>
+                  {content}
+                </div>
+              ) : (
+                <Link
+                  to={`/practice/${encodeURIComponent(subject)}`}
+                  key={subject}
+                  className={cardClasses}
+                >
+                  {content}
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </main>
     </div>
   );
