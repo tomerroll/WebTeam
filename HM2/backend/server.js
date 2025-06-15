@@ -35,9 +35,14 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log('MongoDB connected!'))
 .catch((err) => console.error('MongoDB connection error:', err));
 
-// נתיב ברירת מחדל לבדיקה
+// Default route for health check
 app.get('/', (req, res) => {
-  res.send('API is running');
+  if (mongoose.connection.readyState === 1) {
+    res.status(200).json({ status: 'API is running', db: 'Connected to DB!' });
+  } else {
+    const error = mongoose.connection.readyState === 0 ? 'Disconnected' : (mongoose.connection.readyState === 2 ? 'Connecting' : 'Disconnecting');
+    res.status(500).json({ status: 'API is running', db: 'Failed to connect to DB', error });
+  }
 });
 
 const PORT = process.env.PORT || 5000;
