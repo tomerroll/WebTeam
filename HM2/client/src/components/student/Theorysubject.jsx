@@ -1,26 +1,21 @@
-// src/components/shared/TheorySubject.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-// נשתמש רק בפונקציה ששולפת הכל
 import { fetchTheoryContent } from '../../services/theoryService';
 
 const TheorySubject = () => {
-  const { subject } = useParams(); // ה-subject הזה הוא למעשה ה-title מה-DB
+  const { subject } = useParams();
   const [loading, setLoading] = useState(true);
-  const [filteredTheoryItems, setFilteredTheoryItems] = useState([]); // לשמירת הפריטים המסוננים
-
-  // Removed expandedItems state and toggleContent function
+  const [filteredTheoryItems, setFilteredTheoryItems] = useState([]);
 
   useEffect(() => {
     const loadAndFilterTheory = async () => {
       setLoading(true);
       try {
-        const allData = await fetchTheoryContent(); // שולפים את כל התיאוריה
-        // מסננים לפי ה-title שהגיע ב-URL
+        const allData = await fetchTheoryContent();
         const items = allData.filter(item => item.title === decodeURIComponent(subject));
         setFilteredTheoryItems(items);
       } catch (err) {
-        console.error(`שגיאה בטעינת או סינון תיאוריה עבור: ${decodeURIComponent(subject)}`, err);
+        console.error(`שגיאה בטעינת תוכן עבור: ${decodeURIComponent(subject)}`, err);
         setFilteredTheoryItems([]);
       } finally {
         setLoading(false);
@@ -30,11 +25,11 @@ const TheorySubject = () => {
     if (subject) {
       loadAndFilterTheory();
     }
-  }, [subject]); // תלוי ב-subject שב-URL
+  }, [subject]);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-sky-100 to-sky-200 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-white">
         טוען תוכן...
       </div>
     );
@@ -42,11 +37,11 @@ const TheorySubject = () => {
 
   if (filteredTheoryItems.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
-        <p className="text-lg mb-4">לא נמצא תוכן תיאורטי לנושא: "{decodeURIComponent(subject)}".</p>
+      <div className="min-h-screen flex flex-col items-center justify-center text-gray-600 dark:text-gray-300 bg-gradient-to-b from-sky-100 to-sky-200 dark:from-gray-900 dark:to-gray-800">
+        <p className="text-lg mb-4">לא נמצא תוכן לנושא: "{decodeURIComponent(subject)}"</p>
         <Link
           to="/theory"
-          className="px-4 py-2 rounded bg-primary-600 hover:bg-primary-700 text-white transition duration-200"
+          className="px-6 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition"
         >
           חזור לנושאי תיאוריה
         </Link>
@@ -55,38 +50,35 @@ const TheorySubject = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8">
-      <div className="w-full max-w-3xl mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white text-center">
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sky-200 dark:from-gray-900 dark:to-gray-800 py-10 px-4">
+      <div className="w-full max-w-4xl mx-auto">
+        <h2 className="text-3xl font-bold mb-8 text-center text-blue-800 dark:text-white drop-shadow">
           תוכן תיאורטי: {decodeURIComponent(subject)}
         </h2>
 
-        <Link
-          to="/theory"
-          className="inline-flex items-center px-4 py-2 mb-6 border border-transparent text-sm font-medium rounded-md text-primary-700 dark:text-primary-200 bg-primary-100 dark:bg-primary-900 hover:bg-primary-200 dark:hover:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-        >
-          &larr; חזור לנושאי תיאוריה
-        </Link>
+        <div className="mb-8 text-center">
+          <Link
+            to="/theory"
+            className="inline-block px-5 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full shadow transition"
+          >
+            ← חזור לנושאים
+          </Link>
+        </div>
 
-        <div className="space-y-6">
+        <div className="space-y-8">
           {filteredTheoryItems.map((item) => (
-            <div key={item._id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-              <div className="px-6 py-5 sm:p-6">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">
-                  {item.description}
-                </p>
-
-                {/* Directly display the content */}
-                <div className="mt-4">
-                  <p className="text-gray-700 dark:text-gray-200 whitespace-pre-line leading-relaxed">
-                    {item.content}
-                  </p>
-                </div>
-
-                {/* Removed the "read more" button */}
+            <div
+              key={item._id}
+              className="bg-gradient-to-br from-cyan-100 to-blue-200 dark:from-gray-800 dark:to-gray-700 rounded-2xl shadow-xl p-6 transition-all duration-300"
+            >
+              <h3 className="text-2xl font-semibold text-blue-900 dark:text-white mb-3">
+                {item.title}
+              </h3>
+              <p className="text-gray-700 dark:text-gray-300 text-base mb-4">
+                {item.description}
+              </p>
+              <div className="mt-2 text-gray-800 dark:text-gray-200 whitespace-pre-line leading-relaxed">
+                {item.content}
               </div>
             </div>
           ))}

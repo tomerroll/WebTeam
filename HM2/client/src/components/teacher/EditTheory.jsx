@@ -1,4 +1,3 @@
-// src/components/teacher/EditTheory.jsx
 import React, { useState, useEffect } from 'react';
 import { updateTheory } from '../../services/theoryService';
 
@@ -9,12 +8,11 @@ const EditTheory = ({ theory, onClose, onUpdate }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Update state if the 'theory' prop changes (e.g., if a different exercise is selected for editing)
   useEffect(() => {
     setTitle(theory.title);
     setDescription(theory.description);
     setContent(theory.content);
-    setError(''); // Clear error on new exercise load
+    setError('');
   }, [theory]);
 
   const handleSubmit = async (e) => {
@@ -27,8 +25,8 @@ const EditTheory = ({ theory, onClose, onUpdate }) => {
         throw new Error('אנא מלא את כל השדות.');
       }
       const updatedTheory = await updateTheory(theory._id, { title, description, content });
-      onUpdate(updatedTheory); // Pass the updated theory back to the parent
-      onClose(); // Close the form
+      onUpdate(updatedTheory);
+      onClose();
     } catch (err) {
       console.error('Error updating theory:', err);
       setError(err.message || 'שגיאה בעדכון תיאוריה.');
@@ -38,64 +36,66 @@ const EditTheory = ({ theory, onClose, onUpdate }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">ערוך תוכן תיאורטי</h3>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label htmlFor="edit-title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            כותרת הנושא (Title)
+    <div className="bg-gradient-to-b from-sky-50 to-cyan-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl shadow-2xl p-8 max-w-3xl mx-auto">
+      <h3 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">✏️ עריכת תיאוריה</h3>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label htmlFor="edit-title" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+            כותרת
           </label>
           <input
-            type="text"
             id="edit-title"
-            className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
+            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-2 shadow focus:ring-2 focus:ring-sky-400 transition"
           />
         </div>
-        <div className="mb-4">
-          <label htmlFor="edit-description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+
+        <div>
+          <label htmlFor="edit-description" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
             תיאור קצר
           </label>
           <input
-            type="text"
             id="edit-description"
-            className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
+            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-2 shadow focus:ring-2 focus:ring-sky-400 transition"
           />
         </div>
-        <div className="mb-4">
-          <label htmlFor="edit-content" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+
+        <div>
+          <label htmlFor="edit-content" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
             תוכן מלא
           </label>
           <textarea
             id="edit-content"
             rows="6"
-            className="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             required
-          ></textarea>
+            className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-2 shadow focus:ring-2 focus:ring-sky-400 transition"
+          />
         </div>
 
-        {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
+        {error && <p className="text-red-600 text-sm">{error}</p>}
 
-        <div className="flex justify-end space-x-2">
+        <div className="flex justify-end gap-4 mt-6">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-md hover:bg-gray-400 dark:hover:bg-gray-700"
             disabled={loading}
+            className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-5 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
           >
-            בטל
+            ביטול
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
             disabled={loading}
+            className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white px-6 py-2 rounded-lg shadow-md hover:scale-105 transition-all duration-300"
           >
             {loading ? 'מעדכן...' : 'עדכן תיאוריה'}
           </button>

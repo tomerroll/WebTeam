@@ -12,7 +12,7 @@ const TeacherDashboard = () => {
       try {
         setUser(JSON.parse(storedUser));
       } catch {
-        setUser(null); // Fallback if JSON parsing fails
+        setUser(null);
       }
     }
 
@@ -28,84 +28,77 @@ const TeacherDashboard = () => {
     fetchTeacherData();
   }, []);
 
-  const menuItems = [
+  const tiles = [
     {
+      path: '/manage-students',
       title: 'ניהול תלמידים',
       description: 'הוסף, ערוך ומחק תלמידים',
-      icon: '👥',
-      path: '/manage-students',
+      color: 'bg-gradient-to-r from-blue-400 to-cyan-400 dark:from-blue-700 dark:to-cyan-600',
     },
     {
+      path: '/manage-exercises',
       title: 'ניהול תרגילים',
       description: 'הוסף, ערוך ומחק תרגילים',
-      icon: '📝',
-      path: '/manage-exercises',
+      color: 'bg-gradient-to-r from-green-400 to-lime-400 dark:from-green-700 dark:to-lime-600',
     },
-    // --- NEW: Link for Manage Theory ---
     {
+      path: '/manage-theory',
       title: 'ניהול תיאוריה',
       description: 'הוסף, ערוך ומחק תוכן תיאורטי',
-      icon: '📚', // A book icon is suitable for theory
-      path: '/manage-theory', // This path points to the new ManageTheory component
+      color: 'bg-gradient-to-r from-indigo-400 to-blue-500 dark:from-indigo-700 dark:to-blue-600',
     },
     {
+      path: '/reports',
       title: 'דוחות',
       description: 'צפה בדוחות התקדמות התלמידים',
-      icon: '📊',
-      path: '/reports',
+      color: 'bg-gradient-to-r from-purple-400 to-pink-400 dark:from-purple-700 dark:to-pink-600',
     },
     {
+      path: '/leaderboard',
       title: 'מערכת תגמולים',
       description: 'נהל תגמולים והתקדמות תלמידים',
-      icon: '🏆',
-      path: '/leaderboard',
+      color: 'bg-gradient-to-r from-yellow-400 to-orange-400 dark:from-yellow-600 dark:to-orange-500',
     },
     {
+      path: '/teacher-help-forum',
       title: 'פורום',
       description: 'צפה בבקשות עזרה וענה עליהן',
-      icon: '💬',
-      path: '/teacher-help-forum',
+      color: 'bg-gradient-to-r from-red-400 to-pink-400 dark:from-red-700 dark:to-pink-600',
     },
     {
+      path: '/profile',
       title: 'פרופיל אישי',
       description: 'צפייה ועריכת פרטים אישיים',
-      icon: '👤',
-      path: '/profile',
+      color: 'bg-gradient-to-r from-teal-400 to-emerald-400 dark:from-teal-700 dark:to-emerald-600',
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          {/* Optional: Display teacher's name if available */}
-          {teacherData && (
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
-              ברוך הבא, {teacherData.fullName || user.email}!
-            </h2>
-          )}
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sky-200 dark:from-gray-900 dark:to-gray-800 py-10 px-4">
+      <main className="max-w-6xl mx-auto">
+    
+          <h1 className="text-3xl font-bold text-center mb-10 text-blue-800 dark:text-white drop-shadow">
+            מה תרצה לעשות היום?
+          </h1> 
+      
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {menuItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow duration-300 dark:hover:bg-gray-700"
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tiles.map(({ path, title, description, color }, idx) => (
+            <Link
+              key={idx}
+              to={path}
+              className="transform transition duration-300 hover:scale-105"
+            >
+              <div
+                className={`relative rounded-2xl shadow-lg ${color} p-6 text-white hover:shadow-2xl flex flex-col justify-center items-center text-center h-36 overflow-hidden`}
               >
-                <div className="p-6">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <span className="text-3xl">{item.icon}</span>
-                    </div>
-                    <div className="mr-4"> {/* Changed ml-4 to mr-4 for RTL */}
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">{item.title}</h3>
-                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">{item.description}</p>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                <h3 className="text-2xl font-bold mb-2 drop-shadow-sm z-10">
+                  {title}
+                </h3>
+                <p className="text-base drop-shadow-sm z-10">{description}</p>
+              </div>
+            </Link>
+          ))}
         </div>
       </main>
     </div>

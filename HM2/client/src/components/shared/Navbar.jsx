@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { fetchStudentById } from '../../services/studentService';
+import logo from '../../assets/logo.png';
 
 const Navbar = ({ userType }) => {
   const navigate = useNavigate();
@@ -80,30 +81,33 @@ const Navbar = ({ userType }) => {
   };
 
   return (
-    <nav className={`w-full px-6 py-4 shadow-lg transition-colors duration-300 fixed top-0 z-50 ${
-      isDarkMode 
-        ? 'bg-gray-800 text-white' 
-        : 'bg-white text-gray-800'
-    }`}>
+<nav className={`w-full h-22 px-6 py-2 shadow-lg transition-colors duration-300 fixed top-0 z-50 ${
+  isDarkMode 
+    ? 'bg-gray-800 text-white' 
+    : 'bg-blue-200 text-gray-800'
+}`}>
+
       <div className="max-w-7xl mx-auto flex items-center justify-between flex-row-reverse">
         {/* Right side: Logout, Dark Mode Toggle, Coins/Crowns */}
         <div className="flex items-center gap-4 flex-row-reverse">
           {/* Logout Button */}
-          <button
-            onClick={handleLogout}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors duration-300 ${
-              isDarkMode 
-                ? 'bg-red-600 hover:bg-red-700 text-white' 
-                : 'bg-red-500 hover:bg-red-600 text-white'
-            }`}
-          >
-            התנתק
-          </button>
+<button
+  onClick={handleLogout}
+  className={`px-6 py-2 md:px-7 md:py-3 text-lg rounded-xl font-semibold transition-all duration-300 shadow 
+    ${
+      isDarkMode
+        ? 'bg-red-600 hover:bg-red-700 hover:shadow-lg text-white'
+        : 'bg-red-500 hover:bg-red-600 hover:shadow-xl text-white'
+    }`}
+>
+  התנתק
+</button>
+
 
           {/* Dark Mode Toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-full transition-colors duration-300 border border-gray-400 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-white shadow hover:scale-110"
+            className="p-2 rounded-full transition-colors duration-300 border border-gray-400 dark:border-gray-600 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white shadow hover:scale-110"
             aria-label="Toggle dark mode"
           >
             {isDarkMode ? (
@@ -130,22 +134,25 @@ const Navbar = ({ userType }) => {
           {/* Student Stats */}
           {userType === 'student' && studentData && (
             <div className="flex items-center gap-4 mr-2">
-              <span className="flex items-center gap-1 text-yellow-600 font-bold text-lg align-middle">
+                 <span className="flex items-center gap-1 px-3 py-1 border-2 border-yellow-400 bg-yellow-100 text-yellow-700 font-bold text-lg rounded-full shadow-sm">
+
                 {studentData.crowns || 0} <span role="img" aria-label="crowns" className="text-xl align-middle">👑</span>
               </span>
-              <span className="flex items-center gap-1 text-yellow-500 font-bold text-lg align-middle">
+              <span className="flex items-center gap-1 px-3 py-1 border-2 border-yellow-400 bg-yellow-100 text-yellow-700 font-bold text-lg rounded-full shadow-sm">
                 {studentData.points || 0} <span role="img" aria-label="coins" className="text-lg align-middle">🪙</span>
               </span>
             </div>
           )}
         </div>
         {/* Logo */}
-        <div 
-          onClick={handleLogoClick}
-          className="text-xl font-bold text-primary-600 cursor-pointer transition-all duration-300 hover:text-white hover:bg-primary-600 hover:shadow-lg hover:px-3 hover:rounded-full"
-        >
-          MathDuo 
-        </div>
+<div 
+  onClick={handleLogoClick}
+  className="text-xl font-bold text-primary-600 cursor-pointer transition-all duration-300 hover:text-white hover:bg-primary-300 hover:shadow-lg hover:px-3 hover:rounded-full">
+  <div className="transform scale-125 origin-left">
+    <img src={logo} alt="MathDuo logo" className="h-20 w-auto" />
+  </div>
+</div>
+
       </div>
     </nav>
   );

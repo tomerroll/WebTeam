@@ -11,7 +11,6 @@ import {
   addCrown
 } from '../../services/studentService';
 
-
 const coin = "🪙";
 const crown = "👑";
 
@@ -41,19 +40,20 @@ const PracticeSubject = () => {
 
     setLoading(true);
 
-    const fetchExercises = fetchExercisesBySubject(subject);
-    const fetchProgress = fetchProgressBySubject(user._id, subject);
-    const fetchStudent = fetchStudentById(user._id);
-    
-
-    Promise.all([fetchExercises, fetchProgress, fetchStudent])
+    Promise.all([
+      fetchExercisesBySubject(subject),
+      fetchProgressBySubject(user._id, subject),
+      fetchStudentById(user._id)
+    ])
       .then(([exerciseData, progressData, studentData]) => {
         const answersFromProgress = progressData?.answers || [];
         const answeredIds = new Set(answersFromProgress.map(a => a.questionId?.toString()));
         const incorrectAnswers = answersFromProgress.filter(a => !a.isCorrect);
         const incorrectIds = new Set(incorrectAnswers.map(a => a.questionId?.toString()));
 
-        let newExercises = exerciseData.filter(ex => incorrectIds.has(ex._id.toString()) || !answeredIds.has(ex._id.toString()));
+        let newExercises = exerciseData.filter(
+          ex => incorrectIds.has(ex._id.toString()) || !answeredIds.has(ex._id.toString())
+        );
         newExercises.sort((a, b) => a.difficulty - b.difficulty);
 
         const fullyCompleted = progressData?.completed && newExercises.length === 0;
@@ -73,7 +73,6 @@ const PracticeSubject = () => {
       .finally(() => setLoading(false));
   }, [subject, user._id]);
 
-
   const handleSelect = async idx => {
     if (selected !== null) return;
     setSelected(idx);
@@ -83,25 +82,16 @@ const PracticeSubject = () => {
 
     const selectedAnswer = exercises[current].options[idx];
     const questionId = exercises[current]._id.toString();
-
     const alreadyAnsweredBefore = previousAnswers.some(a => a.questionId?.toString() === questionId);
     const questionPoints = exercises[current].points;
 
     try {
       if (correct) {
-        let pointsToAdd;
-        if (!alreadyAnsweredBefore) {
-          pointsToAdd = questionPoints;
-        } else {
-          pointsToAdd = Math.floor(questionPoints / 2);
-        }
-        
+        const pointsToAdd = alreadyAnsweredBefore ? Math.floor(questionPoints / 2) : questionPoints;
         const response = await addPoints(user._id, pointsToAdd);
         setPoints(response.points);
         setEarnedPoints(pointsToAdd);
-        window.dispatchEvent(new CustomEvent('pointsUpdated', {
-          detail: { points: response.points }
-        }));
+        window.dispatchEvent(new CustomEvent('pointsUpdated', { detail: { points: response.points } }));
       } else {
         setEarnedPoints(0);
       }
@@ -149,9 +139,7 @@ const PracticeSubject = () => {
           const response = await addCrown(user._id);
           setCrowns(response.crowns);
           setFullyCompleted(true);
-          window.dispatchEvent(new CustomEvent('crownsUpdated', {
-            detail: { crowns: response.crowns }
-          }));
+          window.dispatchEvent(new CustomEvent('crownsUpdated', { detail: { crowns: response.crowns } }));
         } catch (err) {
           console.error('Error adding crown:', err);
         }
@@ -183,14 +171,18 @@ const PracticeSubject = () => {
 
   if (fullyCompleted) {
     return (
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-yellow-300">כל הכבוד! {crown}</h2>
-          <p className="mb-4 text-gray-800 dark:text-gray-200">סיימת את כל התרגילים בנושא: {subject}</p>
-          <div className="text-xl font-bold mb-2 text-yellow-700 dark:text-yellow-300">
-            סה\"כ ניקוד: {points} {coin}
+      <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sky-200 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center px-4">
+        <div className="max-w-lg w-full rounded-2xl shadow-xl p-8 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-900 text-center">
+          <h2 className="text-3xl font-bold mb-4 text-yellow-600 dark:text-yellow-300 drop-shadow">
+            כל הכבוד! {crown}
+          </h2>
+          <p className="mb-4 text-gray-800 dark:text-gray-200 text-lg">
+            סיימת את כל התרגילים בנושא: <span className="font-semibold">{subject}</span>
+          </p>
+          <div className="text-xl font-bold mb-6 text-yellow-700 dark:text-yellow-300">
+            סה"כ ניקוד: {points} {coin}
           </div>
-          <Link to="/practice" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+          <Link to="/practice" className="inline-block bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-medium transition">
             חזור לנושאים
           </Link>
         </div>
@@ -203,23 +195,31 @@ const PracticeSubject = () => {
     const allCorrect = correctAnswersCount === exercises.length;
 
     return (
-      <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-8 text-center">
+      <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sky-200 dark:from-gray-900 dark:to-gray-800 flex flex-col items-center justify-center py-8 px-4">
+        <div className="max-w-lg w-full rounded-2xl shadow-xl p-8 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-900 text-center transition-all duration-300">
           {allCorrect ? (
             <>
-              <h2 className="text-2xl font-bold mb-4">כל הכבוד! {crown}</h2>
-              <p className="mb-4">סיימת את כל התרגילים בנושא: {subject}</p>
-              <div className="text-xl font-bold mb-2">
-                סה\"כ ניקוד: {points} {coin}
+              <h2 className="text-3xl font-bold mb-4 text-yellow-600 dark:text-yellow-300 drop-shadow">
+                כל הכבוד! {crown}
+              </h2>
+              <p className="mb-4 text-gray-800 dark:text-gray-200 text-lg">
+                סיימת את כל התרגילים בנושא: <span className="font-semibold">{subject}</span>
+              </p>
+              <div className="text-xl font-bold mb-6 text-yellow-700 dark:text-yellow-300">
+                סה"כ ניקוד: {points} {coin}
               </div>
             </>
           ) : (
             <>
-              <h2 className="text-2xl font-bold mb-4">הצלחת ב-{correctAnswersCount} מתוך {exercises.length} שאלות</h2>
-              <p className="mb-4">נסה שוב את התרגילים בנושא: {subject}</p>
+              <h2 className="text-2xl font-bold mb-4 text-red-600 dark:text-red-400 drop-shadow">
+                הצלחת ב-{correctAnswersCount} מתוך {exercises.length} שאלות
+              </h2>
+              <p className="mb-6 text-gray-800 dark:text-gray-300">
+                נסה שוב את התרגילים בנושא: <span className="font-semibold">{subject}</span>
+              </p>
             </>
           )}
-          <Link to="/practice" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+          <Link to="/practice" className="inline-block bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-medium transition">
             חזור לנושאים
           </Link>
         </div>
@@ -237,22 +237,18 @@ const PracticeSubject = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col items-center py-8">
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sky-200 dark:from-gray-900 dark:to-gray-800 flex flex-col items-center py-8">
       <div className="w-full max-w-2xl mx-auto mb-8">
-        <div className="w-full bg-gray-200 rounded-full h-4 mb-6">
-          <div className="bg-blue-500 h-4 rounded-full transition-all duration-300" style={{ width: `${((current + 1) / exercises.length) * 100}%` }}></div>
+        <div className="w-full bg-blue-100 dark:bg-gray-700 rounded-full h-4 mb-6">
+          <div className="bg-blue-400 dark:bg-blue-700 h-4 rounded-full transition-all duration-300" style={{ width: `${((current + 1) / exercises.length) * 100}%` }}></div>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white text-center">
+        <div className="rounded-2xl shadow-xl p-6 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-900 transition-all duration-300">
+          <h2 className="text-2xl font-bold mb-4 text-center text-blue-800 dark:text-white drop-shadow">
             תרגיל {current + 1} מתוך {exercises.length} בנושא: {subject}
           </h2>
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2 text-right">
-              {ex.title}
-            </h3>
-            <p className="text-gray-700 dark:text-gray-300 text-right">
-              {ex.description}
-            </p>
+            <h3 className="text-lg font-semibold text-right text-gray-800 dark:text-gray-200 mb-2">{ex.title}</h3>
+            <p className="text-right text-gray-700 dark:text-gray-300">{ex.description}</p>
           </div>
           <div className="grid gap-4 mb-6">
             {ex.options.map((option, idx) => {
@@ -264,17 +260,12 @@ const PracticeSubject = () => {
                   key={idx}
                   onClick={() => handleSelect(idx)}
                   disabled={selected !== null}
-                  className={`w-full text-right px-4 py-3 rounded-lg border transition-colors duration-200
-                    bg-gray-100 dark:bg-gray-700
-                    text-gray-900 dark:text-white
-                    border-gray-300 dark:border-gray-600
-                    shadow-sm
+                  className={`w-full text-right px-4 py-3 rounded-xl transition-all duration-200 shadow-sm border font-medium
+                    bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600
+                    hover:ring-2 hover:ring-blue-300 dark:hover:ring-cyan-500
                     ${isCorrectAnswer ? 'bg-green-200 dark:bg-green-700 border-green-500 dark:border-green-400 text-green-900 dark:text-green-200 font-bold' : ''}
                     ${isWrongAnswer ? 'bg-red-200 dark:bg-red-700 border-red-500 dark:border-red-400 text-red-900 dark:text-red-200 font-bold' : ''}
-                    ${isSelected && !isCorrectAnswer && !isWrongAnswer ? 'ring-2 ring-primary-500' : ''}
-                    hover:bg-primary-100 dark:hover:bg-primary-800
-                    disabled:opacity-70
-                  `}
+                    disabled:opacity-70`}
                 >
                   {option}
                 </button>
@@ -290,14 +281,14 @@ const PracticeSubject = () => {
             <button
               onClick={handlePrevious}
               disabled={current === 0}
-              className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
+              className="px-5 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50"
             >
               קודם
             </button>
             <button
               onClick={handleNext}
               disabled={selected === null}
-              className="px-4 py-2 rounded bg-primary-600 hover:bg-primary-700 text-white disabled:opacity-50"
+              className="px-5 py-2 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition disabled:opacity-50"
             >
               {current === exercises.length - 1 ? 'סיים' : 'הבא'}
             </button>
