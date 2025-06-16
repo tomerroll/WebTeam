@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import Navbar from './Navbar';
+import ChatRobot from '../student/ChatRobot';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -16,6 +17,7 @@ const PrivateRoute = ({ children }) => {
       <main className="pt-20">
         {children}
       </main>
+      {userType === 'student' && <ChatRobot />}
     </div>
   );
 };
