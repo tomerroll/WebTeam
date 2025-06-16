@@ -17,6 +17,7 @@ const theoryRoutes = require('./routes/theory');
 const helpRoutes = require('./routes/help');
 const progressRoutes = require('./routes/progress');
 const reportsRoutes = require('./routes/reports');  
+const geminiRoutes = require('./routes/gemini');
 
 // חיבור הנתיבים לשרת
 app.use('/api/auth', authRoutes);
@@ -26,6 +27,7 @@ app.use('/api/theory', theoryRoutes);
 app.use('/api/help', helpRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api', reportsRoutes);  
+app.use('/api/gemini-chat', geminiRoutes);
 
 // חיבור למסד הנתונים MongoDB
 mongoose.connect(process.env.MONGO_URI, {
