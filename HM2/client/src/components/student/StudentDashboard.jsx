@@ -6,21 +6,7 @@ const StudentDashboard = () => {
   const [studentData, setStudentData] = useState(null);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) setUser(JSON.parse(storedUser));
 
-    const loadData = async () => {
-      try {
-        const data = await fetchCurrentStudent();
-        setStudentData(data);
-      } catch (err) {
-        console.error('Error fetching student data:', err);
-      }
-    };
-
-    loadData();
-  }, []);
 
   const tiles = [
     {

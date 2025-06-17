@@ -228,7 +228,28 @@ const PracticeSubject = () => {
   }
 
   if (exercises.length === 0) {
-    return <div className="min-h-screen flex items-center justify-center text-gray-500">אין שאלות לתרגול כרגע.</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sky-200 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center px-4">
+        <div className="max-w-lg w-full rounded-2xl shadow-xl p-8 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-900 text-center">
+          <div className="text-6xl mb-4">📚</div>
+          <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">
+            אין עדיין תרגילים בנושא זה
+          </h2>
+          <p className="mb-6 text-gray-600 dark:text-gray-300">
+            בנושא <span className="font-semibold text-blue-600 dark:text-blue-400">{subject}</span> עדיין לא נוספו תרגילים למערכת.
+          </p>
+          <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+            המורה יוסיף תרגילים בקרוב. בינתיים תוכל לתרגל נושאים אחרים!
+          </p>
+          <Link 
+            to="/practice" 
+            className="inline-block bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105"
+          >
+            חזור לנושאים אחרים
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   const ex = exercises[current];
