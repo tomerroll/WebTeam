@@ -6,27 +6,7 @@ const TeacherDashboard = () => {
   const [teacherData, setTeacherData] = useState(null);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch {
-        setUser(null);
-      }
-    }
 
-    const fetchTeacherData = async () => {
-      try {
-        const data = await fetchCurrentTeacher();
-        setTeacherData(data);
-      } catch (err) {
-        console.error('Error fetching teacher data:', err);
-      }
-    };
-
-    fetchTeacherData();
-  }, []);
 
   const tiles = [
     {

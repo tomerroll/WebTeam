@@ -172,15 +172,31 @@ style={{
 
               {userType === 'student' && (
                 <div className="grid grid-cols-2 gap-4">
-                  <select value={grade} onChange={(e) => setGrade(e.target.value)} className="px-4 py-2 border rounded-lg bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white shadow-sm">
-                    <option value="ז">ז</option>
-                    <option value="ח">ח</option>
-                  </select>
-                  <select value={className} onChange={(e) => setClassName(e.target.value)} className="px-4 py-2 border rounded-lg bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white shadow-sm">
-                    <option value="א">א</option>
-                    <option value="ב">ב</option>
-                    <option value="ג">ג</option>
-                  </select>
+                  <div>
+                    <label htmlFor="gradeSelect" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">כיתה:</label>
+                    <select
+                      id="gradeSelect"
+                      value={grade}
+                      onChange={(e) => setGrade(e.target.value)}
+                      className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
+                    >
+                      <option value="ז">ז</option>
+                      <option value="ח">ח</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="classSelect" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">הקבצה:</label>
+                    <select
+                      id="classSelect"
+                      value={className}
+                      onChange={(e) => setClassName(e.target.value)}
+                      className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-200"
+                    >
+                      <option value="א">א</option>
+                      <option value="ב">ב</option>
+                      <option value="ג">ג</option>
+                    </select>
+                  </div>
                 </div>
               )}
 

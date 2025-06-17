@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { fetchTheoryContent } from '../../services/theoryService';
 import { theoryProgressService } from '../../services/theoryProgressService';
+import { fetchExercisesBySubject } from '../../services/exerciseService';
 
 const TheorySubject = () => {
   const { subject } = useParams();
@@ -15,6 +16,8 @@ const TheorySubject = () => {
   const [startTime, setStartTime] = useState(null);
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [showOverlay, setShowOverlay] = useState(false);
+  const [hasExercises, setHasExercises] = useState(false);
+  const [exercisesLoading, setExercisesLoading] = useState(true);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const navigate = useNavigate();
@@ -77,6 +80,26 @@ const TheorySubject = () => {
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [startTime, progress, user._id, filteredTheoryItems]);
+
+  // בדיקה אם יש תרגילים לנושא
+  useEffect(() => {
+    const checkExercises = async () => {
+      if (!subject) return;
+      
+      setExercisesLoading(true);
+      try {
+        const exercises = await fetchExercisesBySubject(subject);
+        setHasExercises(exercises && exercises.length > 0);
+      } catch (error) {
+        console.error('Error checking exercises:', error);
+        setHasExercises(false);
+      } finally {
+        setExercisesLoading(false);
+      }
+    };
+
+    checkExercises();
+  }, [subject]);
 
   const handleExampleAnswer = async (answerIndex) => {
     if (selectedAnswer !== null) return; // כבר ענה
@@ -255,6 +278,13 @@ const TheorySubject = () => {
     return null;
   };
 
+  const getYouTubeEmbedUrl = (url) => {
+    if (!url) return '';
+    const regExp = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:\S+)?/;
+    const match = url.match(regExp);
+    return (match && match[1]) ? `https://www.youtube.com/embed/${match[1]}` : '';
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'לא התחיל': return 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400';
@@ -359,7 +389,7 @@ const TheorySubject = () => {
             {formatContent(theoryItem.content)}
           </div>
 
-          {theoryItem.youtubeLink && (
+          {theoryItem.youtubeLink && theoryItem.youtubeLink.trim() !== '' && (
             <div className="mt-8">
               <h3 className="text-2xl font-semibold text-blue-900 dark:text-white mb-4">
                 סרטון הסבר
@@ -368,21 +398,13 @@ const TheorySubject = () => {
                 <iframe
                   width="100%"
                   height="100%"
-                  src={theoryItem.youtubeLink}
+                  src={getYouTubeEmbedUrl(theoryItem.youtubeLink)}
                   title="YouTube video player"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                 ></iframe>
               </div>
-            </div>
-          )}
-
-          {!theoryItem.youtubeLink && (
-            <div className="mt-8 p-4 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
-              <p className="text-yellow-800 dark:text-yellow-200">
-                אין סרטון זמין עבור נושא זה. youtubeLink: '{theoryItem.youtubeLink}'
-              </p>
             </div>
           )}
 
@@ -416,7 +438,7 @@ const TheorySubject = () => {
         )}
 
         {/* דוגמאות אינטראקטיביות */}
-        {examples.length > 0 && (
+        {examples && examples.length > 0 ? (
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-8">
             <h3 className="text-2xl font-semibold text-blue-900 dark:text-white mb-4">
               תרגול אינטראקטיבי ({currentExampleIndex + 1} מתוך {examples.length})
@@ -521,23 +543,54 @@ const TheorySubject = () => {
               </div>
             )}
           </div>
+        ) : (
+          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl shadow-xl p-6 mb-8 text-center">
+            <h3 className="text-xl font-semibold text-blue-900 dark:text-blue-300 mb-2">
+              אין דוגמאות אינטראקטיביות זמינות
+            </h3>
+            <p className="text-blue-800 dark:text-blue-200">
+              עבור לסעיף התרגול כדי לתרגל את החומר שלמדת
+            </p>
+          </div>
         )}
 
         {/* קישור לתרגול */}
-        <div className="bg-gradient-to-r from-green-400 to-blue-400 dark:from-green-600 dark:to-blue-600 rounded-2xl shadow-xl p-6 text-center">
-          <h3 className="text-2xl font-bold text-white mb-4 drop-shadow">
-            מוכן לתרגול?
-          </h3>
-          <p className="text-white/90 mb-6 text-lg">
-            עכשיו תוכל לתרגל את החומר שלמדת עם שאלות מותאמות אישית
-          </p>
-          <Link
-            to={`/practice/${encodeURIComponent(theoryItem.title)}`}
-            className="inline-block px-8 py-3 bg-white text-blue-600 font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-          >
-            התחל לתרגל עכשיו →
-          </Link>
-        </div>
+        {!exercisesLoading && (
+          hasExercises ? (
+            <div className="bg-gradient-to-r from-green-400 to-blue-400 dark:from-green-600 dark:to-blue-600 rounded-2xl shadow-xl p-6 text-center">
+              <h3 className="text-2xl font-bold text-white mb-4 drop-shadow">
+                מוכן לתרגול?
+              </h3>
+              <p className="text-white/90 mb-6 text-lg">
+                עכשיו תוכל לתרגל את החומר שלמדת עם שאלות מותאמות אישית
+              </p>
+              <Link
+                to={`/practice/${encodeURIComponent(theoryItem.title)}`}
+                className="inline-block px-8 py-3 bg-white text-blue-600 font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                התחל לתרגל עכשיו →
+              </Link>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-r from-yellow-400 to-orange-400 dark:from-yellow-600 dark:to-orange-600 rounded-2xl shadow-xl p-6 text-center">
+              <h3 className="text-2xl font-bold text-white mb-4 drop-shadow">
+                אין עדיין תרגילים זמינים
+              </h3>
+              <p className="text-white/90 mb-6 text-lg">
+                בנושא <span className="font-semibold">{theoryItem.title}</span> עדיין לא נוספו תרגילים למערכת
+              </p>
+              <p className="text-white/80 mb-6 text-base">
+                המורה יוסיף תרגילים בקרוב. בינתיים תוכל לתרגל נושאים אחרים!
+              </p>
+              <Link
+                to="/practice"
+                className="inline-block px-8 py-3 bg-white text-orange-600 font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                עבור לנושאים אחרים →
+              </Link>
+            </div>
+          )
+        )}
       </div>
     </div>
   );

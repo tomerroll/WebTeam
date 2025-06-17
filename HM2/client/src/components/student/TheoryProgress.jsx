@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { theoryProgressService } from '../../services/theoryProgressService';
 import { fetchTheoryContent } from '../../services/theoryService';
@@ -11,61 +11,56 @@ const TheoryProgress = () => {
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-  useEffect(() => {
-    const loadProgress = async () => {
-      if (!user._id) {
-        console.warn('User ID not found in localStorage, cannot load theory progress.');
-        setLoading(false);
-        return;
-      }
-      console.log('User ID from localStorage:', user._id);
+  const loadProgressData = useCallback(async () => {
+    if (!user._id) {
+      console.warn('User ID not found in localStorage, cannot load theory progress.');
+      setLoading(false);
+      return;
+    }
+    console.log('User ID from localStorage:', user._id);
+    
+    try {
+      // טעינת כל תכני התיאוריה
+      const theoriesData = await fetchTheoryContent();
+      setAllTheories(theoriesData);
       
+      // טעינת התקדמות התלמיד
+      const progressData = await theoryProgressService.getAllTheoryProgress(user._id);
+      setProgress(progressData);
+      
+      // חישוב סטטיסטיקות
+      const completedCount = progressData.filter(p => p.status === 'הושלם').length;
+      const totalCount = theoriesData.length;
+      const completionRate = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+      
+      setStats({
+        totalTheories: totalCount,
+        completedTheories: completedCount,
+        completionRate,
+      });
+      
+    } catch (error) {
+      console.error('Error loading theory progress:', error);
+      // אם יש שגיאה, נציג רק את תכני התיאוריה
       try {
-        // טעינת כל תכני התיאוריה
         const theoriesData = await fetchTheoryContent();
         setAllTheories(theoriesData);
-        
-        // טעינת התקדמות התלמיד
-        const progressData = await theoryProgressService.getAllTheoryProgress(user._id);
-        setProgress(progressData);
-        
-        // חישוב סטטיסטיקות
-        const completedCount = progressData.filter(p => p.status === 'הושלם').length;
-        const totalCount = theoriesData.length;
-        const completionRate = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
-        const averageRating = progressData.length > 0 
-          ? progressData.reduce((sum, p) => sum + (p.rating || 0), 0) / progressData.length 
-          : 0;
-        
         setStats({
-          totalTheories: totalCount,
-          completedTheories: completedCount,
-          completionRate,
-          averageRating
+          totalTheories: theoriesData.length,
+          completedTheories: 0,
+          completionRate: 0,
         });
-        
-      } catch (error) {
-        console.error('Error loading theory progress:', error);
-        // אם יש שגיאה, נציג רק את תכני התיאוריה
-        try {
-          const theoriesData = await fetchTheoryContent();
-          setAllTheories(theoriesData);
-          setStats({
-            totalTheories: theoriesData.length,
-            completedTheories: 0,
-            completionRate: 0,
-            averageRating: 0
-          });
-        } catch (theoryError) {
-          console.error('Error loading theories:', theoryError);
-        }
-      } finally {
-        setLoading(false);
+      } catch (theoryError) {
+        console.error('Error loading theories:', theoryError);
       }
-    };
-
-    loadProgress();
+    } finally {
+      setLoading(false);
+    }
   }, [user._id]);
+
+  useEffect(() => {
+    loadProgressData();
+  }, [loadProgressData]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -128,12 +123,12 @@ const TheoryProgress = () => {
             <h3 className="text-2xl font-semibold text-gray-800 dark:text-white mb-6">
               סטטיסטיקות כלליות
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-                  {stats.totalTheories}
+                <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">
+                  {Math.round(stats.completionRate)}%
                 </div>
-                <div className="text-gray-600 dark:text-gray-400">סה"כ נושאים</div>
+                <div className="text-gray-600 dark:text-gray-400">אחוז השלמה</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
@@ -142,16 +137,10 @@ const TheoryProgress = () => {
                 <div className="text-gray-600 dark:text-gray-400">הושלמו</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">
-                  {Math.round(stats.completionRate)}%
+                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                  {stats.totalTheories}
                 </div>
-                <div className="text-gray-600 dark:text-gray-400">אחוז השלמה</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
-                  {stats.averageRating.toFixed(1)}
-                </div>
-                <div className="text-gray-600 dark:text-gray-400">דירוג ממוצע</div>
+                <div className="text-gray-600 dark:text-gray-400">סה"כ נושאים</div>
               </div>
             </div>
           </div>

@@ -24,7 +24,7 @@ exports.getAllTheories = async (req, res) => {
  * @access Private (לדוגמה, רק למורים)
  */
 exports.createTheory = async (req, res) => {
-  const { title, description, content } = req.body;
+  const { title, description, content, difficulty, estimatedTime, youtubeLink, tags, prerequisites, interactiveExamples, visualExamples } = req.body;
 
   // ולידציה בסיסית של קלט
   if (!title || !description || !content) {
@@ -32,7 +32,18 @@ exports.createTheory = async (req, res) => {
   }
 
   try {
-    const newTheory = new Theory({ title, description, content });
+    const newTheory = new Theory({ 
+      title, 
+      description, 
+      content, 
+      difficulty, 
+      estimatedTime, 
+      youtubeLink, 
+      tags, 
+      prerequisites, 
+      interactiveExamples, 
+      visualExamples 
+    });
     const savedTheory = await newTheory.save();
     res.status(201).json(savedTheory); // החזרת התיאוריה שנוצרה עם סטטוס 201 (Created)
   } catch (err) {
@@ -48,7 +59,7 @@ exports.createTheory = async (req, res) => {
  */
 exports.updateTheory = async (req, res) => {
   const { id } = req.params; // קבלת ה-ID מפרמטרי ה-URL
-  const { title, description, content } = req.body; // קבלת הנתונים המעודכנים מגוף הבקשה
+  const { title, description, content, difficulty, estimatedTime, youtubeLink, tags, prerequisites, interactiveExamples, visualExamples } = req.body; // קבלת הנתונים המעודכנים מגוף הבקשה
 
   // ודא שה-ID חוקי של מונגו DB
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -58,15 +69,15 @@ exports.updateTheory = async (req, res) => {
   // ודא שכל השדות הנדרשים לעדכון קיימים (במידה ואתה דורש את כולם)
   // הערה: ניתן להחליט אילו שדות חייבים להיות קיימים בעדכון.
   // אם שדה מסוים לא נשלח, הוא לא יעודכן.
-  if (!title && !description && !content) { // אם אף אחד מהשדות לא נשלח
-    return res.status(400).json({ error: 'יש לספק לפחות שדה אחד לעדכון (כותרת, תיאור, או תוכן).' });
+  if (!title && !description && !content && !difficulty && !estimatedTime && !youtubeLink && !tags && !prerequisites && !interactiveExamples && !visualExamples) { // אם אף אחד מהשדות לא נשלח
+    return res.status(400).json({ error: 'יש לספק לפחות שדה אחד לעדכון.' });
   }
 
   try {
     // מצא ועדכן את התיאוריה
     const updatedTheory = await Theory.findByIdAndUpdate(
       id,
-      { title, description, content }, // הנתונים לעדכון
+      { title, description, content, difficulty, estimatedTime, youtubeLink, tags, prerequisites, interactiveExamples, visualExamples }, // הנתונים לעדכון
       { new: true, runValidators: true } // { new: true } מחזיר את המסמך המעודכן אחרי השינוי
                                          // { runValidators: true } מפעיל ולידציה של הסכימה בעת העדכון
     );
