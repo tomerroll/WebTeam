@@ -22,6 +22,7 @@ const helpRoutes = require('./routes/help');
 const progressRoutes = require('./routes/progress');
 const reportsRoutes = require('./routes/reports');  
 const geminiRoutes = require('./routes/gemini');
+const reportRoutes = require('./routes/reports');
 
 // Connect routes to server
 app.use('/api/auth', authRoutes);
@@ -33,6 +34,7 @@ app.use('/api/help', helpRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api', reportsRoutes);  
 app.use('/api/gemini-chat', geminiRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Connect to MongoDB database
 mongoose.connect(process.env.MONGO_URI, {
