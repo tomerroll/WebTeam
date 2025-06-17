@@ -9,8 +9,7 @@ export const addTheory = async (theoryData) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      // Add authorization header if your API requires it (e.g., Bearer token)
-      // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+
     },
     body: JSON.stringify(theoryData),
   });

@@ -7,6 +7,7 @@ import TeacherDashboard from './components/teacher/TeacherDashboard';
 import Practice from './components/student/Practice';
 import PracticeSubject from './components/student/PracticeSubject';
 import Theory from './components/student/Theory';
+import TheoryProgress from './components/student/TheoryProgress';
 import Help from './components/student/Help';
 import ManageStudents from './components/teacher/ManageStudents';
 import ManageExercises from './components/teacher/ManageExercises';
@@ -43,6 +44,9 @@ function App() {
             <PrivateRoute><Theory /></PrivateRoute>
           } />
           <Route path="/theory/:subject" element={<PrivateRoute><TheorySubject /></PrivateRoute>} />
+          <Route path="/theory-progress" element={
+            <PrivateRoute><TheoryProgress /></PrivateRoute>
+          } />
           <Route path="/help" element={
             <PrivateRoute><Help /></PrivateRoute>
           } />
