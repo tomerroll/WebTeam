@@ -1,7 +1,16 @@
+/**
+ * Progress Controller
+ * Handles student progress tracking and management for exercises and subjects
+ */
+
 const StudentProgress = require('../models/StudentProgress');
 const Exercise = require('../models/Exercise');
 
-// קבלת רשימת נושאים עם סטטוס completed
+/**
+ * Get list of subjects with completion status for a student
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.getSubjectsStatus = async (req, res) => {
   try {
     const { studentId } = req.params;
@@ -18,7 +27,11 @@ exports.getSubjectsStatus = async (req, res) => {
   }
 };
 
-// קבלת התקדמות של תלמיד בנושא
+/**
+ * Get student progress for a specific subject
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.getProgressForSubject = async (req, res) => {
   try {
     const { studentId, subject } = req.params;
@@ -29,7 +42,11 @@ exports.getProgressForSubject = async (req, res) => {
   }
 };
 
-// שמירה/עדכון התקדמות
+/**
+ * Save or update student progress for a subject
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.saveOrUpdateProgress = async (req, res) => {
   try {
     const { student, subject, currentIndex, answers } = req.body;

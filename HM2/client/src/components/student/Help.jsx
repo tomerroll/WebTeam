@@ -2,6 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { sendHelpRequest, fetchHelpMessages } from '../../services/helpService';
 
+/**
+ * Help Component
+ * 
+ * A help request system that allows students to send questions to teachers and view
+ * responses. Students can submit help requests with subjects and detailed messages,
+ * and view all their previous requests along with teacher responses. The component
+ * includes form validation, real-time updates, and a clean interface for managing
+ * help communications.
+ * 
+ * @returns {JSX.Element} - Help request form and message history
+ */
 const Help = () => {
   const navigate = useNavigate();
   const [message, setMessage] = useState('');
@@ -12,6 +23,10 @@ const Help = () => {
   const studentEmail = user?.email || null;
   const studentName = user?.name || 'משתמש לא מזוהה';
 
+  /**
+   * Handles submission of a new help request
+   * @param {Event} e - Form submission event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!studentEmail) {
@@ -31,6 +46,9 @@ const Help = () => {
     }
   };
 
+  /**
+   * Loads all help messages for the current student
+   */
   const loadHelpMessages = async () => {
     try {
       const data = await fetchHelpMessages();
@@ -40,6 +58,7 @@ const Help = () => {
     }
   };
 
+  // Load help messages on component mount
   useEffect(() => {
     loadHelpMessages();
   }, []);

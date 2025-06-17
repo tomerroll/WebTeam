@@ -1,5 +1,15 @@
+/**
+ * Theory Progress Service
+ * Handles API calls for tracking student progress in theoretical content
+ */
+
 export const theoryProgressService = {
-  // קבלת התקדמות תיאוריה לתלמיד
+  /**
+   * Get theory progress for a student
+   * @param {string} studentId - Student ID
+   * @param {string} theoryId - Theory ID
+   * @returns {Promise<Object>} Theory progress data
+   */
   async getTheoryProgress(studentId, theoryId) {
     try {
       const response = await fetch(`/api/theory-progress/${studentId}/${theoryId}`, {
@@ -21,7 +31,13 @@ export const theoryProgressService = {
     }
   },
 
-  // עדכון סטטוס התקדמות
+  /**
+   * Update theory progress status
+   * @param {string} studentId - Student ID
+   * @param {string} theoryId - Theory ID
+   * @param {string} status - New status
+   * @returns {Promise<Object>} Updated progress data
+   */
   async updateTheoryStatus(studentId, theoryId, status) {
     try {
       const response = await fetch(`/api/theory-progress/status`, {
@@ -48,7 +64,13 @@ export const theoryProgressService = {
     }
   },
 
-  // עדכון התקדמות קריאה
+  /**
+   * Update reading progress
+   * @param {string} studentId - Student ID
+   * @param {string} theoryId - Theory ID
+   * @param {Object} readingData - Reading progress data
+   * @returns {Promise<Object>} Updated progress data
+   */
   async updateReadingProgress(studentId, theoryId, readingData) {
     try {
       const response = await fetch(`/api/theory-progress/reading`, {
@@ -75,7 +97,13 @@ export const theoryProgressService = {
     }
   },
 
-  // עדכון התקדמות דוגמאות אינטראקטיביות
+  /**
+   * Update interactive examples progress
+   * @param {string} studentId - Student ID
+   * @param {string} theoryId - Theory ID
+   * @param {Object} exampleData - Example progress data
+   * @returns {Promise<Object>} Updated progress data
+   */
   async updateInteractiveProgress(studentId, theoryId, exampleData) {
     try {
       const response = await fetch(`/api/theory-progress/interactive`, {
@@ -102,7 +130,11 @@ export const theoryProgressService = {
     }
   },
 
-  // קבלת כל ההתקדמות של תלמיד
+  /**
+   * Get all theory progress for a student
+   * @param {string} studentId - Student ID
+   * @returns {Promise<Array>} Array of theory progress data
+   */
   async getAllTheoryProgress(studentId) {
     try {
       const response = await fetch(`/api/theory-progress/student/${studentId}`, {
@@ -124,7 +156,11 @@ export const theoryProgressService = {
     }
   },
 
-  // קבלת סטטיסטיקות התקדמות
+  /**
+   * Get theory progress statistics
+   * @param {string} studentId - Student ID
+   * @returns {Promise<Object>} Progress statistics
+   */
   async getTheoryStats(studentId) {
     try {
       const response = await fetch(`/api/theory-progress/stats/${studentId}`, {
@@ -146,7 +182,14 @@ export const theoryProgressService = {
     }
   },
 
-  // הוספת הערות ודירוג
+  /**
+   * Add notes and rating for a theory
+   * @param {string} studentId - Student ID
+   * @param {string} theoryId - Theory ID
+   * @param {string} notes - Student notes
+   * @param {number} rating - Student rating (1-5)
+   * @returns {Promise<Object>} Updated progress data
+   */
   async addNotesAndRating(studentId, theoryId, notes, rating) {
     try {
       const response = await fetch(`/api/theory-progress/feedback`, {
@@ -174,7 +217,12 @@ export const theoryProgressService = {
     }
   },
 
-  // סימון תיאוריה כהושלמה
+  /**
+   * Mark theory as completed
+   * @param {string} studentId - Student ID
+   * @param {string} theoryId - Theory ID
+   * @returns {Promise<Object>} Updated progress data
+   */
   async completeTheory(studentId, theoryId) {
     try {
       const response = await fetch(`/api/theory-progress/complete`, {
@@ -200,7 +248,12 @@ export const theoryProgressService = {
     }
   },
 
-  // איפוס התקדמות תיאוריה
+  /**
+   * Reset theory progress
+   * @param {string} studentId - Student ID
+   * @param {string} theoryId - Theory ID
+   * @returns {Promise<Object>} Reset progress data
+   */
   async resetTheoryProgress(studentId, theoryId) {
     try {
       const response = await fetch(`/api/theory-progress/reset`, {

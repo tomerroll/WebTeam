@@ -1,8 +1,19 @@
+/**
+ * Exercise Controller
+ * Handles CRUD operations for math exercises and manages exercise-related functionality
+ */
+
 const Exercise = require('../models/Exercise');
 const StudentProgress = require('../models/StudentProgress');
 
-const difficultyOrder = { 'קל': 1, 'בינוני': 2, 'קשה': 3 };
+// Difficulty level mapping for sorting
+const difficultyOrder = { 'Easy': 1, 'Medium': 2, 'Hard': 3 };
 
+/**
+ * Get all exercises, optionally filtered by grade
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.getAllExercises = async (req, res) => {
   try {
     const { grade } = req.query;
@@ -15,6 +26,11 @@ exports.getAllExercises = async (req, res) => {
   }
 };
 
+/**
+ * Get exercises by specific subject
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.getExercisesBySubject = async (req, res) => {
   try {
     const subject = req.params.subject;
@@ -26,6 +42,11 @@ exports.getExercisesBySubject = async (req, res) => {
   }
 };
 
+/**
+ * Add a new exercise
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.addExercise = async (req, res) => {
   const {
     title, description, options, correctOption,
@@ -59,6 +80,7 @@ exports.addExercise = async (req, res) => {
 
     await exercise.save();
 
+    // Reset progress for all students when new exercise is added
     await StudentProgress.updateMany(
       { subject, completed: true },
       { $set: { completed: false } }
@@ -70,6 +92,11 @@ exports.addExercise = async (req, res) => {
   }
 };
 
+/**
+ * Update an existing exercise
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.updateExercise = async (req, res) => {
   try {
     const exercise = await Exercise.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -80,6 +107,11 @@ exports.updateExercise = async (req, res) => {
   }
 };
 
+/**
+ * Delete an exercise
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.deleteExercise = async (req, res) => {
   try {
     const result = await Exercise.findByIdAndDelete(req.params.id);

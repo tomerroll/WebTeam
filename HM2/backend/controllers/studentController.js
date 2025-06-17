@@ -1,13 +1,26 @@
+/**
+ * Student Controller
+ * Handles CRUD operations for students and manages student-related functionality
+ */
+
 const Student = require('../models/Student');
 const bcrypt = require('bcryptjs');
 
-// שליפת כל התלמידים
+/**
+ * Get all students
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.getAllStudents = async (req, res) => {
   const students = await Student.find();
   res.json(students);
 };
 
-// שליפת תלמיד לפי ID
+/**
+ * Get student by ID
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.getStudentById = async (req, res) => {
   try {
     const student = await Student.findById(req.params.id);
@@ -18,7 +31,11 @@ exports.getStudentById = async (req, res) => {
   }
 };
 
-// יצירת תלמיד חדש
+/**
+ * Create a new student
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.createStudent = async (req, res) => {
   try {
     const { name, grade, class: className, email, password } = req.body;
@@ -31,7 +48,11 @@ exports.createStudent = async (req, res) => {
   }
 };
 
-// עדכון תלמיד קיים
+/**
+ * Update existing student
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.updateStudent = async (req, res) => {
   try {
     const student = await Student.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -41,7 +62,11 @@ exports.updateStudent = async (req, res) => {
   }
 };
 
-// מחיקת תלמיד
+/**
+ * Delete student
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.deleteStudent = async (req, res) => {
   try {
     await Student.findByIdAndDelete(req.params.id);
@@ -51,7 +76,11 @@ exports.deleteStudent = async (req, res) => {
   }
 };
 
-// הוספת או עדכון ניקוד
+/**
+ * Add or update points for a student
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.addPoints = async (req, res) => {
   const { studentId, points } = req.body;
   if (!studentId || typeof points !== 'number') {
@@ -69,7 +98,11 @@ exports.addPoints = async (req, res) => {
   }
 };
 
-// הוספת כתר
+/**
+ * Add crown to student
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.addCrown = async (req, res) => {
   const { studentId } = req.body;
   if (!studentId) return res.status(400).json({ error: 'Missing studentId' });
@@ -85,7 +118,11 @@ exports.addCrown = async (req, res) => {
   }
 };
 
-// סימון תרגיל כפתור
+/**
+ * Mark exercise as solved for a student
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.markExerciseSolved = async (req, res) => {
   const { studentId, exerciseId } = req.body;
   try {
@@ -99,11 +136,15 @@ exports.markExerciseSolved = async (req, res) => {
   }
 };
 
-// שליפת התלמיד המחובר
+/**
+ * Get current logged-in student
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.getCurrentStudent = async (req, res) => {
   try {
-    // בהנחה ש-req.user קיים וכולל את ה-ID של המשתמש לאחר אימות
-    const student = await Student.findById(req.user.id).select('-password'); // נמנע משליפת הסיסמה
+    // Assuming req.user exists and contains the user ID after authentication
+    const student = await Student.findById(req.user.id).select('-password'); // Avoid returning password
     if (!student) {
       return res.status(404).json({ msg: 'Student not found' });
     }

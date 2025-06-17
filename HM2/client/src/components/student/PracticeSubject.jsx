@@ -11,6 +11,19 @@ import {
   addCrown
 } from '../../services/studentService';
 
+/**
+ * PracticeSubject Component
+ * 
+ * An interactive exercise interface that allows students to practice specific subjects.
+ * Features include question navigation, answer tracking, progress persistence,
+ * points and crowns reward system, and completion status. The component handles
+ * both new exercises and retry of incorrect answers, with adaptive difficulty
+ * and real-time progress updates.
+ * 
+ * @returns {JSX.Element} - Interactive exercise practice interface
+ */
+
+// Reward emojis
 const coin = "🪙";
 const crown = "👑";
 
@@ -31,6 +44,7 @@ const PracticeSubject = () => {
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
+  // Load exercises, progress, and student data
   useEffect(() => {
     if (!user._id) {
       console.warn("No user found");
@@ -46,11 +60,13 @@ const PracticeSubject = () => {
       fetchStudentById(user._id)
     ])
       .then(([exerciseData, progressData, studentData]) => {
+        // Process previous answers and filter exercises
         const answersFromProgress = progressData?.answers || [];
         const answeredIds = new Set(answersFromProgress.map(a => a.questionId?.toString()));
         const incorrectAnswers = answersFromProgress.filter(a => !a.isCorrect);
         const incorrectIds = new Set(incorrectAnswers.map(a => a.questionId?.toString()));
 
+        // Show incorrect answers first, then uncompleted exercises
         let newExercises = exerciseData.filter(
           ex => incorrectIds.has(ex._id.toString()) || !answeredIds.has(ex._id.toString())
         );
@@ -73,6 +89,10 @@ const PracticeSubject = () => {
       .finally(() => setLoading(false));
   }, [subject, user._id]);
 
+  /**
+   * Handles answer selection and updates progress
+   * @param {number} idx - Index of selected answer
+   */
   const handleSelect = async idx => {
     if (selected !== null) return;
     setSelected(idx);
@@ -87,6 +107,7 @@ const PracticeSubject = () => {
 
     try {
       if (correct) {
+        // Award full points for first attempt, half points for retry
         const pointsToAdd = alreadyAnsweredBefore ? Math.floor(questionPoints / 2) : questionPoints;
         const response = await addPoints(user._id, pointsToAdd);
         setPoints(response.points);
@@ -96,12 +117,14 @@ const PracticeSubject = () => {
         setEarnedPoints(0);
       }
 
+      // Update answers array
       const updatedAnswers = [
         ...answers.filter(a => a.questionId !== questionId),
         { questionIndex: current, questionId, selectedAnswer, isCorrect: correct }
       ];
       setAnswers(updatedAnswers);
 
+      // Save progress to backend
       await updateProgress({
         student: user._id,
         subject,
@@ -114,12 +137,16 @@ const PracticeSubject = () => {
     }
   };
 
+  /**
+   * Handles navigation to next question or completion
+   */
   const handleNext = async () => {
     const nextIndex = current + 1;
     const isFinished = nextIndex >= exercises.length;
 
     setCurrent(nextIndex);
 
+    // Restore previous answer state if exists
     const nextAnswer = answers.find(a => a.questionIndex === nextIndex);
     if (nextAnswer) {
       const selectedIdx = exercises[nextIndex]?.options.indexOf(nextAnswer.selectedAnswer);
@@ -135,6 +162,7 @@ const PracticeSubject = () => {
     if (isFinished) {
       const correctCount = answers.filter(a => a.isCorrect).length;
       if (correctCount === exercises.length) {
+        // Award crown for perfect completion
         try {
           const response = await addCrown(user._id);
           setCrowns(response.crowns);
@@ -148,6 +176,9 @@ const PracticeSubject = () => {
     }
   };
 
+  /**
+   * Handles navigation to previous question
+   */
   const handlePrevious = () => {
     if (current > 0) {
       setCurrent(current - 1);

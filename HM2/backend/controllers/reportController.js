@@ -1,15 +1,25 @@
+/**
+ * Report Controller
+ * Handles generation and retrieval of student progress reports
+ */
+
 const StudentProgress = require('../models/StudentProgress');
 const Student = require('../models/Student');
 
+/**
+ * Get all student progress reports
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.getAllReports = async (req, res) => {
   try {
     const reports = await StudentProgress.find()
-      .populate('student', 'name') // מציג רק את שם התלמיד
+      .populate('student', 'name') // Show only student name
       .lean();
 
     const formatted = reports.map(r => ({
-      _id: r._id,  // הוסף את ה-id כדי להשתמש כמפתח ב-React
-      studentName: r.student?.name || 'לא ידוע',
+      _id: r._id,  // Add id to use as key in React
+      studentName: r.student?.name || 'Unknown',
       subject: r.subject,
       completed: r.completed,
       currentIndex: r.currentIndex,

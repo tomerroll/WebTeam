@@ -1,3 +1,8 @@
+/**
+ * Student Progress Model
+ * Defines the schema for tracking student progress in exercises and subjects
+ */
+
 const mongoose = require('mongoose');
 
 const studentProgressSchema = new mongoose.Schema({

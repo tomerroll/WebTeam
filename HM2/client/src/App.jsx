@@ -1,3 +1,8 @@
+/**
+ * Main App Component
+ * Defines the routing structure and main layout of the Math Learning Platform
+ */
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -24,10 +29,10 @@ function App() {
     <ThemeProvider>
       <Router>
         <Routes>
-          {/* דף ההתחברות פתוח */}
+          {/* Login page is open */}
           <Route path="/login" element={<Login />} />
 
-          {/* כל שאר הדפים מוגנים */}
+          {/* All other pages are protected */}
           <Route path="/student-dashboard" element={
             <PrivateRoute><StudentDashboard /></PrivateRoute>
           } />
@@ -72,7 +77,7 @@ function App() {
             <PrivateRoute><Leaderboard /></PrivateRoute>
           } />
 
-          {/* ברירת מחדל מפנה להתחברות */}
+          {/* Default redirects to login */}
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>

@@ -25,7 +25,17 @@ const TheoryProgress = () => {
       setAllTheories(theoriesData);
       
       // טעינת התקדמות התלמיד
-      const progressData = await theoryProgressService.getAllTheoryProgress(user._id);
+      let progressData = await theoryProgressService.getAllTheoryProgress(user._id);
+
+      // Normalize status: change 'Completed' to 'הושלם'
+      progressData = progressData.map(p => {
+        const normalizedStatus = p.status === 'Completed' ? 'הושלם' : p.status;
+        console.log(`Theory ID: ${p.theory?._id}, Original Status: ${p.status}, Normalized Status: ${normalizedStatus}`);
+        return {
+          ...p,
+          status: normalizedStatus
+        };
+      });
       setProgress(progressData);
       
       // חישוב סטטיסטיקות
@@ -161,13 +171,17 @@ const TheoryProgress = () => {
             <div className="space-y-4">
               {allTheories.map((theory) => {
                 const theoryProgress = getTheoryProgress(theory._id);
-                const status = theoryProgress?.status || 'לא התחיל';
+                let status = theoryProgress?.status || 'לא התחיל';
+
+                console.log(`Rendering Theory: ${theory.title}, Status: ${status}`);
                 
                 return (
                   <div
                     key={theory._id}
-                    className={`border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow relative ${
-                      status === 'הושלם' ? 'ring-2 ring-green-500 dark:ring-green-400 bg-green-50 dark:bg-green-900/10' : ''
+                    className={`border rounded-lg p-4 hover:shadow-md transition-shadow relative ${
+                      status === 'הושלם' 
+                        ? 'ring-2 ring-green-500 dark:ring-green-400 bg-green-100 dark:bg-green-900/20 border-green-300 dark:border-green-600' 
+                        : 'border-gray-200 dark:border-gray-700'
                     }`}
                   >
                     {/* סמל השלמה */}
@@ -176,7 +190,11 @@ const TheoryProgress = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h4 className="text-lg font-semibold text-gray-800 dark:text-white">
+                          <h4 className={`text-lg font-semibold ${
+                            status === 'הושלם' 
+                              ? 'text-green-800 dark:text-green-200' 
+                              : 'text-gray-800 dark:text-white'
+                          }`}>
                             {theory.title}
                           </h4>
                           <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(status)}`}>
@@ -184,7 +202,11 @@ const TheoryProgress = () => {
                           </span>
                         </div>
                         
-                        <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                        <div className={`flex items-center gap-4 text-sm ${
+                          status === 'הושלם' 
+                            ? 'text-green-700 dark:text-green-300' 
+                            : 'text-gray-600 dark:text-gray-400'
+                        }`}>
                           <span>📚 {theory.difficulty}</span>
                           <span>⏱️ {theory.estimatedTime} דקות</span>
                           {theoryProgress?.readingProgress?.timeSpent > 0 && (
@@ -217,8 +239,16 @@ const TheoryProgress = () => {
                     </div>
                     
                     {theoryProgress?.notes && (
-                      <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                      <div className={`mt-3 p-3 rounded-lg ${
+                        status === 'הושלם' 
+                          ? 'bg-green-50 dark:bg-green-900/30' 
+                          : 'bg-gray-50 dark:bg-gray-700'
+                      }`}>
+                        <p className={`text-sm ${
+                          status === 'הושלם' 
+                            ? 'text-green-800 dark:text-green-200' 
+                            : 'text-gray-700 dark:text-gray-300'
+                        }`}>
                           <strong>הערות:</strong> {theoryProgress.notes}
                         </p>
                       </div>

@@ -1,4 +1,7 @@
-// File: backend/routes/gemini.js
+/**
+ * Gemini Routes
+ * Defines API endpoints for AI chat functionality using Google's Gemini API
+ */
 
 const express = require('express');
 const router = express.Router();

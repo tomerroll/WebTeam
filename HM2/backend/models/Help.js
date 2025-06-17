@@ -1,3 +1,8 @@
+/**
+ * Help Model
+ * Defines the schema for help requests from students and teacher responses
+ */
+
 const mongoose = require('mongoose');
 
 const helpSchema = new mongoose.Schema({

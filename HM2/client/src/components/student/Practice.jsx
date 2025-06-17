@@ -6,6 +6,18 @@ import {
 } from '../../services/exerciseService';
 import { fetchStudentById } from '../../services/studentService';
 
+/**
+ * Practice Component
+ * 
+ * A subject selection interface for students to choose which topics they want to practice.
+ * Displays available subjects based on the student's grade level, shows completion status
+ * for each subject, and tracks student progress with points and crowns. Completed subjects
+ * are visually marked and disabled from further practice.
+ * 
+ * @returns {JSX.Element} - Subject selection grid with completion status
+ */
+
+// Star emoji for completed subjects
 const star = "⭐";
 
 const Practice = () => {
@@ -17,17 +29,20 @@ const Practice = () => {
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
+  // Load subjects, student data, and completion status
   useEffect(() => {
     if (!user || !user._id) return;
 
     const loadData = async () => {
       try {
+        // Fetch exercises, student data, and completion status in parallel
         const [exerciseData, studentData, completionData] = await Promise.all([
           fetchExercisesByGrade(user.grade),
           fetchStudentById(user._id),
           fetchCompletedSubjects(user._id)
         ]);
 
+        // Extract unique subjects from exercises
         const uniqueSubjects = [...new Set(exerciseData.map(ex => ex.subject))];
         setSubjects(uniqueSubjects);
         setPoints(studentData.points || 0);

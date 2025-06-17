@@ -1,8 +1,18 @@
+/**
+ * Authentication Controller
+ * Handles user registration, login, and profile updates for students and teachers
+ */
+
 const Student = require('../models/Student');
 const Teacher = require('../models/Teacher');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+/**
+ * Register a new user (student or teacher)
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.register = async (req, res) => {
   const { name, email, password, userType, grade, class: className, teacherKey } = req.body;
 
@@ -11,13 +21,13 @@ exports.register = async (req, res) => {
     const existingTeacher = await Teacher.findOne({ email });
 
     if (existingStudent || existingTeacher) {
-      return res.status(400).json({ error: 'לא ניתן להירשם – אימייל זה כבר רשום במערכת.' });
+      return res.status(400).json({ error: 'Cannot register - this email is already registered in the system.' });
     }
 
-    // בדיקת קוד מורה
+    // Validate teacher key
     if (userType === 'teacher') {
       if (!teacherKey || teacherKey !== process.env.TEACHER_SECRET_KEY) {
-        return res.status(400).json({ error: 'קוד מורה שגוי או חסר.' });
+        return res.status(400).json({ error: 'Invalid or missing teacher key.' });
       }
     }
 
@@ -29,17 +39,22 @@ exports.register = async (req, res) => {
     } else if (userType === 'teacher') {
       user = new Teacher({ name, email, password: hashedPassword });
     } else {
-      return res.status(400).json({ error: 'סוג משתמש לא תקין' });
+      return res.status(400).json({ error: 'Invalid user type' });
     }
 
     await user.save();
     res.json({ success: true });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'אירעה שגיאה בעת ההרשמה. נסה שוב מאוחר יותר.' });
+    res.status(500).json({ error: 'An error occurred during registration. Please try again later.' });
   }
 };
 
+/**
+ * Login user (student or teacher)
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -77,6 +92,11 @@ exports.login = async (req, res) => {
   }
 };
 
+/**
+ * Update user profile information
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.updateProfile = async (req, res) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) return res.status(401).json({ error: 'Unauthorized' });

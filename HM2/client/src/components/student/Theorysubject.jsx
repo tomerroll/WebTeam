@@ -4,6 +4,17 @@ import { fetchTheoryContent } from '../../services/theoryService';
 import { theoryProgressService } from '../../services/theoryProgressService';
 import { fetchExercisesBySubject } from '../../services/exerciseService';
 
+/**
+ * TheorySubject Component
+ * 
+ * A comprehensive theory learning interface that displays detailed theoretical content
+ * for a specific subject. Features include interactive examples, visual examples,
+ * progress tracking, reading time monitoring, YouTube video integration, and
+ * adaptive learning flow. The component manages student progress through different
+ * stages: reading, interactive examples, and completion.
+ * 
+ * @returns {JSX.Element} - Interactive theory learning interface with progress tracking
+ */
 const TheorySubject = () => {
   const { subject } = useParams();
   const [loading, setLoading] = useState(true);
@@ -22,6 +33,7 @@ const TheorySubject = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const navigate = useNavigate();
 
+  // Load theory content and initialize progress tracking
   useEffect(() => {
     const loadAndFilterTheory = async () => {
       setLoading(true);
@@ -33,12 +45,12 @@ const TheorySubject = () => {
         setFilteredTheoryItems(items);
         
         if (items.length > 0 && user._id) {
-          // טעינת התקדמות התלמיד
+          // Load student progress
           try {
             const progressData = await theoryProgressService.getTheoryProgress(user._id, items[0]._id);
             setProgress(progressData);
             
-            // עדכון סטטוס ל"בקריאה"
+            // Update status to "reading" if not started
             if (progressData.status === 'לא התחיל') {
               await theoryProgressService.updateTheoryStatus(user._id, items[0]._id, 'בקריאה');
               setProgress(prev => ({ ...prev, status: 'בקריאה' }));
@@ -62,11 +74,11 @@ const TheorySubject = () => {
     }
   }, [subject, user._id]);
 
-  // עדכון זמן קריאה כשהמשתמש עוזב את הדף
+  // Update reading time when user leaves the page
   useEffect(() => {
     const handleBeforeUnload = async () => {
       if (startTime && progress && user._id && filteredTheoryItems.length > 0) {
-        const timeSpent = Math.round((new Date() - startTime) / 1000 / 60); // בדקות
+        const timeSpent = Math.round((new Date() - startTime) / 1000 / 60); // in minutes
         try {
           await theoryProgressService.updateReadingProgress(user._id, filteredTheoryItems[0]._id, {
             timeSpent: (progress.readingProgress?.timeSpent || 0) + timeSpent
@@ -81,7 +93,7 @@ const TheorySubject = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [startTime, progress, user._id, filteredTheoryItems]);
 
-  // בדיקה אם יש תרגילים לנושא
+  // Check if exercises exist for this subject
   useEffect(() => {
     const checkExercises = async () => {
       if (!subject) return;
@@ -101,8 +113,12 @@ const TheorySubject = () => {
     checkExercises();
   }, [subject]);
 
+  /**
+   * Handles interactive example answer selection and progress updates
+   * @param {number} answerIndex - Index of selected answer
+   */
   const handleExampleAnswer = async (answerIndex) => {
-    if (selectedAnswer !== null) return; // כבר ענה
+    if (selectedAnswer !== null) return; // Already answered
     
     setSelectedAnswer(answerIndex);
     setShowExplanation(true);
@@ -116,7 +132,7 @@ const TheorySubject = () => {
       if (isCorrect) {
         setCompletedExamples(prev => [...prev, currentExampleIndex]);
       } else {
-        // אם נכשל בשאלה - אפס את כל ההתקדמות
+        // If failed the question - reset all progress
         try {
           await theoryProgressService.resetTheoryProgress(user._id, currentTheory._id);
           setProgress(prev => ({ 
@@ -137,7 +153,7 @@ const TheorySubject = () => {
           setCompletedExamples([]);
           setCurrentExampleIndex(0);
           
-          // הצג הודעה למשתמש
+          // Show feedback to user
           setFeedbackMessage('❌ טעית בשאלה! ההתקדמות אופסה. התחל מחדש מההתחלה.');
           setShowOverlay(true);
           setTimeout(() => {
@@ -151,17 +167,17 @@ const TheorySubject = () => {
         }
       }
       
-      // עדכון התקדמות דוגמאות רק אם התשובה נכונה
+      // Update example progress only if answer is correct
       if (isCorrect) {
         try {
           await theoryProgressService.updateInteractiveProgress(user._id, currentTheory._id, {
             exampleIndex: currentExampleIndex,
             isCorrect,
-            timeSpent: 1, // דקה אחת
+            timeSpent: 1, // one minute
             attempts: 1
           });
           
-          // עדכון סטטוס ל"בדוגמאות"
+          // Update status to "examples" if currently reading
           if (progress?.status === 'בקריאה') {
             await theoryProgressService.updateTheoryStatus(user._id, currentTheory._id, 'בדוגמאות');
             setProgress(prev => ({ ...prev, status: 'בדוגמאות' }));
@@ -173,6 +189,9 @@ const TheorySubject = () => {
     }
   };
 
+  /**
+   * Handles navigation to next interactive example or completion
+   */
   const handleNextExample = async () => {
     const currentTheory = filteredTheoryItems[0];
     const examples = currentTheory?.interactiveExamples || [];
@@ -190,7 +209,7 @@ const TheorySubject = () => {
     } else {
       console.log('Attempting to complete theory (last example)');
       
-      // בדיקה שכל השאלות האינטראקטיביות הושלמו
+      // Check that all interactive questions are completed
       const allExamplesCompleted = examples.length > 0 && completedExamples.length === examples.length;
       
       if (!allExamplesCompleted) {

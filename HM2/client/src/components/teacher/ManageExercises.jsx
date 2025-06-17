@@ -5,6 +5,16 @@ import AddExercise from './AddExercise';
 import EditExercise from './EditExercise';
 import { fetchAllExercises, deleteExercise } from '../../services/exerciseService';
 
+/**
+ * ManageExercises Component
+ * 
+ * A comprehensive exercise management interface for teachers to view, add, edit, and delete exercises.
+ * Features include filtering by subject, grade, and difficulty level, responsive design with
+ * table view for desktop and card view for mobile, and integration with AddExercise and
+ * EditExercise components for CRUD operations.
+ * 
+ * @returns {JSX.Element} - Exercise management interface with filtering and CRUD operations
+ */
 const ManageExercises = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -17,6 +27,7 @@ const ManageExercises = () => {
   const [filterGrade, setFilterGrade] = useState('');
   const [filterDifficulty, setFilterDifficulty] = useState('');
 
+  // Load user data from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -24,6 +35,7 @@ const ManageExercises = () => {
     }
   }, []);
 
+  // Load all exercises data
   useEffect(() => {
     const fetchExercises = async () => {
       setLoading(true);
@@ -40,6 +52,10 @@ const ManageExercises = () => {
     fetchExercises();
   }, []);
 
+  /**
+   * Handles deleting an exercise from the system
+   * @param {string} id - Exercise ID to delete
+   */
   const handleDeleteExercise = async (id) => {
     if (!window.confirm('האם אתה בטוח שברצונך למחוק תרגיל זה?')) return;
     setLoading(true);
@@ -52,12 +68,14 @@ const ManageExercises = () => {
     setLoading(false);
   };
 
+  // Filter exercises based on selected criteria
   const filteredExercises = exercises.filter(exercise => (
     (filterSubject === '' || exercise.subject === filterSubject) &&
     (filterGrade === '' || exercise.grade === filterGrade) &&
     (filterDifficulty === '' || exercise.difficulty === filterDifficulty)
   ));
 
+  // Extract unique values for filter dropdowns
   const uniqueSubjects = [...new Set(exercises.map(ex => ex.subject))].sort();
   const uniqueGrades = [...new Set(exercises.map(ex => ex.grade))].sort();
   const uniqueDifficulties = [...new Set(exercises.map(ex => ex.difficulty))].sort();

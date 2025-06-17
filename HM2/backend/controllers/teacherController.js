@@ -1,7 +1,16 @@
+/**
+ * Teacher Controller
+ * Handles CRUD operations for teachers and manages teacher-related functionality
+ */
+
 const Teacher = require('../models/Teacher');
 const bcrypt = require('bcryptjs');
 
-// שליפת כל המורים
+/**
+ * Get all teachers
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.getAllTeachers = async (req, res) => {
   try {
     const teachers = await Teacher.find();
@@ -11,7 +20,11 @@ exports.getAllTeachers = async (req, res) => {
   }
 };
 
-// יצירת מורה חדש
+/**
+ * Create a new teacher
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.createTeacher = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -24,7 +37,11 @@ exports.createTeacher = async (req, res) => {
   }
 };
 
-// עדכון מורה לפי ID
+/**
+ * Update teacher by ID
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.updateTeacher = async (req, res) => {
   try {
     const teacher = await Teacher.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -34,7 +51,11 @@ exports.updateTeacher = async (req, res) => {
   }
 };
 
-// מחיקת מורה לפי ID
+/**
+ * Delete teacher by ID
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.deleteTeacher = async (req, res) => {
   try {
     await Teacher.findByIdAndDelete(req.params.id);

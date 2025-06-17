@@ -3,6 +3,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchAllStudents, addStudent, deleteStudent } from '../../services/studentService';
 
+/**
+ * ManageStudents Component
+ * 
+ * A comprehensive student management interface for teachers to view, add, and delete students.
+ * Features include filtering by grade and class, responsive design with table view for desktop
+ * and card view for mobile, form validation, and confirmation dialogs for destructive actions.
+ * The component provides real-time updates and error handling for all student operations.
+ * 
+ * @returns {JSX.Element} - Student management interface with CRUD operations
+ */
 const ManageStudents = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -14,6 +24,7 @@ const ManageStudents = () => {
   const [filterGrade, setFilterGrade] = useState('');
   const [filterClass, setFilterClass] = useState('');
 
+  // Load user data from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -21,6 +32,7 @@ const ManageStudents = () => {
     }
   }, []);
 
+  // Load all students data
   useEffect(() => {
     const loadStudents = async () => {
       setLoading(true);
@@ -37,6 +49,10 @@ const ManageStudents = () => {
     loadStudents();
   }, []);
 
+  /**
+   * Handles adding a new student to the system
+   * @param {Event} e - Form submission event
+   */
   const handleAddStudent = async (e) => {
     e.preventDefault();
     setError('');
@@ -52,6 +68,10 @@ const ManageStudents = () => {
     setLoading(false);
   };
 
+  /**
+   * Handles deleting a student from the system
+   * @param {string} id - Student ID to delete
+   */
   const handleDeleteStudent = async (id) => {
     if (!window.confirm('האם אתה בטוח שברצונך למחוק תלמיד זה?')) return;
     setError('');
@@ -65,6 +85,7 @@ const ManageStudents = () => {
     setLoading(false);
   };
 
+  // Filter students based on selected grade and class
   const filteredStudents = students.filter(s => (
     (filterGrade === '' || s.grade === filterGrade) &&
     (filterClass === '' || s.class === filterClass)

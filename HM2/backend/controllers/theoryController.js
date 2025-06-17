@@ -1,12 +1,17 @@
-const Theory = require('../models/Theory');
-const mongoose = require('mongoose'); // צריך לייבא את Mongoose כדי להשתמש ב-isValidObjectId
+/**
+ * Theory Controller
+ * Handles CRUD operations for theoretical content and manages theory-related functionality
+ */
 
-// --- פונקציות עבור ניהול תיאוריה (Theory) ---
+const Theory = require('../models/Theory');
+const mongoose = require('mongoose'); // Import Mongoose to use isValidObjectId
 
 /**
- * @desc קבלת כל התכנים התיאורטיים
+ * Get all theoretical content
  * @route GET /api/theory
  * @access Public
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 exports.getAllTheories = async (req, res) => {
   try {
@@ -14,21 +19,23 @@ exports.getAllTheories = async (req, res) => {
     res.json(theories);
   } catch (err) {
     console.error('Error fetching all theories:', err);
-    res.status(500).json({ error: err.message || 'שגיאה בשרת בעת קבלת כל התכנים' });
+    res.status(500).json({ error: err.message || 'Server error while fetching all content' });
   }
 };
 
 /**
- * @desc יצירת תוכן תיאורטי חדש
+ * Create new theoretical content
  * @route POST /api/theory
- * @access Private (לדוגמה, רק למורים)
+ * @access Private (e.g., teachers only)
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 exports.createTheory = async (req, res) => {
   const { title, description, content, difficulty, estimatedTime, youtubeLink, tags, prerequisites, interactiveExamples, visualExamples } = req.body;
 
-  // ולידציה בסיסית של קלט
+  // Basic input validation
   if (!title || !description || !content) {
-    return res.status(400).json({ error: 'אנא מלא את כל השדות הנדרשים (כותרת, תיאור, ותוכן).' });
+    return res.status(400).json({ error: 'Please fill in all required fields (title, description, and content).' });
   }
 
   try {
@@ -45,71 +52,73 @@ exports.createTheory = async (req, res) => {
       visualExamples 
     });
     const savedTheory = await newTheory.save();
-    res.status(201).json(savedTheory); // החזרת התיאוריה שנוצרה עם סטטוס 201 (Created)
+    res.status(201).json(savedTheory); // Return created theory with status 201 (Created)
   } catch (err) {
     console.error('Error creating theory:', err);
-    res.status(500).json({ error: err.message || 'שגיאה בשרת בעת יצירת תיאוריה.' });
+    res.status(500).json({ error: err.message || 'Server error while creating theory.' });
   }
 };
 
 /**
- * @desc עדכון תוכן תיאורטי קיים לפי ID
+ * Update existing theoretical content by ID
  * @route PUT /api/theory/:id
- * @access Private (לדוגמה, רק למורים)
+ * @access Private (e.g., teachers only)
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 exports.updateTheory = async (req, res) => {
-  const { id } = req.params; // קבלת ה-ID מפרמטרי ה-URL
-  const { title, description, content, difficulty, estimatedTime, youtubeLink, tags, prerequisites, interactiveExamples, visualExamples } = req.body; // קבלת הנתונים המעודכנים מגוף הבקשה
+  const { id } = req.params; // Get ID from URL parameters
+  const { title, description, content, difficulty, estimatedTime, youtubeLink, tags, prerequisites, interactiveExamples, visualExamples } = req.body; // Get updated data from request body
 
-  // ודא שה-ID חוקי של מונגו DB
+  // Ensure the ID is a valid MongoDB ObjectId
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ error: 'מזהה תיאוריה לא חוקי.' });
+    return res.status(400).json({ error: 'Invalid theory identifier.' });
   }
 
-  // ודא שכל השדות הנדרשים לעדכון קיימים (במידה ואתה דורש את כולם)
-  // הערה: ניתן להחליט אילו שדות חייבים להיות קיימים בעדכון.
-  // אם שדה מסוים לא נשלח, הוא לא יעודכן.
-  if (!title && !description && !content && !difficulty && !estimatedTime && !youtubeLink && !tags && !prerequisites && !interactiveExamples && !visualExamples) { // אם אף אחד מהשדות לא נשלח
-    return res.status(400).json({ error: 'יש לספק לפחות שדה אחד לעדכון.' });
+  // Ensure at least one field is provided for update
+  if (!title && !description && !content && !difficulty && !estimatedTime && !youtubeLink && !tags && !prerequisites && !interactiveExamples && !visualExamples) {
+    return res.status(400).json({ error: 'Please provide at least one field to update.' });
   }
 
   try {
-    // מצא ועדכן את התיאוריה
+    // Find and update the theory
     const updatedTheory = await Theory.findByIdAndUpdate(
       id,
-      { title, description, content, difficulty, estimatedTime, youtubeLink, tags, prerequisites, interactiveExamples, visualExamples }, // הנתונים לעדכון
-      { new: true, runValidators: true } // { new: true } מחזיר את המסמך המעודכן אחרי השינוי
-                                         // { runValidators: true } מפעיל ולידציה של הסכימה בעת העדכון
+      { title, description, content, difficulty, estimatedTime, youtubeLink, tags, prerequisites, interactiveExamples, visualExamples }, // Data to update
+      { new: true, runValidators: true } // { new: true } returns the updated document after the change
+                                         // { runValidators: true } runs schema validation during update
     );
 
-    // אם התיאוריה לא נמצאה
+    // If theory not found
     if (!updatedTheory) {
-      return res.status(404).json({ error: 'תיאוריה עם המזהה הנבחר לא נמצאה.' });
+      return res.status(404).json({ error: 'Theory with the selected identifier was not found.' });
     }
 
-    res.status(200).json(updatedTheory); // החזרת התיאוריה המעודכנת
+    res.status(200).json(updatedTheory); // Return updated theory
   } catch (err) {
-    console.error('Error updating theory:', err); // לוג של השגיאה המלאה בשרת
-    res.status(500).json({ error: err.message || 'שגיאה בשרת בעת עדכון תיאוריה.' });
+    console.error('Error updating theory:', err); // Log full error on server
+    res.status(500).json({ error: err.message || 'Server error while updating theory.' });
   }
 };
 
 /**
- * @desc מחיקת תוכן תיאורטי לפי ID
+ * Delete theoretical content by ID
  * @route DELETE /api/theory/:id
- * @access Private (לדוגמה, רק למורים)
+ * @access Private (e.g., teachers only)
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
 exports.deleteTheory = async (req, res) => {
   try {
     const deletedTheory = await Theory.findByIdAndDelete(req.params.id);
 
     if (!deletedTheory) {
-      return res.status(404).json({ error: 'תיאוריה עם המזהה הנבחר לא נמצאה.' });
+      return res.status(404).json({ error: 'Theory with the selected identifier was not found.' });
     }
 
-    res.json({ message: 'התיאוריה נמחקה בהצלחה!' }); // הודעת הצלחה
+    res.json({ message: 'Theory deleted successfully!' }); // Success message
   } catch (err) {
     console.error('Error deleting theory:', err);
-    res.status(500).json({ error: err.message || 'שגיאה בשרת בעת מחיקת תיאוריה.' });
+    res.status(500).json({ error: err.message || 'Server error while deleting theory.' });
   }
 };

@@ -1,3 +1,8 @@
+/**
+ * Theory Routes
+ * Defines API endpoints for theoretical content management
+ */
+
 const express = require('express');
 const router = express.Router();
 const {

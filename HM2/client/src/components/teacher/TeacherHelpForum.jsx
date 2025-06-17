@@ -2,6 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchHelpMessages, answerHelpRequest, deleteHelpAnswer, deleteHelpRequest } from '../../services/helpService';
 
+/**
+ * TeacherHelpForum Component
+ * 
+ * A help forum interface for teachers to view and respond to student help requests.
+ * Features include viewing all help requests, answering questions, editing responses,
+ * deleting answers and requests, and real-time updates. The component provides
+ * a comprehensive management system for student-teacher communication.
+ * 
+ * @returns {JSX.Element} - Help forum management interface for teachers
+ */
 const TeacherHelpForum = () => {
   const navigate = useNavigate();
   const [helps, setHelps] = useState([]);
@@ -9,7 +19,7 @@ const TeacherHelpForum = () => {
   const [editing, setEditing] = useState({});
   const [user, setUser] = useState(null);
 
-  // טען את המשתמש מה-localStorage בפעם הראשונה
+  // Load user data from localStorage on first load
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -20,6 +30,10 @@ const TeacherHelpForum = () => {
       }
     }
   }, []);
+
+  /**
+   * Fetches all help messages from the server
+   */
   const fetchHelps = async () => {
     try {
       const data = await fetchHelpMessages();
@@ -28,16 +42,25 @@ const TeacherHelpForum = () => {
       console.error('שגיאה בקבלת הפניות:', err);
     }
   };
-  
 
+  // Load help messages on component mount
   useEffect(() => {
     fetchHelps();
   }, []);
 
+  /**
+   * Handles changes to answer input fields
+   * @param {string} id - Help request ID
+   * @param {string} value - New answer value
+   */
   const handleAnswerChange = (id, value) => {
     setAnswerInputs((prev) => ({ ...prev, [id]: value }));
   };
 
+  /**
+   * Submits an answer to a help request
+   * @param {string} id - Help request ID
+   */
   const submitAnswer = async (id) => {
     const answer = answerInputs[id];
     if (!answer || answer.trim() === '') {
@@ -60,8 +83,11 @@ const TeacherHelpForum = () => {
       alert('אירעה שגיאה בעת שליחת התשובה');
     }
   };
-  
 
+  /**
+   * Deletes an answer to a help request
+   * @param {string} id - Help request ID
+   */
   const deleteAnswer = async (id) => {
     const confirmDelete = window.confirm('האם אתה בטוח שברצונך למחוק את התשובה?');
     if (!confirmDelete) return;
@@ -75,9 +101,11 @@ const TeacherHelpForum = () => {
       alert('אירעה שגיאה בעת מחיקת התשובה');
     }
   };
-  
 
-  // פונקציה למחיקת פנייה מלאה
+  /**
+   * Deletes an entire help request
+   * @param {string} id - Help request ID
+   */
   const deleteHelp = async (id) => {
     const confirmDelete = window.confirm('האם אתה בטוח שברצונך למחוק את הפנייה הזו?');
     if (!confirmDelete) return;

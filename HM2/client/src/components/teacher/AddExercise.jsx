@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
 import { addExercise } from '../../services/exerciseService';
 
+/**
+ * AddExercise Component
+ * 
+ * A form component for teachers to create new exercises with multiple choice questions.
+ * Features include form validation, dynamic option management, difficulty levels,
+ * point allocation, and integration with the exercise service. The component
+ * provides a comprehensive interface for creating educational content.
+ * 
+ * @param {Function} onClose - Callback function to close the form
+ * @param {Function} onAdd - Callback function called when exercise is successfully added
+ * @returns {JSX.Element} - Exercise creation form
+ */
 const AddExercise = ({ onClose, onAdd }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -13,6 +25,10 @@ const AddExercise = ({ onClose, onAdd }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Handles form submission to create a new exercise
+   * @param {Event} e - Form submission event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');

@@ -1,4 +1,8 @@
-// === 📁 routes/theoryProgress.js ===
+/**
+ * Theory Progress Routes
+ * Defines API endpoints for tracking student progress in theoretical content
+ */
+
 const express = require('express');
 const router = express.Router();
 const {

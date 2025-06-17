@@ -2,6 +2,18 @@ import React, { useEffect, useState } from 'react';
 import Confetti from 'react-confetti';
 import { fetchAllStudents } from '../../services/studentService';
 
+/**
+ * Leaderboard Component
+ * 
+ * Displays a competitive leaderboard showing student rankings based on crowns and points.
+ * Features a podium display for the top 3 students with special styling and medals,
+ * followed by a list of remaining students in the top 10. Includes confetti animation
+ * for celebration effect and responsive design for different screen sizes.
+ * 
+ * @returns {JSX.Element} - Leaderboard with podium and rankings
+ */
+
+// Color gradients for podium positions (gold, silver, bronze)
 const podiumColors = [
   'from-yellow-300 to-yellow-400',
   'from-gray-300 to-gray-400',
@@ -12,6 +24,7 @@ const Leaderboard = () => {
   const [students, setStudents] = useState([]);
   const [showConfetti, setShowConfetti] = useState(true);
 
+  // Load students data and set confetti timer
   useEffect(() => {
     const loadStudents = async () => {
       try {
@@ -23,13 +36,15 @@ const Leaderboard = () => {
     };
 
     loadStudents();
+    // Hide confetti after 10 seconds
     const timer = setTimeout(() => setShowConfetti(false), 10000);
     return () => clearTimeout(timer);
   }, []);
 
+  // Sort students by crowns first, then by points, and get top 10
   const sorted = [...students].sort((a, b) => b.crowns - a.crowns || b.points - a.points).slice(0, 10);
-  const podium = sorted.slice(0, 3);
-  const rest = sorted.slice(3);
+  const podium = sorted.slice(0, 3); // Top 3 for podium
+  const rest = sorted.slice(3); // Remaining students
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sky-200 dark:from-gray-900 dark:to-gray-800 py-10 px-4 flex flex-col items-center">

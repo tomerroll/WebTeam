@@ -1,3 +1,8 @@
+/**
+ * Teacher Model
+ * Defines the schema for teacher users in the learning platform
+ */
+
 const mongoose = require('mongoose');
 
 const teacherSchema = new mongoose.Schema({

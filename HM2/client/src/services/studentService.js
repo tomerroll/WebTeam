@@ -1,27 +1,46 @@
+/**
+ * Student Service
+ * Handles API calls for student management and achievements
+ */
+
 const BASE_URL = '/api/students';
 
-// 1. שליפת כל התלמידים
+/**
+ * Fetch all students
+ * @returns {Promise<Array>} Array of all students
+ */
 export const fetchAllStudents = async () => {
   const res = await fetch(BASE_URL);
-  if (!res.ok) throw new Error('שגיאה בשליפת תלמידים');
+  if (!res.ok) throw new Error('Error fetching students');
   return await res.json();
 };
 
-// 2. שליפת תלמיד לפי ID
+/**
+ * Fetch student by ID
+ * @param {string} id - Student ID
+ * @returns {Promise<Object>} Student data
+ */
 export const fetchStudentById = async (id) => {
   const res = await fetch(`${BASE_URL}/${id}`);
-  if (!res.ok) throw new Error('שגיאה בשליפת פרטי תלמיד');
+  if (!res.ok) throw new Error('Error fetching student details');
   return await res.json();
 };
 
-// 3. שליפת התלמיד המחובר (אם יש אימות מבוסס טוקן)
+/**
+ * Fetch current logged-in student (if token-based authentication exists)
+ * @returns {Promise<Object>} Current student data
+ */
 export const fetchCurrentStudent = async () => {
   const res = await fetch(`${BASE_URL}/me`);
-  if (!res.ok) throw new Error('שגיאה בשליפת פרטי התלמיד הנוכחי');
+  if (!res.ok) throw new Error('Error fetching current student details');
   return await res.json();
 };
 
-// 4. הוספת תלמיד חדש
+/**
+ * Add new student
+ * @param {Object} studentData - Student data to add
+ * @returns {Promise<Object>} Created student data
+ */
 export const addStudent = async (studentData) => {
   const res = await fetch(BASE_URL, {
     method: 'POST',
@@ -29,17 +48,26 @@ export const addStudent = async (studentData) => {
     body: JSON.stringify(studentData),
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'שגיאה בהוספת תלמיד');
+  if (!res.ok) throw new Error(data.error || 'Error adding student');
   return data;
 };
 
-// 5. מחיקת תלמיד
+/**
+ * Delete student
+ * @param {string} id - Student ID
+ * @returns {Promise<void>}
+ */
 export const deleteStudent = async (id) => {
   const res = await fetch(`${BASE_URL}/${id}`, { method: 'DELETE' });
-  if (!res.ok) throw new Error('שגיאה במחיקת תלמיד');
+  if (!res.ok) throw new Error('Error deleting student');
 };
 
-// 6. הוספת נקודות
+/**
+ * Add points to student
+ * @param {string} studentId - Student ID
+ * @param {number} amount - Points to add
+ * @returns {Promise<Object>} Updated points data
+ */
 export const addPoints = async (studentId, amount) => {
   const res = await fetch(`${BASE_URL}/addPoints`, {
     method: 'POST',
@@ -48,13 +76,17 @@ export const addPoints = async (studentId, amount) => {
   });
   if (!res.ok) {
     const error = await res.json();
-    throw new Error(error.message || 'שגיאה בהוספת נקודות');
+    throw new Error(error.message || 'Error adding points');
   }
   const data = await res.json();
-  return data;  // השרת מחזיר את ה-points החדש
+  return data;  // Server returns the new points
 };
 
-// 7. הוספת כתר
+/**
+ * Add crown to student
+ * @param {string} studentId - Student ID
+ * @returns {Promise<Object>} Updated crowns data
+ */
 export const addCrown = async (studentId) => {
   const res = await fetch(`${BASE_URL}/addCrown`, {
     method: 'POST',
@@ -63,8 +95,8 @@ export const addCrown = async (studentId) => {
   });
   if (!res.ok) {
     const error = await res.json();
-    throw new Error(error.message || 'שגיאה בהוספת כתר');
+    throw new Error(error.message || 'Error adding crown');
   }
   const data = await res.json();
-  return data;  // השרת מחזיר את ה-crowns החדש
+  return data;  // Server returns the new crowns
 };
