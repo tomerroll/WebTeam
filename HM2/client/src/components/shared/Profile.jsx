@@ -2,18 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateUserProfile } from '../../services/authService';
 
+/**
+ * Profile Component
+ * 
+ * A user profile management component that allows authenticated users to view and update
+ * their personal information. The component displays current user data and provides
+ * a form to update name, email, and password. It includes authentication checks,
+ * form validation, and success/error message handling.
+ * 
+ * @returns {JSX.Element} - User profile form with update functionality
+ */
 const Profile = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const userType = localStorage.getItem('userType');
 
+  // Form state management
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  /* ───────────────────── טעינת נתוני משתמש ───────────────────── */
+  /* ───────────────────── Load user data ───────────────────── */
   useEffect(() => {
     if (!token) return navigate('/login');
     const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -22,7 +33,11 @@ const Profile = () => {
     setEmail(storedUser.email);
   }, [token, navigate]);
 
-  /* ───────────────────── שליחת עדכון ───────────────────── */
+  /* ───────────────────── Handle profile update ───────────────────── */
+  /**
+   * Handles profile update form submission
+   * @param {Event} e - Form submission event
+   */
   const handleUpdate = async (e) => {
     e.preventDefault();
     setMessage('');

@@ -2,12 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchCurrentStudent } from '../../services/studentService';
 
+/**
+ * StudentDashboard Component
+ * 
+ * The main dashboard interface for students, providing navigation to different
+ * learning activities and features. Displays a grid of interactive tiles for
+ * accessing practice exercises, theory materials, progress tracking, help forum,
+ * leaderboard, and profile management. Includes learning tips and responsive design.
+ * 
+ * @returns {JSX.Element} - Student dashboard with navigation tiles and learning tips
+ */
 const StudentDashboard = () => {
   const [studentData, setStudentData] = useState(null);
   const [user, setUser] = useState(null);
 
-
-
+  // Navigation tiles configuration with routes, titles, descriptions, colors, and icons
   const tiles = [
     {
       to: '/practice',

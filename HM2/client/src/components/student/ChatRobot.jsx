@@ -3,6 +3,20 @@ import '@google/model-viewer';
 import { sendMessageToGemini } from '../../services/geminiService'
 import { ThemeContext } from '../../contexts/ThemeContext';
 
+/**
+ * ChatRobot Component
+ * 
+ * An interactive AI chat assistant that provides students with help and answers questions.
+ * Features a 3D animated robot model, real-time chat interface, and integration with
+ * Google's Gemini AI service. The component includes animations, theme support,
+ * and a floating chat interface that can be toggled open/closed.
+ * 
+ * @param {number} width - Width of the robot model in pixels (default: 150)
+ * @param {number} height - Height of the robot model in pixels (default: 150)
+ * @returns {JSX.Element} - Interactive chat robot with 3D model and chat interface
+ */
+
+// Available robot animations
 const animations = ['Free_Fall', 'Look_Wave', 'Sitting'];
 
 export default function ChatRobot({ width = 150, height = 150 }) {
@@ -10,6 +24,7 @@ export default function ChatRobot({ width = 150, height = 150 }) {
   const messagesEndRef = useRef(null);
   const { isDarkMode } = useContext(ThemeContext);
 
+  // Chat state management
   const [messages, setMessages] = useState([
     { sender: 'bot', text: 'היי אני הרובוט פאי! 😊 איך אפשר לעזור?' },
   ]);
@@ -19,8 +34,8 @@ export default function ChatRobot({ width = 150, height = 150 }) {
   const [hasShownAskMeAnything, setHasShownAskMeAnything] = useState(false);
   const [hasSentFirstMessage, setHasSentFirstMessage] = useState(false);
 
+  // Random animation cycle every 6 seconds
   useEffect(() => {
-    // הפעלת אנימציה רנדומלית כל 6 שניות
     const interval = setInterval(() => {
       const viewer = viewerRef.current;
       if (viewer) {
@@ -32,7 +47,7 @@ export default function ChatRobot({ width = 150, height = 150 }) {
     return () => clearInterval(interval);
   }, []);
 
-  // הצגת בועת "שאל אותי כל דבר" עם טעינת הרכיב
+  // Show "Ask me anything" bubble on component load
   useEffect(() => {
     if (!hasShownAskMeAnything) {
       setShowAskMeAnythingBubble(true);
@@ -43,13 +58,16 @@ export default function ChatRobot({ width = 150, height = 150 }) {
     }
   }, []);
 
-  // גלילה לתחתית הצ'אט
+  // Auto-scroll to bottom of chat
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
+  /**
+   * Handles sending messages to the AI and updating chat
+   */
   const handleSend = async () => {
     if (input.trim() === '') return;
 
@@ -58,6 +76,7 @@ export default function ChatRobot({ width = 150, height = 150 }) {
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
 
+    // Prepare conversation history for AI
     const indexOfFirstUserMsg = messages.findIndex(msg => msg.sender === 'user');
     const filteredMessages = indexOfFirstUserMsg >= 0 ? messages.slice(indexOfFirstUserMsg) : [];
     
@@ -76,6 +95,10 @@ export default function ChatRobot({ width = 150, height = 150 }) {
     }
   };
 
+  /**
+   * Handles Enter key press in input field
+   * @param {KeyboardEvent} e - Key press event
+   */
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') handleSend();
   };

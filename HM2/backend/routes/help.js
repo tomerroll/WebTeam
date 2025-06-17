@@ -1,3 +1,8 @@
+/**
+ * Help Routes
+ * Defines API endpoints for help request management and teacher responses
+ */
+
 const express = require('express');
 const router = express.Router();
 const {

@@ -1,3 +1,8 @@
+/**
+ * Student Model
+ * Defines the schema for student users in the learning platform
+ */
+
 const mongoose = require('mongoose');
 
 const studentSchema = new mongoose.Schema({

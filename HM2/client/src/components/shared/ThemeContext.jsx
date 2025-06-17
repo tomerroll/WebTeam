@@ -1,8 +1,21 @@
 // contexts/ThemeContext.jsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
+/**
+ * Theme Context
+ * 
+ * A React context that provides theme management functionality across the application.
+ * It handles switching between light and dark themes, persists theme preference
+ * in localStorage, and provides a custom hook for easy theme access.
+ */
+
 const ThemeContext = createContext();
 
+/**
+ * Custom hook to access theme context
+ * @returns {Object} Theme context with theme state and toggle function
+ * @throws {Error} If used outside of ThemeProvider
+ */
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
@@ -11,7 +24,17 @@ export const useTheme = () => {
   return context;
 };
 
+/**
+ * Theme Provider Component
+ * 
+ * Provides theme context to child components. Manages theme state,
+ * localStorage persistence, and DOM class manipulation for dark mode.
+ * 
+ * @param {React.ReactNode} children - Child components to wrap with theme context
+ * @returns {JSX.Element} - Theme context provider
+ */
 export const ThemeProvider = ({ children }) => {
+  // Initialize theme state from localStorage or default to light
   const [theme, setTheme] = useState(() => {
     // קריאת הערך הראשוני מ-localStorage
     const savedTheme = localStorage.getItem('theme');
@@ -30,10 +53,14 @@ export const ThemeProvider = ({ children }) => {
     }
   }, [theme]);
 
+  /**
+   * Toggles between light and dark themes
+   */
   const toggleTheme = () => {
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
 
+  // Context value object
   const value = {
     theme,
     setTheme,

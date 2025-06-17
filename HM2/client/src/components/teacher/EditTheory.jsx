@@ -1,7 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { updateTheory } from '../../services/theoryService';
 
+/**
+ * EditTheory Component
+ * 
+ * A comprehensive form component for teachers to edit existing theoretical content.
+ * Pre-populates all fields with current theory data and allows modification of
+ * all theory properties including interactive examples, visual examples, prerequisites,
+ * tags, difficulty levels, and estimated time. Features dynamic form management
+ * for complex nested data structures and validation for all required fields.
+ * 
+ * @param {Object} theory - Theory object to edit
+ * @param {Function} onClose - Callback function to close the form
+ * @param {Function} onUpdate - Callback function called when theory is successfully updated
+ * @returns {JSX.Element} - Theory editing form with multiple sections
+ */
 const EditTheory = ({ theory, onClose, onUpdate }) => {
+  // Main form state management
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -15,14 +30,30 @@ const EditTheory = ({ theory, onClose, onUpdate }) => {
     visualExamples: []
   });
 
+  // Interactive example form state
   const [newExample, setNewExample] = useState({
-    title: '', description: '', question: '', options: ['', '', '', ''], correctAnswer: 0, explanation: '', difficulty: 'קל'
+    title: '',
+    description: '',
+    question: '',
+    options: ['', '', '', ''],
+    correctAnswer: 1,
+    explanation: '',
+    difficulty: 'קל'
   });
-  const [newVisualExample, setNewVisualExample] = useState({ title: '', description: '', imageUrl: '', animationData: '', explanation: '' });
+  
+  // Visual example form state
+  const [newVisualExample, setNewVisualExample] = useState({ 
+    title: '', 
+    description: '', 
+    imageUrl: '', 
+    animationData: '', 
+    explanation: '' 
+  });
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Initialize form data with current theory values
   useEffect(() => {
     if (theory) {
       setFormData({
@@ -41,44 +72,83 @@ const EditTheory = ({ theory, onClose, onUpdate }) => {
     }
   }, [theory]);
 
+  /**
+   * Updates form data for a specific field
+   * @param {string} field - Field name to update
+   * @param {any} value - New value for the field
+   */
   const updateFormData = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  /**
+   * Handles array input fields (tags, prerequisites) by splitting comma-separated values
+   * @param {string} field - Field name to update
+   * @param {string} value - Comma-separated string to convert to array
+   */
   const handleArrayInput = (field, value) => {
     const array = value.split(',').map(s => s.trim()).filter(s => s.length > 0);
     updateFormData(field, array);
   };
 
+  /**
+   * Updates option text for interactive examples
+   * @param {number} index - Option index
+   * @param {string} value - New option text
+   */
   const handleOptionChange = (index, value) => {
     const newOptions = [...newExample.options];
     newOptions[index] = value;
     setNewExample({ ...newExample, options: newOptions });
   };
 
+  /**
+   * Resets the new example form to default values
+   */
   const resetNewExample = () => {
     setNewExample({
-      title: '', description: '', question: '', options: ['', '', '', ''], correctAnswer: 0, explanation: '', difficulty: 'קל'
+      title: '',
+      description: '',
+      question: '',
+      options: ['', '', '', ''],
+      correctAnswer: 1,
+      explanation: '',
+      difficulty: 'קל'
     });
   };
 
+  /**
+   * Adds a new interactive example to the theory
+   */
   const handleAddExample = () => {
     if (!newExample.title || !newExample.question) {
       setError('אנא מלא את כותרת הדוגמה והשאלה');
       return;
     }
+
     if (newExample.options.some(opt => !opt.trim())) {
-      setError('אנא מלא את כל אפשרויות התשובה בדוגמה האינטראקטיבית');
+      setError('אנא מלא את כל אפשרויות התשובה');
       return;
     }
+
+    // Convert user input (1-4) to array index (0-3) before saving
+    const exampleToAdd = {
+      ...newExample,
+      correctAnswer: newExample.correctAnswer - 1
+    };
+
     setFormData(prev => ({
       ...prev,
-      interactiveExamples: [...prev.interactiveExamples, { ...newExample }]
+      interactiveExamples: [...prev.interactiveExamples, exampleToAdd]
     }));
     resetNewExample();
     setError('');
   };
 
+  /**
+   * Removes an interactive example from the theory
+   * @param {number} index - Index of example to remove
+   */
   const handleRemoveExample = (index) => {
     setFormData(prev => ({
       ...prev,
@@ -86,6 +156,9 @@ const EditTheory = ({ theory, onClose, onUpdate }) => {
     }));
   };
 
+  /**
+   * Adds a new visual example to the theory
+   */
   const handleAddVisualExample = () => {
     if (!newVisualExample.title || !newVisualExample.description || (!newVisualExample.imageUrl && !newVisualExample.animationData)) {
       setError('אנא מלא את הכותרת, התיאור ואחד מהשדות (תמונה/אנימציה) עבור הדוגמה הוויזואלית');
@@ -99,6 +172,10 @@ const EditTheory = ({ theory, onClose, onUpdate }) => {
     setError('');
   };
 
+  /**
+   * Removes a visual example from the theory
+   * @param {number} index - Index of example to remove
+   */
   const handleRemoveVisualExample = (index) => {
     setFormData(prev => ({
       ...prev,
@@ -106,6 +183,10 @@ const EditTheory = ({ theory, onClose, onUpdate }) => {
     }));
   };
 
+  /**
+   * Handles form submission to update the theory
+   * @param {Event} e - Form submission event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -128,6 +209,7 @@ const EditTheory = ({ theory, onClose, onUpdate }) => {
     }
   };
 
+  // Tailwind input classes for consistent styling
   const inputClasses = "w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200";
   const selectClasses = "w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200";
 
@@ -304,12 +386,12 @@ const EditTheory = ({ theory, onClose, onUpdate }) => {
             <div className="grid grid-cols-2 gap-2">
               <input
                 type="number"
-                placeholder="תשובה נכונה (אינדקס 0-3)"
+                placeholder="תשובה נכונה (1-4)"
                 value={newExample.correctAnswer}
                 onChange={e => setNewExample({ ...newExample, correctAnswer: +e.target.value })}
                 className={inputClasses}
-                min="0"
-                max="3"
+                min="1"
+                max="4"
               />
               <select
                 value={newExample.difficulty}

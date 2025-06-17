@@ -1,3 +1,8 @@
+/**
+ * Exercise Routes
+ * Defines API endpoints for exercise management and retrieval
+ */
+
 const express = require('express');
 const router = express.Router();
 

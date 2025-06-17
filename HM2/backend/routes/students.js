@@ -1,3 +1,8 @@
+/**
+ * Student Routes
+ * Defines API endpoints for student management and progress tracking
+ */
+
 const express = require('express');
 const router = express.Router();
 const {

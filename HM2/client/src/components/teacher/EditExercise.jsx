@@ -1,7 +1,21 @@
 import React, { useState } from 'react';
 import { updateExercise } from '../../services/exerciseService';
 
+/**
+ * EditExercise Component
+ * 
+ * A form component for teachers to edit existing exercises. Pre-populates all fields
+ * with current exercise data and allows modification of title, description, options,
+ * correct answer, subject, grade, difficulty, and points. Features form validation
+ * and integration with the exercise service for updates.
+ * 
+ * @param {Object} exercise - Exercise object to edit
+ * @param {Function} onClose - Callback function to close the form
+ * @param {Function} onUpdate - Callback function called when exercise is successfully updated
+ * @returns {JSX.Element} - Exercise editing form
+ */
 const EditExercise = ({ exercise, onClose, onUpdate }) => {
+  // Form state initialized with current exercise data
   const [title, setTitle] = useState(exercise.title);
   const [description, setDescription] = useState(exercise.description);
   const [options, setOptions] = useState([...exercise.options]);
@@ -13,6 +27,10 @@ const EditExercise = ({ exercise, onClose, onUpdate }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Handles form submission to update the exercise
+   * @param {Event} e - Form submission event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');

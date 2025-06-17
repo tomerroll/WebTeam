@@ -1,3 +1,8 @@
+/**
+ * Exercise Model
+ * Defines the schema for mathematical exercises in the learning platform
+ */
+
 const mongoose = require('mongoose');
 
 const ExerciseSchema = new mongoose.Schema({

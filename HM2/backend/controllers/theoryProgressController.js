@@ -1,8 +1,17 @@
-// === 📁 controllers/theoryProgressController.js ===
+/**
+ * Theory Progress Controller
+ * Handles student progress tracking for theoretical content and manages theory learning progress
+ */
+
 const TheoryProgress = require('../models/TheoryProgress');
 const Theory = require('../models/Theory');
 const mongoose = require('mongoose');
 
+/**
+ * Get student's theory progress for all theories
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.getStudentTheoryProgress = async (req, res) => {
   try {
     const { studentId } = req.params;
@@ -12,26 +21,36 @@ exports.getStudentTheoryProgress = async (req, res) => {
     res.json(progress);
   } catch (error) {
     console.error('Error fetching student theory progress:', error);
-    res.status(500).json({ message: 'שגיאה בקבלת התקדמות תיאוריה של תלמיד' });
+    res.status(500).json({ message: 'Error fetching student theory progress' });
   }
 };
 
+/**
+ * Get theory progress by specific theory ID
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.getTheoryProgressById = async (req, res) => {
   try {
     const { studentId, theoryId } = req.params;
     let progress = await TheoryProgress.findOne({ student: studentId, theory: theoryId }).populate('theory');
     if (!progress) {
-      progress = new TheoryProgress({ student: studentId, theory: theoryId, status: 'לא התחיל' });
+      progress = new TheoryProgress({ student: studentId, theory: theoryId, status: 'Not Started' });
       await progress.save();
       await progress.populate('theory');
     }
     res.json(progress);
   } catch (error) {
     console.error('Error fetching theory progress:', error);
-    res.status(500).json({ message: 'שגיאה בקבלת התקדמות תיאוריה' });
+    res.status(500).json({ message: 'Error fetching theory progress' });
   }
 };
 
+/**
+ * Update theory status for a student
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.updateTheoryStatus = async (req, res) => {
   try {
     const { studentId, theoryId, status } = req.body;
@@ -43,10 +62,15 @@ exports.updateTheoryStatus = async (req, res) => {
     res.json(progress);
   } catch (error) {
     console.error('Error updating theory status:', error);
-    res.status(500).json({ message: 'שגיאה בעדכון סטטוס תיאוריה' });
+    res.status(500).json({ message: 'Error updating theory status' });
   }
 };
 
+/**
+ * Update reading progress for a theory
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.updateReadingProgress = async (req, res) => {
   try {
     const { studentId, theoryId, timeSpent, sectionsRead } = req.body;
@@ -66,17 +90,22 @@ exports.updateReadingProgress = async (req, res) => {
     res.json(progress);
   } catch (error) {
     console.error('Error updating reading progress:', error);
-    res.status(500).json({ message: 'שגיאה בעדכון התקדמות קריאה' });
+    res.status(500).json({ message: 'Error updating reading progress' });
   }
 };
 
+/**
+ * Update interactive progress for theory examples
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.updateInteractiveProgress = async (req, res) => {
   try {
     const { studentId, theoryId, exampleIndex, isCorrect, timeSpent, attempts } = req.body;
     let progress = await TheoryProgress.findOne({ student: studentId, theory: theoryId });
 
     if (!progress) {
-      progress = new TheoryProgress({ student: studentId, theory: theoryId, status: 'בדוגמאות' });
+      progress = new TheoryProgress({ student: studentId, theory: theoryId, status: 'In Examples' });
     }
 
     const existingIndex = progress.interactiveProgress.examplesCompleted.findIndex(ex => ex.exampleIndex === exampleIndex);
@@ -97,10 +126,15 @@ exports.updateInteractiveProgress = async (req, res) => {
     res.json(progress);
   } catch (error) {
     console.error('Error updating interactive progress:', error);
-    res.status(500).json({ message: 'שגיאה בעדכון התקדמות דוגמאות' });
+    res.status(500).json({ message: 'Error updating examples progress' });
   }
 };
 
+/**
+ * Add notes and rating for a theory
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.addNotesAndRating = async (req, res) => {
   try {
     const { studentId, theoryId, notes, rating } = req.body;
@@ -112,32 +146,42 @@ exports.addNotesAndRating = async (req, res) => {
     res.json(progress);
   } catch (error) {
     console.error('Error adding feedback:', error);
-    res.status(500).json({ message: 'שגיאה בהוספת משוב' });
+    res.status(500).json({ message: 'Error adding feedback' });
   }
 };
 
+/**
+ * Mark theory as completed
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.completeTheory = async (req, res) => {
   try {
     const { studentId, theoryId } = req.body;
     const progress = await TheoryProgress.findOneAndUpdate(
       { student: studentId, theory: theoryId },
-      { status: 'הושלם', completedAt: new Date(), lastAccessedAt: new Date() },
+      { status: 'Completed', completedAt: new Date(), lastAccessedAt: new Date() },
       { upsert: true, new: true }
     ).populate('theory');
     res.json(progress);
   } catch (error) {
     console.error('Error completing theory:', error);
-    res.status(500).json({ message: 'שגיאה בסימון תיאוריה כהושלמה' });
+    res.status(500).json({ message: 'Error marking theory as completed' });
   }
 };
 
+/**
+ * Reset theory progress for a student
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.resetTheoryProgress = async (req, res) => {
   try {
     const { studentId, theoryId } = req.body;
     const progress = await TheoryProgress.findOneAndUpdate(
       { student: studentId, theory: theoryId },
       {
-        status: 'לא התחיל',
+        status: 'Not Started',
         readingProgress: { startedAt: null, completedAt: null, timeSpent: 0, sectionsRead: [] },
         interactiveProgress: { examplesCompleted: [], totalCorrect: 0, totalAttempts: 0 },
         notes: '',
@@ -150,15 +194,20 @@ exports.resetTheoryProgress = async (req, res) => {
     res.json(progress);
   } catch (error) {
     console.error('Error resetting theory progress:', error);
-    res.status(500).json({ message: 'שגיאה באיפוס התקדמות תיאוריה' });
+    res.status(500).json({ message: 'Error resetting theory progress' });
   }
 };
 
+/**
+ * Get theory progress statistics for a student
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 exports.getTheoryStats = async (req, res) => {
   try {
     const { studentId } = req.params;
     const totalTheories = await Theory.countDocuments();
-    const completedTheories = await TheoryProgress.countDocuments({ student: studentId, status: 'הושלם' });
+    const completedTheories = await TheoryProgress.countDocuments({ student: studentId, status: 'Completed' });
     const progressData = await TheoryProgress.aggregate([
       { $match: { student: new mongoose.Types.ObjectId(studentId) } },
       { $lookup: {
@@ -174,6 +223,6 @@ exports.getTheoryStats = async (req, res) => {
     res.json({ totalTheories, completedTheories, progressData });
   } catch (error) {
     console.error('Error fetching progress statistics:', error);
-    res.status(500).json({ message: 'שגיאה בקבלת סטטיסטיקות התקדמות' });
+    res.status(500).json({ message: 'Error fetching progress statistics' });
   }
 };

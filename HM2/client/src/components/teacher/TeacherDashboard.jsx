@@ -2,12 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchCurrentTeacher } from '../../services/teacherService';
 
+/**
+ * TeacherDashboard Component
+ * 
+ * The main dashboard interface for teachers, providing navigation to various
+ * administrative and management features. Displays a grid of interactive tiles
+ * for managing students, exercises, theory content, viewing reports, managing
+ * rewards system, accessing help forum, and profile management.
+ * 
+ * @returns {JSX.Element} - Teacher dashboard with administrative navigation tiles
+ */
 const TeacherDashboard = () => {
   const [teacherData, setTeacherData] = useState(null);
   const [user, setUser] = useState(null);
 
-
-
+  // Navigation tiles configuration for teacher management features
   const tiles = [
     {
       path: '/manage-students',

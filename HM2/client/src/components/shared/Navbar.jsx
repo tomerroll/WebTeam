@@ -4,6 +4,17 @@ import { ThemeContext } from '../../contexts/ThemeContext';
 import { fetchStudentById } from '../../services/studentService';
 import logo from '../../assets/logo.png';
 
+/**
+ * Navbar Component
+ * 
+ * A navigation bar component that displays at the top of the application.
+ * It includes user authentication status, theme toggle, student statistics (points/crowns),
+ * and navigation functionality. The component adapts its display based on user type
+ * (student or teacher) and supports dark/light theme switching.
+ * 
+ * @param {string} userType - The type of user ('student' or 'teacher')
+ * @returns {JSX.Element} - Navigation bar with user controls and branding
+ */
 const Navbar = ({ userType }) => {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
@@ -66,12 +77,18 @@ const Navbar = ({ userType }) => {
     };
   }, []);
 
+  /**
+   * Handles user logout by clearing localStorage and redirecting to login
+   */
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userType');
     navigate('/login');
   };
 
+  /**
+   * Handles logo click navigation based on user type
+   */
   const handleLogoClick = () => {
     if (userType === 'student') {
       navigate('/student-dashboard');

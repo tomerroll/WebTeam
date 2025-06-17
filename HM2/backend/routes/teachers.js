@@ -1,3 +1,8 @@
+/**
+ * Teacher Routes
+ * Defines API endpoints for teacher management and administration
+ */
+
 const express = require('express');
 const router = express.Router();
 const {

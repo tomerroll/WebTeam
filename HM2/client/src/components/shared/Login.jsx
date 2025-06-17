@@ -4,8 +4,18 @@ import { loginUser, registerUser } from '../../services/authService';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import backgroundImage from '../../assets/login-bg.png';
 
-
+/**
+ * Login Component
+ * 
+ * A comprehensive authentication component that handles both user login and registration.
+ * It provides a dual-mode interface where users can switch between login and registration forms.
+ * The component supports both student and teacher user types with different registration fields.
+ * Features include form validation, error handling, loading states, and theme switching.
+ * 
+ * @returns {JSX.Element} - Authentication form with login/register functionality
+ */
 const Login = () => {
+  // Form state management
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -16,19 +26,26 @@ const Login = () => {
   const [teacherKey, setTeacherKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
 
+  // Clear localStorage on component mount
   useEffect(() => {
     localStorage.clear();
   }, []);
 
+  /**
+   * Handles form submission for both login and registration
+   * @param {Event} e - Form submission event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     if (isLogin) {
+      // Handle login flow
       try {
         const data = await loginUser(username, password);
         if (data.token) {
@@ -43,6 +60,7 @@ const Login = () => {
         setError('שגיאה בשרת');
       }
     } else {
+      // Handle registration flow
       try {
         const data = await registerUser({
           name: fullName,

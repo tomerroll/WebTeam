@@ -1,27 +1,45 @@
-// client/src/services/exerciseService.js
+/**
+ * Exercise Service
+ * Handles API calls for exercise management and progress tracking
+ */
 
-// 1. שליפת תרגילים לפי נושא
+/**
+ * Fetch exercises by subject
+ * @param {string} subject - Subject name
+ * @returns {Promise<Array>} Array of exercises for the subject
+ */
 export const fetchExercisesBySubject = async (subject) => {
   const res = await fetch(`/api/exercises/subject/${encodeURIComponent(subject)}`);
-  if (!res.ok) throw new Error('שגיאה בשליפת תרגילים לפי נושא');
+  if (!res.ok) throw new Error('Error fetching exercises by subject');
   return await res.json();
 };
 
-// 2. שליפת תרגילים לפי כיתה
+/**
+ * Fetch exercises by grade
+ * @param {string} grade - Grade level
+ * @returns {Promise<Array>} Array of exercises for the grade
+ */
 export const fetchExercisesByGrade = async (grade) => {
   const res = await fetch(`/api/exercises?grade=${encodeURIComponent(grade)}`);
-  if (!res.ok) throw new Error('שגיאה בשליפת תרגילים לפי כיתה');
+  if (!res.ok) throw new Error('Error fetching exercises by grade');
   return await res.json();
 };
 
-// 3. שליפת כל התרגילים (למורה)
+/**
+ * Fetch all exercises (for teachers)
+ * @returns {Promise<Array>} Array of all exercises
+ */
 export const fetchAllExercises = async () => {
   const res = await fetch('/api/exercises');
-  if (!res.ok) throw new Error('שגיאה בשליפת כלל התרגילים');
+  if (!res.ok) throw new Error('Error fetching all exercises');
   return await res.json();
 };
 
-// 4. הוספת תרגיל
+/**
+ * Add a new exercise
+ * @param {Object} exerciseData - Exercise data to add
+ * @returns {Promise<Object>} Created exercise
+ */
 export const addExercise = async (exerciseData) => {
   const res = await fetch('/api/exercises/add', {
     method: 'POST',
@@ -29,11 +47,16 @@ export const addExercise = async (exerciseData) => {
     body: JSON.stringify(exerciseData),
   });
   const data = await res.json();
-  if (!res.ok || !data.success) throw new Error(data.error || 'שגיאה בהוספת תרגיל');
+  if (!res.ok || !data.success) throw new Error(data.error || 'Error adding exercise');
   return data.exercise;
 };
 
-// 5. עדכון תרגיל קיים
+/**
+ * Update existing exercise
+ * @param {string} id - Exercise ID
+ * @param {Object} updatedData - Updated exercise data
+ * @returns {Promise<Object>} Updated exercise
+ */
 export const updateExercise = async (id, updatedData) => {
   const res = await fetch(`/api/exercises/${id}`, {
     method: 'PUT',
@@ -41,39 +64,56 @@ export const updateExercise = async (id, updatedData) => {
     body: JSON.stringify(updatedData),
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'שגיאה בעדכון תרגיל');
+  if (!res.ok) throw new Error(data.error || 'Error updating exercise');
   return data;
 };
 
-// 6. מחיקת תרגיל
+/**
+ * Delete exercise
+ * @param {string} id - Exercise ID
+ * @returns {Promise<void>}
+ */
 export const deleteExercise = async (id) => {
   const res = await fetch(`/api/exercises/${id}`, {
     method: 'DELETE',
   });
-  if (!res.ok) throw new Error('שגיאה במחיקת תרגיל');
+  if (!res.ok) throw new Error('Error deleting exercise');
 };
 
-// 7. שליפת סטטוס התקדמות לפי נושא
+/**
+ * Fetch progress by subject
+ * @param {string} studentId - Student ID
+ * @param {string} subject - Subject name
+ * @returns {Promise<Object>} Progress data for the subject
+ */
 export const fetchProgressBySubject = async (studentId, subject) => {
   const res = await fetch(`/api/progress/${studentId}/${subject}`);
-  if (!res.ok) throw new Error('שגיאה בשליפת התקדמות');
+  if (!res.ok) throw new Error('Error fetching progress');
   return await res.json();
 };
 
-// 8. שליפת נושאים שהושלמו
+/**
+ * Fetch completed subjects
+ * @param {string} studentId - Student ID
+ * @returns {Promise<Array>} Array of completed subjects
+ */
 export const fetchCompletedSubjects = async (studentId) => {
   const res = await fetch(`/api/progress/completed/${studentId}`);
-  if (!res.ok) throw new Error('שגיאה בשליפת נושאים שהושלמו');
+  if (!res.ok) throw new Error('Error fetching completed subjects');
   return await res.json();
 };
 
-// 9. עדכון התקדמות תרגול
+/**
+ * Update practice progress
+ * @param {Object} progressData - Progress data to update
+ * @returns {Promise<Object>} Updated progress data
+ */
 export const updateProgress = async ({ student, subject, currentIndex, completed, answers }) => {
   const res = await fetch('/api/progress', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ student, subject, currentIndex, completed, answers }),
   });
-  if (!res.ok) throw new Error('שגיאה בעדכון התקדמות');
+  if (!res.ok) throw new Error('Error updating progress');
   return await res.json();
 };

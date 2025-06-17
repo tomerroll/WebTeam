@@ -4,6 +4,16 @@ import AddTheory from './AddTheory';
 import EditTheory from './EditTheory';
 import { fetchTheoryContent, deleteTheory } from '../../services/theoryService';
 
+/**
+ * ManageTheory Component
+ * 
+ * A comprehensive theory content management interface for teachers to view, add, edit, and delete
+ * theoretical content. Features include filtering by title, expandable content preview,
+ * responsive design with table view for desktop and card view for mobile, and integration
+ * with AddTheory and EditTheory components for CRUD operations.
+ * 
+ * @returns {JSX.Element} - Theory content management interface with filtering and CRUD operations
+ */
 const ManageTheory = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -16,6 +26,7 @@ const ManageTheory = () => {
 
   const [filterTitle, setFilterTitle] = useState('');
 
+  // Load user data from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -27,6 +38,7 @@ const ManageTheory = () => {
     }
   }, []);
 
+  // Load all theory content
   useEffect(() => {
     const loadTheory = async () => {
       setLoading(true);
@@ -44,6 +56,10 @@ const ManageTheory = () => {
     loadTheory();
   }, []);
 
+  /**
+   * Handles deleting a theory from the system
+   * @param {string} id - Theory ID to delete
+   */
   const handleDeleteTheory = async (id) => {
     if (!window.confirm('האם אתה בטוח שברצונך למחוק תוכן תיאורטי זה?')) {
       return;
@@ -59,20 +75,32 @@ const ManageTheory = () => {
     setLoading(false);
   };
 
+  // Filter theories based on selected title
   const filteredTheory = theoryList.filter(item => {
     return (
       filterTitle === '' || item.title === filterTitle
     );
   });
 
+  // Extract unique titles for filter dropdown
   const uniqueTitles = [...new Set(theoryList.map(item => item.title))].sort();
 
+  /**
+   * Truncates text to specified length with ellipsis
+   * @param {string} text - Text to truncate
+   * @param {number} maxLength - Maximum length before truncation
+   * @returns {string} - Truncated text
+   */
   const truncateText = (text, maxLength) => {
     if (!text) return '';
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
   };
 
+  /**
+   * Toggles content expansion for a specific theory
+   * @param {string} id - Theory ID to toggle
+   */
   const toggleExpand = (id) => {
     setExpandedContent(prevState => ({
       ...prevState,

@@ -1,3 +1,8 @@
+/**
+ * Report Model
+ * Defines the schema for student progress reports and analytics
+ */
+
 const mongoose = require('mongoose');
 
 const reportSchema = new mongoose.Schema({

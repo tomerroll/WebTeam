@@ -3,6 +3,17 @@ import { Link } from 'react-router-dom';
 import { fetchTheoryContent } from '../../services/theoryService';
 import { theoryProgressService } from '../../services/theoryProgressService';
 
+/**
+ * Theory Component
+ * 
+ * A theory content selection interface that displays available theoretical topics
+ * for students to learn. Features include difficulty levels, progress tracking,
+ * completion status, estimated time, interactive examples, and prerequisites.
+ * The component shows theory cards with visual indicators for completion status
+ * and provides navigation to detailed theory content.
+ * 
+ * @returns {JSX.Element} - Theory topic selection interface
+ */
 const Theory = () => {
   const [theoryData, setTheoryData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,16 +21,22 @@ const Theory = () => {
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
+  // Load theory content and progress data
   useEffect(() => {
     const loadAllTheory = async () => {
       try {
         const data = await fetchTheoryContent();
         setTheoryData(data);
         
-        // טעינת נתוני התקדמות אם יש משתמש מחובר
+        // Load progress data if user is logged in
         if (user._id) {
           try {
-            const progress = await theoryProgressService.getAllTheoryProgress(user._id);
+            let progress = await theoryProgressService.getAllTheoryProgress(user._id);
+            // Normalize status: change 'Completed' to 'הושלם'
+            progress = progress.map(p => ({
+              ...p,
+              status: p.status === 'Completed' ? 'הושלם' : p.status
+            }));
             setProgressData(progress);
           } catch (error) {
             console.error('Error loading progress:', error);
@@ -35,6 +52,11 @@ const Theory = () => {
     loadAllTheory();
   }, [user._id]);
 
+  /**
+   * Returns color classes based on difficulty level
+   * @param {string} difficulty - Difficulty level ('קל', 'בינוני', 'קשה')
+   * @returns {string} - Tailwind CSS classes for styling
+   */
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case 'קל': return 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200';
@@ -44,6 +66,11 @@ const Theory = () => {
     }
   };
 
+  /**
+   * Returns emoji icon based on difficulty level
+   * @param {string} difficulty - Difficulty level
+   * @returns {string} - Emoji icon
+   */
   const getDifficultyIcon = (difficulty) => {
     switch (difficulty) {
       case 'קל': return '🟢';
@@ -53,13 +80,20 @@ const Theory = () => {
     }
   };
 
+  /**
+   * Gets progress data for a specific theory
+   * @param {string} theoryId - Theory ID
+   * @returns {Object|null} - Progress data or null if not found
+   */
   const getTheoryProgress = (theoryId) => {
     return progressData.find(p => p.theory?._id === theoryId) || null;
   };
-  
-  
-  
 
+  /**
+   * Determines completion status and styling for a theory
+   * @param {Object} theory - Theory object
+   * @returns {Object} - Status object with status, icon, and color
+   */
   const getCompletionStatus = (theory) => {
     const progress = getTheoryProgress(theory._id);
     if (!progress) return { status: 'לא התחיל', icon: '⭕', color: 'text-gray-400' };
@@ -97,8 +131,10 @@ const Theory = () => {
                 <Link
                   to={`/theory/${encodeURIComponent(theory.title)}`}
                   key={theory._id}
-                  className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden relative ${
-                    completionStatus.status === 'הושלם' ? 'ring-2 ring-green-500 dark:ring-green-400' : ''
+                  className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden relative ${ 
+                    completionStatus.status === 'הושלם' 
+                      ? 'ring-2 ring-green-500 dark:ring-green-400 bg-green-50 dark:bg-green-900/10 border-green-300 dark:border-green-600' 
+                      : ''
                   }`}
                 >
                   {/* סמל השלמה */}
@@ -113,7 +149,11 @@ const Theory = () => {
                   <div className="p-6">
                     {/* כותרת ורמה */}
                     <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+                      <h3 className={`text-xl font-bold ${
+                        completionStatus.status === 'הושלם' 
+                          ? 'text-green-800 dark:text-green-200' 
+                          : 'text-gray-800 dark:text-white'
+                      }`}>
                         {theory.title}
                       </h3>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(theory.difficulty)}`}>
@@ -130,7 +170,11 @@ const Theory = () => {
                     </div>
 
                     {/* תיאור */}
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
+                    <p className={`text-sm mb-4 line-clamp-2 ${
+                      completionStatus.status === 'הושלם' 
+                        ? 'text-green-700 dark:text-green-300' 
+                        : 'text-gray-600 dark:text-gray-300'
+                    }`}>
                       {theory.description}
                     </p>
 
