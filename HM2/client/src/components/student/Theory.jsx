@@ -31,12 +31,7 @@ const Theory = () => {
         // Load progress data if user is logged in
         if (user._id) {
           try {
-            let progress = await theoryProgressService.getAllTheoryProgress(user._id);
-            // Normalize status: change 'Completed' to 'הושלם'
-            progress = progress.map(p => ({
-              ...p,
-              status: p.status === 'Completed' ? 'הושלם' : p.status
-            }));
+            const progress = await theoryProgressService.getAllTheoryProgress(user._id);
             setProgressData(progress);
           } catch (error) {
             console.error('Error loading progress:', error);
@@ -131,10 +126,8 @@ const Theory = () => {
                 <Link
                   to={`/theory/${encodeURIComponent(theory.title)}`}
                   key={theory._id}
-                  className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden relative ${ 
-                    completionStatus.status === 'הושלם' 
-                      ? 'ring-2 ring-green-500 dark:ring-green-400 bg-green-50 dark:bg-green-900/10 border-green-300 dark:border-green-600' 
-                      : ''
+                  className={`bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden relative ${
+                    completionStatus.status === 'הושלם' ? 'ring-2 ring-green-500 dark:ring-green-400' : ''
                   }`}
                 >
                   {/* סמל השלמה */}
@@ -149,11 +142,7 @@ const Theory = () => {
                   <div className="p-6">
                     {/* כותרת ורמה */}
                     <div className="flex justify-between items-start mb-4">
-                      <h3 className={`text-xl font-bold ${
-                        completionStatus.status === 'הושלם' 
-                          ? 'text-green-800 dark:text-green-200' 
-                          : 'text-gray-800 dark:text-white'
-                      }`}>
+                      <h3 className="text-xl font-bold text-gray-800 dark:text-white">
                         {theory.title}
                       </h3>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(theory.difficulty)}`}>
@@ -170,11 +159,7 @@ const Theory = () => {
                     </div>
 
                     {/* תיאור */}
-                    <p className={`text-sm mb-4 line-clamp-2 ${
-                      completionStatus.status === 'הושלם' 
-                        ? 'text-green-700 dark:text-green-300' 
-                        : 'text-gray-600 dark:text-gray-300'
-                    }`}>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
                       {theory.description}
                     </p>
 

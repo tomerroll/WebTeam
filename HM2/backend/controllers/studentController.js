@@ -4,6 +4,8 @@
  */
 
 const Student = require('../models/Student');
+const TheoryProgress = require('../models/TheoryProgress');
+const Theory = require('../models/Theory');
 const bcrypt = require('bcryptjs');
 
 /**
@@ -41,8 +43,38 @@ exports.createStudent = async (req, res) => {
     const { name, grade, class: className, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     const student = new Student({ name, grade, class: className, email, password: hashedPassword });
-    await student.save();
-    res.json(student);
+    const savedStudent = await student.save();
+    
+    // Create theory progress entries for all existing theories
+    try {
+      const theories = await Theory.find();
+      
+      const progressEntries = theories.map(theory => ({
+        studentId: savedStudent._id,
+        theoryId: theory._id,
+        status: 'לא התחיל',
+        readingProgress: {
+          startedAt: null,
+          completedAt: null,
+          timeSpent: 0,
+          sectionsRead: []
+        },
+        interactiveProgress: {
+          examplesCompleted: [],
+          totalCorrect: 0,
+          totalAttempts: 0
+        },
+        completedAt: null
+      }));
+      
+      await TheoryProgress.insertMany(progressEntries);
+      console.log(`Created theory progress entries for student ${savedStudent.name} for ${theories.length} theories`);
+    } catch (progressError) {
+      console.error('Error creating theory progress entries for new student:', progressError);
+      // Don't fail the student creation if progress creation fails
+    }
+    
+    res.json(savedStudent);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -69,7 +101,21 @@ exports.updateStudent = async (req, res) => {
  */
 exports.deleteStudent = async (req, res) => {
   try {
-    await Student.findByIdAndDelete(req.params.id);
+    const deletedStudent = await Student.findByIdAndDelete(req.params.id);
+    
+    if (!deletedStudent) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+    
+    // Delete all theory progress entries for this student
+    try {
+      await TheoryProgress.deleteMany({ studentId: req.params.id });
+      console.log(`Deleted theory progress entries for student: ${deletedStudent.name}`);
+    } catch (progressError) {
+      console.error('Error deleting theory progress entries for student:', progressError);
+      // Don't fail the student deletion if progress deletion fails
+    }
+    
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });

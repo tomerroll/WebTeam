@@ -38,38 +38,6 @@ const theories = [
       }
     ],
     
-    visualExamples: [
-      {
-        title: 'המחשה ויזואלית של שברים',
-        description: 'צפה כיצד שברים נראים בצורה ויזואלית',
-        imageUrl: '/images/fractions-visual.png',
-        animationData: {
-          type: 'svg',
-          content: `
-            <svg width="400" height="200" viewBox="0 0 400 200">
-              <!-- עיגול 1/2 -->
-              <circle cx="100" cy="100" r="50" fill="none" stroke="#3B82F6" stroke-width="3"/>
-              <path d="M 100 50 L 100 150" stroke="#3B82F6" stroke-width="3"/>
-              <text x="100" y="180" text-anchor="middle" fill="#374151" font-size="16">1/2</text>
-              
-              <!-- עיגול 1/4 -->
-              <circle cx="250" cy="100" r="50" fill="none" stroke="#10B981" stroke-width="3"/>
-              <path d="M 250 50 L 250 150" stroke="#10B981" stroke-width="3"/>
-              <path d="M 200 100 L 300 100" stroke="#10B981" stroke-width="3"/>
-              <text x="250" y="180" text-anchor="middle" fill="#374151" font-size="16">1/4</text>
-              
-              <!-- מלבן 3/4 -->
-              <rect x="320" y="50" width="60" height="100" fill="none" stroke="#F59E0B" stroke-width="3"/>
-              <path d="M 320 100 L 380 100" stroke="#F59E0B" stroke-width="3"/>
-              <path d="M 320 125 L 380 125" stroke="#F59E0B" stroke-width="3"/>
-              <text x="350" y="180" text-anchor="middle" fill="#374151" font-size="16">3/4</text>
-            </svg>
-          `
-        },
-        explanation: 'התמונה מראה כיצד שברים שונים נראים כחלקים של עיגול או מלבן.'
-      }
-    ],
-    
     difficulty: 'קל',
     estimatedTime: 15,
     prerequisites: [],
@@ -98,35 +66,6 @@ const theories = [
         options: ['15%', '20%', '25%', '30%'],
         correctAnswer: 2,
         explanation: '(15 ÷ 60) × 100 = 0.25 × 100 = 25%'
-      }
-    ],
-    
-    visualExamples: [
-      {
-        title: 'המחשה ויזואלית של אחוזים',
-        description: 'צפה כיצד אחוזים נראים בצורה ויזואלית',
-        animationData: {
-          type: 'svg',
-          content: `
-            <svg width="400" height="200" viewBox="0 0 400 200">
-              <!-- 25% -->
-              <circle cx="100" cy="100" r="40" fill="none" stroke="#E5E7EB" stroke-width="8"/>
-              <path d="M 100 100 L 100 60 A 40 40 0 0 1 140 100 Z" fill="#3B82F6"/>
-              <text x="100" y="180" text-anchor="middle" fill="#374151" font-size="14">25%</text>
-              
-              <!-- 50% -->
-              <circle cx="200" cy="100" r="40" fill="none" stroke="#E5E7EB" stroke-width="8"/>
-              <path d="M 200 100 L 200 60 A 40 40 0 0 1 240 100 Z" fill="#10B981"/>
-              <text x="200" y="180" text-anchor="middle" fill="#374151" font-size="14">50%</text>
-              
-              <!-- 75% -->
-              <circle cx="300" cy="100" r="40" fill="none" stroke="#E5E7EB" stroke-width="8"/>
-              <path d="M 300 100 L 300 60 A 40 40 0 0 1 340 100 A 40 40 0 0 1 300 140 Z" fill="#F59E0B"/>
-              <text x="300" y="180" text-anchor="middle" fill="#374151" font-size="14">75%</text>
-            </svg>
-          `
-        },
-        explanation: 'התמונה מראה כיצד אחוזים שונים נראים כחלקים של עיגול.'
       }
     ],
     
@@ -161,72 +100,6 @@ const theories = [
       }
     ],
     
-    visualExamples: [
-      {
-        title: 'המחשה ויזואלית של משוואות',
-        description: 'צפה כיצד משוואות נפתרות צעד אחר צעד',
-        animationData: {
-          type: 'html',
-          content: `
-            <div class="equation-steps">
-              <div class="step">
-                <span class="step-number">1</span>
-                <span class="equation">2x + 3 = 7</span>
-              </div>
-              <div class="step">
-                <span class="step-number">2</span>
-                <span class="equation">2x = 7 - 3</span>
-              </div>
-              <div class="step">
-                <span class="step-number">3</span>
-                <span class="equation">2x = 4</span>
-              </div>
-              <div class="step">
-                <span class="step-number">4</span>
-                <span class="equation">x = 4 ÷ 2</span>
-              </div>
-              <div class="step">
-                <span class="step-number">5</span>
-                <span class="equation">x = 2</span>
-              </div>
-            </div>
-            <style>
-              .equation-steps {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                padding: 20px;
-                background: #f8fafc;
-                border-radius: 8px;
-              }
-              .step {
-                display: flex;
-                align-items: center;
-                gap: 15px;
-              }
-              .step-number {
-                background: #3b82f6;
-                color: white;
-                width: 30px;
-                height: 30px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: bold;
-              }
-              .equation {
-                font-size: 18px;
-                font-family: 'Courier New', monospace;
-                color: #374151;
-              }
-            </style>
-          `
-        },
-        explanation: 'התמונה מראה את השלבים השונים בפתרון משוואה לינארית.'
-      }
-    ],
-    
     difficulty: 'בינוני',
     estimatedTime: 25,
     prerequisites: ['חשבון בסיסי'],
@@ -258,33 +131,6 @@ const theories = [
       }
     ],
     
-    visualExamples: [
-      {
-        title: 'המחשה ויזואלית של יחסים',
-        description: 'צפה כיצד יחסים נראים בצורה ויזואלית',
-        animationData: {
-          type: 'svg',
-          content: `
-            <svg width="400" height="200" viewBox="0 0 400 200">
-              <!-- יחס 2:1 -->
-              <rect x="50" y="50" width="60" height="40" fill="#3B82F6"/>
-              <rect x="120" y="50" width="30" height="40" fill="#10B981"/>
-              <text x="100" y="120" text-anchor="middle" fill="#374151" font-size="14">יחס 2:1</text>
-              
-              <!-- יחס 3:2 -->
-              <rect x="200" y="50" width="90" height="40" fill="#F59E0B"/>
-              <rect x="300" y="50" width="60" height="40" fill="#EF4444"/>
-              <text x="250" y="120" text-anchor="middle" fill="#374151" font-size="14">יחס 3:2</text>
-              
-              <!-- פרופורציה -->
-              <text x="200" y="160" text-anchor="middle" fill="#374151" font-size="12">2:1 = 4:2</text>
-            </svg>
-          `
-        },
-        explanation: 'התמונה מראה כיצד יחסים שונים נראים כחלקים של מלבנים.'
-      }
-    ],
-    
     difficulty: 'בינוני',
     estimatedTime: 20,
     prerequisites: ['חשבון בסיסי'],
@@ -313,35 +159,6 @@ const theories = [
         options: ['10', '15', '20', '25'],
         correctAnswer: 2,
         explanation: 'היקף = 4 × צלע = 4 × 5 = 20'
-      }
-    ],
-    
-    visualExamples: [
-      {
-        title: 'המחשה ויזואלית של שטח והיקף',
-        description: 'צפה כיצד שטח והיקף נראים בצורה ויזואלית',
-        animationData: {
-          type: 'svg',
-          content: `
-            <svg width="400" height="200" viewBox="0 0 400 200">
-              <!-- מלבן -->
-              <rect x="50" y="50" width="80" height="40" fill="none" stroke="#3B82F6" stroke-width="2"/>
-              <text x="90" y="110" text-anchor="middle" fill="#374151" font-size="12">מלבן</text>
-              <text x="90" y="125" text-anchor="middle" fill="#374151" font-size="10">שטח: 80×40</text>
-              
-              <!-- ריבוע -->
-              <rect x="180" y="50" width="50" height="50" fill="none" stroke="#10B981" stroke-width="2"/>
-              <text x="205" y="110" text-anchor="middle" fill="#374151" font-size="12">ריבוע</text>
-              <text x="205" y="125" text-anchor="middle" fill="#374151" font-size="10">היקף: 4×50</text>
-              
-              <!-- משולש -->
-              <polygon points="320,90 350,50 380,90" fill="none" stroke="#F59E0B" stroke-width="2"/>
-              <text x="350" y="110" text-anchor="middle" fill="#374151" font-size="12">משולש</text>
-              <text x="350" y="125" text-anchor="middle" fill="#374151" font-size="10">שטח: (ב×ג)/2</text>
-            </svg>
-          `
-        },
-        explanation: 'התמונה מראה כיצד שטח והיקף נראים בצורות גיאומטריות שונות.'
       }
     ],
     

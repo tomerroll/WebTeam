@@ -259,42 +259,13 @@ const TheorySubject = () => {
   };
 
   const formatContent = (content) => {
+    if (!content) return '';
     return content.split('\n').map((line, index) => {
       if (line.startsWith('**') && line.endsWith('**')) {
-        return <h3 key={index} className="text-xl font-bold text-blue-800 dark:text-blue-300 mt-4 mb-2">{line.replace(/\*\*/g, '')}</h3>;
+        return <strong key={index}>{line.slice(2, -2)}</strong>;
       }
-      if (line.startsWith('- ')) {
-        return <li key={index} className="text-gray-700 dark:text-gray-300 mb-1">{line.substring(2)}</li>;
-      }
-      if (line.trim() === '') {
-        return <br key={index} />;
-      }
-      return <p key={index} className="text-gray-700 dark:text-gray-300 mb-3 leading-relaxed">{line}</p>;
+      return <span key={index}>{line}<br /></span>;
     });
-  };
-
-  const renderVisualExample = (example) => {
-    if (!example.animationData) return null;
-
-    if (example.animationData.type === 'svg') {
-      return (
-        <div 
-          className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600"
-          dangerouslySetInnerHTML={{ __html: example.animationData.content }}
-        />
-      );
-    }
-
-    if (example.animationData.type === 'html') {
-      return (
-        <div 
-          className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600"
-          dangerouslySetInnerHTML={{ __html: example.animationData.content }}
-        />
-      );
-    }
-
-    return null;
   };
 
   const getYouTubeEmbedUrl = (url) => {
@@ -338,7 +309,6 @@ const TheorySubject = () => {
 
   const theoryItem = filteredTheoryItems[0];
   const examples = theoryItem.interactiveExamples || [];
-  const visualExamples = theoryItem.visualExamples || [];
   const currentExample = examples[currentExampleIndex];
 
   return (
@@ -428,33 +398,6 @@ const TheorySubject = () => {
           )}
 
         </div>
-
-        {/* דוגמאות ויזואליות */}
-        {visualExamples.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-8">
-            <h3 className="text-2xl font-semibold text-blue-900 dark:text-white mb-4">
-              המחשות ויזואליות
-            </h3>
-            <div className="grid grid-cols-1 gap-6">
-              {visualExamples.map((example, index) => (
-                <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-800 dark:text-white mb-2">
-                    {example.title}
-                  </h4>
-                  <p className="text-gray-600 dark:text-gray-400 mb-3">
-                    {example.description}
-                  </p>
-                  <div className="flex justify-center mb-3">
-                    {renderVisualExample(example)}
-                  </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
-                    {example.explanation}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* דוגמאות אינטראקטיביות */}
         {examples && examples.length > 0 ? (

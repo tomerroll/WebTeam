@@ -16,15 +16,6 @@ const theorySchema = new mongoose.Schema({
     difficulty: { type: String, enum: ['קל', 'בינוני', 'קשה'], default: 'קל' }
   }],
   
-  // דוגמאות ויזואליות
-  visualExamples: [{
-    title: String,
-    description: String,
-    imageUrl: String,
-    animationData: mongoose.Schema.Types.Mixed,
-    explanation: String
-  }],
-  
   // קישורים לתרגול
   relatedExercises: [{
     exerciseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Exercise' },

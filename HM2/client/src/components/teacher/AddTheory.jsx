@@ -27,8 +27,7 @@ const AddTheory = ({ onClose, onAdd }) => {
     youtubeLink: '',
     tags: [],
     prerequisites: [],
-    interactiveExamples: [],
-    visualExamples: []
+    interactiveExamples: []
   });
 
   // Interactive example form state
@@ -40,15 +39,6 @@ const AddTheory = ({ onClose, onAdd }) => {
     correctAnswer: 1,
     explanation: '',
     difficulty: 'קל'
-  });
-
-  // Visual example form state
-  const [newVisualExample, setNewVisualExample] = useState({ 
-    title: '', 
-    description: '', 
-    imageUrl: '', 
-    animationData: '', 
-    explanation: '' 
   });
 
   const [error, setError] = useState('');
@@ -135,33 +125,6 @@ const AddTheory = ({ onClose, onAdd }) => {
     setFormData(prev => ({
       ...prev,
       interactiveExamples: prev.interactiveExamples.filter((_, i) => i !== index)
-    }));
-  };
-
-  /**
-   * Adds a new visual example to the theory
-   */
-  const handleAddVisualExample = () => {
-    if (!newVisualExample.title || !newVisualExample.description || (!newVisualExample.imageUrl && !newVisualExample.animationData)) {
-      setError('אנא מלא את הכותרת, התיאור ואחד מהשדות (תמונה/אנימציה) עבור הדוגמה הוויזואלית');
-      return;
-    }
-    setFormData(prev => ({
-      ...prev,
-      visualExamples: [...prev.visualExamples, { ...newVisualExample }]
-    }));
-    setNewVisualExample({ title: '', description: '', imageUrl: '', animationData: '', explanation: '' });
-    setError('');
-  };
-
-  /**
-   * Removes a visual example from the theory
-   * @param {number} index - Index of example to remove
-   */
-  const handleRemoveVisualExample = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      visualExamples: prev.visualExamples.filter((_, i) => i !== index)
     }));
   };
 
@@ -402,95 +365,6 @@ const AddTheory = ({ onClose, onAdd }) => {
               className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
             >
               ➕ הוסף דוגמה
-            </button>
-          </div>
-        </div>
-
-        {/* Visual Examples Section */}
-        <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-700">
-          <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">🖼️ דוגמאות ויזואליות</h3>
-          
-          <div className="mb-4 p-3 bg-purple-100 dark:bg-purple-800/30 rounded-lg border border-purple-200 dark:border-purple-600">
-            <p className="text-sm text-purple-800 dark:text-purple-200">
-              💡 <strong>טיפ:</strong> הוסף המחשות ויזואליות כמו תמונות או קוד HTML/SVG להצגה ישירה.
-            </p>
-          </div>
-
-          {formData.visualExamples.length > 0 && (
-            <div className="mb-4">
-              <h4 className="font-medium mb-2 text-gray-700 dark:text-gray-300">
-                דוגמאות ויזואליות קיימות ({formData.visualExamples.length}):
-              </h4>
-              {formData.visualExamples.map((example, index) => (
-                <div key={index} className="bg-white dark:bg-gray-600 p-3 rounded border border-gray-200 dark:border-gray-500 mb-2">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex-1">
-                      <h5 className="font-medium text-gray-800 dark:text-white text-sm">
-                        {example.title || 'דוגמה ויזואלית ללא כותרת'}
-                      </h5>
-                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                        {example.description || 'תיאור לא מוגדר'}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveVisualExample(index)}
-                      className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm px-2 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors ml-2"
-                    >
-                      מחק
-                    </button>
-                  </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {example.imageUrl && <span className="mr-3">סוג: תמונה</span>}
-                    {example.animationData && <span className="mr-3">סוג: אנימציה</span>}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="space-y-3">
-            <h4 className="font-medium text-gray-700 dark:text-gray-300">
-              {formData.visualExamples.length > 0 ? 'הוסף דוגמה ויזואלית נוספת:' : 'הוסף דוגמה ויזואלית ראשונה:'}
-            </h4>
-            <input
-              placeholder="כותרת הדוגמה הוויזואלית (חובה)"
-              value={newVisualExample.title}
-              onChange={e => setNewVisualExample({ ...newVisualExample, title: e.target.value })}
-              className={inputClasses}
-            />
-            <input
-              placeholder="תיאור הדוגמה הוויזואלית (חובה)"
-              value={newVisualExample.description}
-              onChange={e => setNewVisualExample({ ...newVisualExample, description: e.target.value })}
-              className={inputClasses}
-            />
-            <input
-              type="url"
-              placeholder="קישור לתמונה (אופציונלי)"
-              value={newVisualExample.imageUrl}
-              onChange={e => setNewVisualExample({ ...newVisualExample, imageUrl: e.target.value })}
-              className={inputClasses}
-            />
-            <textarea
-              placeholder="קוד אנימציה HTML/SVG (אופציונלי)"
-              value={newVisualExample.animationData}
-              onChange={e => setNewVisualExample({ ...newVisualExample, animationData: e.target.value })}
-              className={`${inputClasses} h-24 resize-none`}
-            />
-            <textarea
-              placeholder="הסבר לדוגמה הוויזואלית (אופציונלי)"
-              value={newVisualExample.explanation}
-              onChange={e => setNewVisualExample({ ...newVisualExample, explanation: e.target.value })}
-              className={`${inputClasses} h-20 resize-none`}
-            />
-            
-            <button
-              type="button"
-              onClick={handleAddVisualExample}
-              className="w-full px-4 py-2 bg-purple-500 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white rounded-lg transition-colors font-medium"
-            >
-              ➕ הוסף דוגמה ויזואלית
             </button>
           </div>
         </div>
