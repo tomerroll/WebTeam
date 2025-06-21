@@ -1,2 +1,6 @@
+# Node modules (client & server)
 **/node_modules/
 
+# Environment variables
+.env
+.env.*  # במידה ויש קבצי סביבה נפרדים כמו .env.production
