@@ -40,50 +40,64 @@ const Login = () => {
    * @param {Event} e - Form submission event
    */
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+  e.preventDefault();
+  setError('');
+  setLoading(true);
 
-    if (isLogin) {
-      // Handle login flow
-      try {
-        const data = await loginUser(username, password);
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          localStorage.setItem('userType', data.userType);
-          navigate(data.userType === 'student' ? '/student-dashboard' : '/teacher-dashboard');
-        } else {
-          setError(data.error || 'שגיאה בהתחברות');
-        }
-      } catch {
-        setError('שגיאה בשרת');
+  if (isLogin) {
+    // Handle login flow
+    try {
+      const data = await loginUser(username, password);
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('userType', data.userType);
+        navigate(data.userType === 'student' ? '/student-dashboard' : '/teacher-dashboard');
+      } else {
+        setError(data.error || 'שגיאה בהתחברות');
       }
-    } else {
-      // Handle registration flow
-      try {
-        const data = await registerUser({
-          name: fullName,
-          email: username,
-          password,
-          userType,
-          ...(userType === 'student' && { grade, class: className }),
-          ...(userType === 'teacher' && { teacherKey }),
-        });
-
-        if (data.success) {
-          alert('נרשמת בהצלחה! כעת תוכל להתחבר');
-          setIsLogin(true);
-        } else {
-          setError(data.error || 'שגיאה בהרשמה');
-        }
-      } catch {
-        setError('שגיאה בשרת');
-      }
+    } catch {
+      setError('שגיאה בשרת');
+    }
+  } else {
+    // Handle registration flow
+    if (!isValidEmail(username)) {
+      setError('כתובת האימייל שהוזנה אינה תקינה');
+      setLoading(false);
+      return;
     }
 
-    setLoading(false);
-  };
+    try {
+      const data = await registerUser({
+        name: fullName,
+        email: username,
+        password,
+        userType,
+        ...(userType === 'student' && { grade, class: className }),
+        ...(userType === 'teacher' && { teacherKey }),
+      });
+
+      if (data.success) {
+        alert('נרשמת בהצלחה! כעת תוכל להתחבר');
+        setIsLogin(true);
+      } else {
+        setError(data.error || 'שגיאה בהרשמה');
+      }
+    } catch {
+      setError('שגיאה בשרת');
+    }
+  }
+
+  setLoading(false);
+};
+
+
+  const isValidEmail = (email) => {
+  // בדיקת מבנה תקין של אימייל בעזרת רג'קס
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
 
   return (
 <div
