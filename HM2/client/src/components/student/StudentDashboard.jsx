@@ -76,7 +76,7 @@ const StudentDashboard = () => {
     <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sky-200 dark:from-gray-900 dark:to-gray-800 py-10 px-4">
       <main className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold text-center mb-10 text-blue-800 dark:text-white drop-shadow">
-          שלום {userName}, מה תרצה לעשות היום?
+          שלום {userName}, מה נלמד היום? 
         </h1>
 
 
