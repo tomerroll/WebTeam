@@ -15,6 +15,16 @@ import { fetchCurrentStudent } from '../../services/studentService';
 const StudentDashboard = () => {
   const [studentData, setStudentData] = useState(null);
   const [user, setUser] = useState(null);
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  if (user.name) {
+    setUserName(user.name);
+  }
+}, []);
+
+
 
   // Navigation tiles configuration with routes, titles, descriptions, colors, and icons
   const tiles = [
@@ -66,8 +76,9 @@ const StudentDashboard = () => {
     <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sky-200 dark:from-gray-900 dark:to-gray-800 py-10 px-4">
       <main className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold text-center mb-10 text-blue-800 dark:text-white drop-shadow">
-          מה תרצה לעשות היום?
+          שלום {userName}, מה תרצה לעשות היום?
         </h1>
+
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {tiles.map(({ to, title, description, color, icon }, idx) => (

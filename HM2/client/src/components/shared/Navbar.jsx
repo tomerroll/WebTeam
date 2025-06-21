@@ -19,14 +19,7 @@ const Navbar = ({ userType }) => {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const [studentData, setStudentData] = useState(null);
-  const [userName, setUserName] = useState('');
 
-useEffect(() => {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  if (user.name) {
-    setUserName(user.name);
-  }
-}, []);
   // Fetch student data on mount and when userType changes
   useEffect(() => {
     if (userType === 'student') {
@@ -164,14 +157,6 @@ useEffect(() => {
           </div>
         )}
       </div>
-
-      {/* Center: Hello Message (positioned absolutely to not break layout) */}
-      <div className={`absolute left-1/2 transform -translate-x-1/2 px-5 py-1.5 rounded-full shadow-md text-base sm:text-lg font-bold transition-all duration-300
-  ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-sky-600 border border-sky-600'}`}>
-  שלום, {userName}
-</div>
-
-
 
       {/* Left: Logo */}
       <div 
