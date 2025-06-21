@@ -1,10 +1,18 @@
-# Group 9
+# Math Learning Platform - Group 9
+
+This project is a web-based platform designed to help students practice and learn mathematics.  
+It provides students with access to exercises, a question-and-answer forum, and progress tracking.  
+Teachers can view student progress, add new questions and exercises, and respond to student queries.
+
+🔗 [Visit the Website](https://web-team-ten.vercel.app/login)
+
+---
 
 ## Course WEB - Classmates
 
 This repository contains information about the students in the "WEB" course.
 
-## Classmates
+### Group Members
 
 1. **Tom Biton**  
    Email: [tom.biton@e.braude.ac.il](mailto:tom.biton@e.braude.ac.il)
